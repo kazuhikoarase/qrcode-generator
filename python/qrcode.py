@@ -15,6 +15,8 @@
 
 """QR Code Generator for Python
 
+	from qrcode import QRCode, ErrorCorrectLevel
+
 	# generate with explicit type number
 	qr = QRCode()
 	qr.setTypeNumber(4)
@@ -63,7 +65,7 @@ class QRCode:
 		self.qrDataList.append(QR8BitByte(data) )
 
 	def getDataCount(self):
-		return self.qrDataList.size()
+		return len(self.qrDataList)
 	
 	def getData(self, index):
 		return self.qrDataList[index]
@@ -224,9 +226,7 @@ class QRCode:
 			buffer.put(data.getLength(), data.getLengthInBits(typeNumber) )
 			data.write(buffer)
 
-		totalDataCount = 0
-		for rsBlock in rsBlocks:
-			totalDataCount += rsBlock.getDataCount()
+		totalDataCount = sum([rsBlock.getDataCount() for rsBlock in rsBlocks])
 
 		if buffer.getLengthInBits() > totalDataCount * 8:
 			raise Exception('code length overflow. ('
@@ -353,7 +353,7 @@ class QRUtil:
 	def getPatternPosition(typeNumber):
 		return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1]
 
-	PATTERN_POSITION_TABLE =[
+	PATTERN_POSITION_TABLE = [
 		[],
 		[6, 18],
 		[6, 22],
