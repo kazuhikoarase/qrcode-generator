@@ -276,7 +276,7 @@ module QRCode
 
       if buffer.getLengthInBits() > totalDataCount * 8
         raise 'code length overflow. ' +
-          "(#{buffer.getLengthInBits()} > #{totalDataCount * 8})";
+          "(#{buffer.getLengthInBits()} > #{totalDataCount * 8})"
       end
 
       # end code
@@ -286,7 +286,7 @@ module QRCode
 
       # padding
       while buffer.getLengthInBits() % 8 != 0
-        buffer.put(False)
+        buffer.put(false)
       end
 
       # padding
