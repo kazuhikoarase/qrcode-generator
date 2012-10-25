@@ -229,11 +229,8 @@ class QRCode:
                               for rsBlock in rsBlocks])
 
         if buffer.getLengthInBits() > totalDataCount * 8:
-            raise Exception('code length overflow. (' +
-                str(buffer.getLengthInBits() ) +
-                '>' +
-                str(totalDataCount * 8) +
-                ')')
+            raise Exception('code length overflow. (%s>%s)' %
+                    (buffer.getLengthInBits(), totalDataCount * 8) )
 
         # end code
         if buffer.getLengthInBits() + 4 <= totalDataCount * 8:
@@ -611,7 +608,7 @@ class QR8BitByte:
                 }[self.mode]
 
         else:
-            raise Exception('type:' + str(type) )
+            raise Exception('type:%s' % type)
 
 class QRMath:
 
@@ -634,7 +631,7 @@ class QRMath:
     @staticmethod
     def glog(n):
         if n < 1:
-            raise Exception('log(' + str(n) + ')')
+            raise Exception('log(%s)' % n)
         return QRMath.LOG_TABLE[n]
 
     @staticmethod
@@ -769,8 +766,7 @@ class RSBlock:
         return self.totalCount
 
     def __repr__(self):
-        return ('(total=' + str(self.totalCount) +
-            ',data=' + str(self.dataCount) + ')')
+        return ('(total=%s,data=%s)' % (self.totalCount, self.dataCount) )
 
     @staticmethod
     def getRSBlocks(typeNumber, errorCorrectLevel):
