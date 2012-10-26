@@ -225,8 +225,8 @@ class QRCode:
             buffer.put(data.getLength(), data.getLengthInBits(typeNumber) )
             data.write(buffer)
 
-        totalDataCount = sum([rsBlock.getDataCount()
-                              for rsBlock in rsBlocks])
+        totalDataCount = sum(rsBlock.getDataCount()
+                              for rsBlock in rsBlocks)
 
         if buffer.getLengthInBits() > totalDataCount * 8:
             raise Exception('code length overflow. (%s>%s)' %
@@ -284,8 +284,8 @@ class QRCode:
                 modIndex = i + modPoly.getLength() - len(ecdata[r])
                 ecdata[r][i] = modPoly.get(modIndex) if modIndex >= 0 else 0
 
-        totalCodeCount = sum([rsBlock.getTotalCount()
-                              for rsBlock in rsBlocks])
+        totalCodeCount = sum(rsBlock.getTotalCount()
+                              for rsBlock in rsBlocks)
 
         data = [0] * totalCodeCount
 
@@ -821,5 +821,5 @@ class BitBuffer:
             self.putBit( ( (num >> (length - i - 1) ) & 1) == 1)
 
     def __repr__(self):
-        return ''.join(['1' if self.get(i) else '0'
-            for i in range(self.getLengthInBits() )])
+        return ''.join('1' if self.get(i) else '0'
+            for i in range(self.getLengthInBits() ) )
