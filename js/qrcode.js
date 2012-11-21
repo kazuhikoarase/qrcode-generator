@@ -296,7 +296,7 @@ var qrcode = function() {
 				ecdata[r] = new Array(rsPoly.getLength() - 1);
 				for (var i = 0; i < ecdata[r].length; i += 1) {
 					var modIndex = i + modPoly.getLength() - ecdata[r].length;
-					ecdata[r][i] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+					ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
 				}
 			}
 
@@ -932,7 +932,7 @@ var qrcode = function() {
 
 		var _this = {};
 
-		_this.get = function(index) {
+		_this.getAt = function(index) {
 			return _num[index];
 		};
 
@@ -946,7 +946,7 @@ var qrcode = function() {
 
 			for (var i = 0; i < _this.getLength(); i += 1) {
 				for (var j = 0; j < e.getLength(); j += 1) {
-					num[i + j] ^= QRMath.gexp(QRMath.glog(_this.get(i) ) + QRMath.glog(e.get(j) ) );
+					num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
 				}
 			}
 
@@ -959,15 +959,15 @@ var qrcode = function() {
 				return _this;
 			}
 
-			var ratio = QRMath.glog(_this.get(0) ) - QRMath.glog(e.get(0) );
+			var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
 
 			var num = new Array(_this.getLength() );
 			for (var i = 0; i < _this.getLength(); i += 1) {
-				num[i] = _this.get(i);
+				num[i] = _this.getAt(i);
 			}
 
 			for (var i = 0; i < e.getLength(); i += 1) {
-				num[i] ^= QRMath.gexp(QRMath.glog(e.get(i) ) + ratio);
+				num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
 			}
 
 			// recursive call
@@ -1121,7 +1121,7 @@ var qrcode = function() {
 			return _buffer;
 		};
 
-		_this.get = function(index) {
+		_this.getAt = function(index) {
 			var bufIndex = Math.floor(index / 8);
 			return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
 		};
