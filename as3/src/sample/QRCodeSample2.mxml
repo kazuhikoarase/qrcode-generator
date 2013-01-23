@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
-    xmlns:dp="http://www.d-project.com/flex"
-    layout="vertical" backgroundColor="#cccccc" 
-    paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4">
-
-  <dp:QRCode text="タグでもっとお手軽！" width="100" height="100"/>
-
-</mx:Application>
