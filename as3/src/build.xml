@@ -1,7 +1,6 @@
 <project default="all" basedir="../">
 
 	<property environment="env" />
-	<property name="FLEX_HOME" value="${env.FLEX_HOME}"/>
 
 	<property name="package.name" value="qrcode-as3"/>
 
@@ -18,10 +17,10 @@
 	<property name="build.as3" location="${build}/as3"/>
 	<property name="build.asdoc" location="${build}/asdoc"/>
 
-	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/>
-
 	<target name="init">
-
+		<fail unless="env.FLEX_HOME" message="environment variable FLEX_HOME not set."/>
+		<property name="FLEX_HOME" value="${env.FLEX_HOME}"/>
+		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/>
 	</target>
 		
 	<target name="clean">
@@ -104,6 +103,7 @@
 			</compiler.include-libraries>
 			<default-background-color>#ffffff</default-background-color>
 			<default-size width="200" height="200"/>
+			<static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
 		</mxmlc>
 
 		<mxmlc 
