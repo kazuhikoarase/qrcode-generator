@@ -28,7 +28,7 @@ public class QRCode {
 
 	private int errorCorrectLevel;
 
-	private List qrDataList;
+	private List<QRData> qrDataList;
 
 	/**
      * コンストラクタ
@@ -38,7 +38,7 @@ public class QRCode {
 	public QRCode() {
  		this.typeNumber = 1;
 		this.errorCorrectLevel = ErrorCorrectLevel.H;
-		this.qrDataList = new ArrayList(1);
+		this.qrDataList = new ArrayList<QRData>(1);
 	}
 
     /**
@@ -122,15 +122,15 @@ public class QRCode {
 		qrDataList.clear();
 	}
 	
-	private void addData(QRData qrData) {
+	protected void addData(QRData qrData) {
 		qrDataList.add(qrData);
 	}
 
-	private int getDataCount() {
+	protected int getDataCount() {
 		return qrDataList.size();
 	}
-	
-	private QRData getData(int index) {
+
+	protected QRData getData(int index) {
 		return (QRData)qrDataList.get(index);
 	}
 

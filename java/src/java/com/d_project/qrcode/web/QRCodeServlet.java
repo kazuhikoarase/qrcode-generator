@@ -31,6 +31,7 @@ import com.d_project.qrcode.QRCode;
  * @see com.d_project.qrcode.Mode
  * @see com.d_project.qrcode.ErrorCorrectLevel
  */
+@SuppressWarnings("serial")
 public class QRCodeServlet extends HttpServlet {
 
 	private String defaultCharacterEncoding;

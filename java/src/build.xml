@@ -35,12 +35,13 @@
 
 		<javac
 	    	classpath="${SERVLET_API}"
+			bootclasspath=""
 			srcdir="${src.java}"
 	    	includes="**/*.java"
-	    	excludes="**/*Test*.java"
 	    	destdir="${build.java}"
 	    	debug="true"
-	    	encoding="UTF-8"/>
+	    	encoding="UTF-8"
+			includeantruntime="false" />
 
 	</target>
 	

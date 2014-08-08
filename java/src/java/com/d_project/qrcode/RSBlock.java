@@ -100,7 +100,7 @@ class RSBlock {
 		int length = rsBlock.length / 3;
 		
 
-		List list = new ArrayList();
+		List<RSBlock> list = new ArrayList<RSBlock>();
 						
 		for (int i = 0; i < length; i++) {
 

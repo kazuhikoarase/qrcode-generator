@@ -174,17 +174,17 @@ class GIFImage {
     
     private static class LZWTable {
 
-        private Map map;
+        private Map<String,Integer> map;
         
         public LZWTable() {
-            map = new HashMap();
+            map = new HashMap<String,Integer>();
         }
         
         public void add(String key) {
             if (contains(key) ) {
                 throw new IllegalArgumentException("dup key:" + key);
             }
-            map.put(key, new Integer(map.size() ) );
+            map.put(key, map.size() );
         }
         
         public int size() {

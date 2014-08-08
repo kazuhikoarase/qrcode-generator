@@ -1,9 +1,11 @@
 package com.d_project.qrcode;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class QRCodeTest extends TestCase {
+public class QRCodeTest {
 
+	@Test
 	public void test1() {
 		QRNumber data = new QRNumber("0123");
 		byte[] act = QRCode.createData(1, ErrorCorrectLevel.H, new QRData[]{data} );
@@ -11,6 +13,7 @@ public class QRCodeTest extends TestCase {
 		assertEquals(exp, act);
 	}
 	
+	@Test
 	public void test2() {
 		QRAlphaNum data = new QRAlphaNum("AB01");
 		byte[] act = QRCode.createData(1, ErrorCorrectLevel.H, new QRData[]{data} );
@@ -18,6 +21,7 @@ public class QRCodeTest extends TestCase {
 		assertEquals(exp, act);
 	}
 
+	@Test
 	public void test3() {
 		QRKanji data = new QRKanji("漢字");
 		byte[] act = QRCode.createData(1, ErrorCorrectLevel.H, new QRData[]{data} );
@@ -25,6 +29,7 @@ public class QRCodeTest extends TestCase {
 		assertEquals(exp, act);
 	}
 
+	@Test
 	public void test4() {
 		QR8BitByte data = new QR8BitByte("ab01");
 		byte[] act = QRCode.createData(1, ErrorCorrectLevel.H, new QRData[]{data} );
@@ -32,10 +37,10 @@ public class QRCodeTest extends TestCase {
 		assertEquals(exp, act);
 	}
 
-	public void assertEquals(byte[] expected, byte[] actual) {
-		assertEquals(expected.length, actual.length);
+	protected void assertEquals(byte[] expected, byte[] actual) {
+		Assert.assertEquals(expected.length, actual.length);
 		for (int i = 0; i < expected.length; i++) {
-			assertEquals(expected[i], actual[i]);
+			Assert.assertEquals(expected[i], actual[i]);
 		}
 	}
 }

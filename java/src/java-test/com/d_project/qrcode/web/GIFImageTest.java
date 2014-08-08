@@ -2,10 +2,11 @@ package com.d_project.qrcode.web;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class GIFImageTest extends TestCase {
+public class GIFImageTest {
 
+	@Test
 	public void test() throws Exception {
 
 		GIFImage g = new GIFImage(2, 2);
