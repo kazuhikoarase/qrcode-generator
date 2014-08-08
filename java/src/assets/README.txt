@@ -14,7 +14,7 @@ DENSO WAVE INCORPORATED
 
 -- REQUIREMENTS
 
-Java Runtime Environment (JRE) 1.4 or above
+Java Runtime Environment (JRE) 1.5 or above
 
 -- CONTENTS
 

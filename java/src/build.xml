@@ -19,7 +19,7 @@
 
 	<target name="init">
 		<fail unless="env.SERVLET_API" message="environment variable SERVLET_API not set."/>
-		<property name="SERVLET_API" value="${env.SERVLET_API}"/>
+		<fail unless="env.JAVA5_BOOTSTRAP_CLASSPATH" message="environment variable JAVA5_BOOTSTRAP_CLASSPATH not set."/>
 	</target>
 		
 	<target name="clean">
@@ -34,8 +34,10 @@
 		<mkdir dir="${build.java}"/>
 
 		<javac
-	    	classpath="${SERVLET_API}"
-			bootclasspath=""
+			source="1.5"
+			target="1.5"
+			bootclasspath="${env.JAVA5_BOOTSTRAP_CLASSPATH}"
+	    	classpath="${env.SERVLET_API}"
 			srcdir="${src.java}"
 	    	includes="**/*.java"
 	    	destdir="${build.java}"
@@ -52,7 +54,7 @@
 		<property name="doc.title" value="QRCode for Java"/>
 		
 		<javadoc
-	    	classpath="${SERVLET_API}"
+	    	classpath="${env.SERVLET_API}"
 			encoding="UTF-8"
 			docencoding="UTF-8"
 			charset="UTF-8"
