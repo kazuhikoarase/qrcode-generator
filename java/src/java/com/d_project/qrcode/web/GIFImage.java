@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * GIFイメージ(モノクロ)
+ * GIFイメージ(B/W)
  * @author Kazuhiko Arase 
  */
 class GIFImage {
