@@ -44,7 +44,7 @@ class QRKanji extends QRData {
 			}
 
 		} catch(UnsupportedEncodingException e) {
-			throw new Error(e.getMessage() );
+			throw new RuntimeException(e.getMessage() );
 		}		
 	}
 	
@@ -52,7 +52,7 @@ class QRKanji extends QRData {
 		try {
 			return getData().getBytes(QRUtil.getJISEncoding() ).length / 2;
 		} catch(UnsupportedEncodingException e) {
-			throw new Error(e.getMessage() );
+			throw new RuntimeException(e.getMessage() );
 		}
 	}	
 }

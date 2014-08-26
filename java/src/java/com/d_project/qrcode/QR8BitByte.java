@@ -23,7 +23,7 @@ class QR8BitByte extends QRData {
 			}
 			
 		} catch(UnsupportedEncodingException e) {
-			throw new Error(e.getMessage() );
+			throw new RuntimeException(e.getMessage() );
 		}		
 	}
 	
@@ -31,7 +31,7 @@ class QR8BitByte extends QRData {
 		try {
 			return getData().getBytes(QRUtil.getJISEncoding() ).length;
 		} catch(UnsupportedEncodingException e) {
-			throw new Error(e.getMessage() );
+			throw new RuntimeException(e.getMessage() );
 		}
 	}
 	

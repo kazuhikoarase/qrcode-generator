@@ -131,7 +131,7 @@ public class QRCode {
 	}
 
 	protected QRData getData(int index) {
-		return (QRData)qrDataList.get(index);
+		return qrDataList.get(index);
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class QRCode {
 			setupTypeNumber(test);
 		}
 		
-		QRData[] dataArray = (QRData[])qrDataList.toArray(new QRData[qrDataList.size()]);
+		QRData[] dataArray = qrDataList.toArray(new QRData[qrDataList.size()]);
 
 		byte[] data = createData(typeNumber, errorCorrectLevel, dataArray);
 		

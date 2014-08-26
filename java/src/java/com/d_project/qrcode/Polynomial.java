@@ -34,7 +34,7 @@ class Polynomial {
 
 	public String toString() {
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		for (int i = 0; i < getLength(); i++) {
 			if (i > 0) {
@@ -48,7 +48,7 @@ class Polynomial {
 	
 	public String toLogString() {
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		for (int i = 0; i < getLength(); i++) {
 			if (i > 0) {

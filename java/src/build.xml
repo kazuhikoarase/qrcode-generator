@@ -34,8 +34,8 @@
 		<mkdir dir="${build.java}"/>
 
 		<javac
-			source="1.5"
 			target="1.5"
+			source="1.5"
 			bootclasspath="${env.JAVA5_BOOTSTRAP_CLASSPATH}"
 	    	classpath="${env.SERVLET_API}"
 			srcdir="${src.java}"
@@ -65,7 +65,6 @@
 			author="false">
 	    	<fileset dir="${src.java}">
 	    		<include name="**/*.java"/>
-	    		<exclude name="**/*Test*.java"/>
 	    	</fileset>
 		</javadoc>
 

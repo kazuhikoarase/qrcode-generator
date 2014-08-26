@@ -307,7 +307,7 @@ class QRUtil {
 			return true;
 
 		} catch(UnsupportedEncodingException e) {
-			throw new Error(e.getMessage() );
+			throw new RuntimeException(e.getMessage() );
 		}
 	}
 	
