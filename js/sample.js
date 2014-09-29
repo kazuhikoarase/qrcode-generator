@@ -5,8 +5,8 @@ var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
 
 var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
 
-	var qr = qrcode(typeNumber || 4, errorCorrectLevel || 'M');
-	qr.addData(text);
+	var qr = qrcode((typeNumber === 0 || typeNumber ? typeNumber : -1), errorCorrectLevel || 'M');
+	qr.addData(unescape(encodeURI(text)));
 	qr.make();
 
 //	return qr.createTableTag();
