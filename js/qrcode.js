@@ -424,6 +424,39 @@ var qrcode = function() {
 			makeImpl(false, getBestMaskPattern() );
 		};
 
+		_this.createImage = function(cellSize, margin) {
+			cellSize = cellSize || 2;
+			margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+			var size = _this.getModuleCount() * cellSize + margin * 2;
+			var min = margin;
+			var max = size - margin;
+
+			var y, x, r, p;
+			var gif = gifImage(size, size);
+			for (y = 0; y < size; y += 1) {
+				r = Math.floor( (y - min) / cellSize);
+				for (x = 0; x < size; x += 1) {
+					p = 1;
+
+					if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor( (x - min) / cellSize))) {
+						p = 0;
+					}
+
+					gif.setPixel(x, y, p);
+				}
+			}
+
+			var b = byteArrayOutputStream();
+			gif.write(b);
+
+			return {
+				bytes: b,
+				width: size,
+				height: size
+			};
+		};
+
 		_this.createTableTag = function(cellSize, margin) {
 
 			cellSize = cellSize || 2;
@@ -464,24 +497,36 @@ var qrcode = function() {
 			return qrHtml;
 		};
 
-		_this.createImgTag = function(cellSize, margin) {
+		_this.createImgTag = function(cellSize, margin, alt) {
+			var data = _this.createImage(cellSize, margin);
 
-			cellSize = cellSize || 2;
-			margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+			var base64 = base64EncodeOutputStream();
+			var bytes = data.bytes.toByteArray();
+			for (var i = 0; i < bytes.length; i += 1) {
+				base64.writeByte(bytes[i]);
+			}
+			base64.flush();
 
-			var size = _this.getModuleCount() * cellSize + margin * 2;
-			var min = margin;
-			var max = size - margin;
+			var img = '';
+			img += '<img';
+			img += '\u0020src="';
+			img += 'data:image/gif;base64,';
+			img += base64;
+			img += '"';
+			img += '\u0020width="';
+			img += data.width;
+			img += '"';
+			img += '\u0020height="';
+			img += data.height;
+			img += '"';
+			if (alt) {
+				img += '\u0020alt="';
+				img += alt;
+				img += '"';
+			}
+			img += '/>';
 
-			return createImgTag(size, size, function(x, y) {
-				if (min <= x && x < max && min <= y && y < max) {
-					var c = Math.floor( (x - min) / cellSize);
-					var r = Math.floor( (y - min) / cellSize);
-					return _this.isDark(r, c)? 0 : 1;
-				} else {
-					return 1;
-				}
-			} );
+			return img;
 		};
 
 		return _this;
@@ -1784,47 +1829,6 @@ var qrcode = function() {
 		};
 
 		return _this;
-	};
-
-	var createImgTag = function(width, height, getPixel, alt) {
-
-		var gif = gifImage(width, height);
-		for (var y = 0; y < height; y += 1) {
-			for (var x = 0; x < width; x += 1) {
-				gif.setPixel(x, y, getPixel(x, y) );
-			}
-		}
-
-		var b = byteArrayOutputStream();
-		gif.write(b);
-
-		var base64 = base64EncodeOutputStream();
-		var bytes = b.toByteArray();
-		for (var i = 0; i < bytes.length; i += 1) {
-			base64.writeByte(bytes[i]);
-		}
-		base64.flush();
-
-		var img = '';
-		img += '<img';
-		img += '\u0020src="';
-		img += 'data:image/gif;base64,';
-		img += base64;
-		img += '"';
-		img += '\u0020width="';
-		img += width;
-		img += '"';
-		img += '\u0020height="';
-		img += height;
-		img += '"';
-		if (alt) {
-			img += '\u0020alt="';
-			img += alt;
-			img += '"';
-		}
-		img += '/>';
-
-		return img;
 	};
 
 	//---------------------------------------------------------------------
