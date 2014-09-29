@@ -1836,3 +1836,8 @@ var qrcode = function() {
 
 	return qrcode;
 }();
+
+// Export module for node.js when used in node.js
+if (typeof module === 'object' && module.exports) {
+	module.exports = qrcode;
+}

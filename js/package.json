@@ -1,0 +1,23 @@
+{
+  "name": "qrcode-generator",
+  "version": "1.0.0",
+  "description": "QR Code Generator implementation in JavaScript which does not depent on any other modules.",
+  "main": "qrcode.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kazuhikoarase/qrcode-generator/tree/master/js"
+  },
+  "keywords": [
+    "qr",
+    "code",
+    "generator"
+  ],
+  "author": "kazuhiko arase",
+  "license": "MIT"
+}
