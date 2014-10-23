@@ -1,20 +1,42 @@
+<!doctype html>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=Utf-8">
-		<script type="text/javascript" src="qrcode.js"></script>
-		<!-- SJIS Support (optional) -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Utf-8">
+    <script type="text/javascript" src="qrcode.js"></script>
+    <!-- SJIS Support (optional) -->
 <!--
-		<script type="text/javascript" src="qrcode_SJIS.js"></script>
+    <script type="text/javascript" src="qrcode_SJIS.js"></script>
 -->
-		<script type="text/javascript" src="sample.js"></script>
-		<title>QR Code for JavaScript</title>
-	</head>
-	<body onload="update_qrcode()">
-		<form>
-			<textarea name="msg" rows="10" cols="40">here comes qr!</textarea>
-			<br/>
-			<input type="button" value="update" onclick="update_qrcode()"/>
-			<div id="qr"></div>
-		</form>
-	</body>
+    <script type="text/javascript" src="sample.js"></script>
+    <title>QR Code for JavaScript</title>
+  </head>
+  <body onload="update_qrcode()">
+    <form name="qrForm">
+      <span>TypeNumber:</span>
+      <select name="t">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected="selected">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
+      <span>ErrorCorrectLevel:</span>
+      <select name="e">
+        <option value="L">L(7%)</option>
+        <option value="M" selected="selected">M(15%)</option>
+        <option value="Q">Q(25%)</option>
+        <option value="H">H(30%)</option>
+      </select>
+      <br/>
+      <textarea name="msg" rows="10" cols="40">here comes qr!</textarea>
+      <br/>
+      <input type="button" value="update" onclick="update_qrcode()"/>
+      <div id="qr"></div>
+    </form>
+  </body>
 </html>
