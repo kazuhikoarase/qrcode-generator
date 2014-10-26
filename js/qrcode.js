@@ -711,10 +711,10 @@ var qrcode = function() {
         // 1 - 9
 
         switch(mode) {
-        case QRMode.MODE_NUMBER   : return 10;
-        case QRMode.MODE_ALPHA_NUM   : return 9;
-        case QRMode.MODE_8BIT_BYTE  : return 8;
-        case QRMode.MODE_KANJI    : return 8;
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
         default :
           throw new Error('mode:' + mode);
         }
