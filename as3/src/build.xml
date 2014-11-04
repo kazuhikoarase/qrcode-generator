@@ -1,0 +1,152 @@
+<project default="all" basedir="../">
+
+	<property environment="env" />
+
+	<property name="package.name" value="qrcode-as3"/>
+
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+	<property name="src" location="src"/>
+
+	<property name="namespace.uri" value="http://www.d-project.com/flex"/>
+
+	<property name="src.as3" location="${src}/as3"/>
+	<property name="src.sample" location="${src}/sample"/>
+	<property name="src.assets" location="${src}/assets"/>
+
+	<property name="build.as3" location="${build}/as3"/>
+	<property name="build.asdoc" location="${build}/asdoc"/>
+
+	<target name="init">
+		<fail unless="env.FLEX_HOME" message="environment variable FLEX_HOME not set."/>
+		<property name="FLEX_HOME" value="${env.FLEX_HOME}"/>
+		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/>
+	</target>
+		
+	<target name="clean">
+
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+
+	</target>
+
+	<target name="all" depends="package"/>
+
+	<target name="compile" depends="init">
+		
+		<mkdir dir="${build.as3}"/>
+
+		<compc 
+			benchmark="true"
+			include-classes="com.d_project.qrcode.QRCode com.d_project.qrcode.mx.QRCode"
+			output="${build.as3}/qrcode.swc"
+		>
+			<compiler.source-path path-element="${src.as3}"/>
+			<namespace uri="${namespace.uri}" manifest="${src.assets}/manifest.xml"/>
+			<include-namespaces uri="${namespace.uri}"/>
+		</compc>
+
+	</target>
+
+	<target name="docs" depends="init">
+
+		<mkdir dir="${build.asdoc}"/>
+
+		<property name="doc.title" value="QRCode for ActionScript3"/>
+
+		<java taskname="asdoc" jar="${FLEX_HOME}/lib/asdoc.jar" fork="true">
+
+			<jvmarg value="-Dapplication.home=${FLEX_HOME}"/>
+			<jvmarg value="-Dsun.io.useCanonCaches=false"/>
+			<jvmarg value="-Xms512m"/>
+			<jvmarg value="-Xmx1024m"/>
+			<jvmarg value="-XX:MaxPermSize=256m"/>
+			
+			<arg value="-benchmark"/>
+			<arg value="-main-title"/>
+			<arg value="${doc.title}"/>
+			<arg value="-window-title"/>
+			<arg value="${doc.title}"/>
+			<arg value="-source-path"/>
+			<arg value="${src.as3}"/>
+			<arg value="-output"/>
+			<arg value="${build.asdoc}"/>
+			<arg value="-doc-classes"/>
+			<arg value="com.d_project.qrcode.QRCode"/>
+			<arg value="com.d_project.qrcode.mx.QRCode"/>
+
+		</java>
+
+	</target>
+
+	<target name="dist" depends="compile">
+
+		<mkdir dir="${dist}"/>
+
+		<copy todir="${dist}">
+			<fileset dir="${build.as3}">
+				<include name="qrcode.swc"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="sample" depends="dist">
+
+		<mxmlc 
+			benchmark="true"
+			file="${src.sample}/QRCodeSample1.as"
+			output="${build.as3}/QRCodeSample1.swf"
+		>
+			<compiler.include-libraries dir="${dist}" append="true">
+			    <include name="qrcode.swc"/>
+			</compiler.include-libraries>
+			<default-background-color>#ffffff</default-background-color>
+			<default-size width="200" height="200"/>
+			<static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
+		</mxmlc>
+
+		<mxmlc 
+			benchmark="true"
+			file="${src.sample}/QRCodeSample2.mxml"
+			output="${build.as3}/QRCodeSample2.swf"
+		>
+			<compiler.include-libraries dir="${dist}" append="true">
+			    <include name="qrcode.swc"/>
+			</compiler.include-libraries>
+			<default-background-color>#ffffff</default-background-color>
+			<default-size width="200" height="200"/>
+		</mxmlc>
+
+	</target>
+
+	<target name="package" depends="docs,sample">
+
+		<zip destfile="${dist}/${package.name}.zip">
+			<zipfileset prefix="${package.name}" dir="${src.assets}">
+				<patternset>
+					<include name="README.txt"/>
+				</patternset>
+			</zipfileset>
+			<zipfileset prefix="${package.name}" dir="${build.as3}">
+				<patternset>
+					<include name="qrcode.swc"/>
+				</patternset>
+			</zipfileset>
+			<zipfileset prefix="${package.name}/sample" dir="${build.as3}">
+				<patternset>
+					<include name="QRCodeSample1.swf"/>
+					<include name="QRCodeSample2.swf"/>
+				</patternset>
+			</zipfileset>
+			<zipfileset prefix="${package.name}/sample" dir="${src.sample}">
+				<patternset>
+					<include name="*.*"/>
+				</patternset>
+			</zipfileset>
+			<zipfileset prefix="${package.name}/apidocs" dir="${build.asdoc}"/>
+		</zip>
+
+	</target>
+
+</project>
