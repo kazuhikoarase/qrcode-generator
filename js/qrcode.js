@@ -464,8 +464,29 @@ var qrcode = function() {
       } );
     };
 
+    _this.drawOnCanvas = function(canvas, cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      drawOnCanvas(canvas, size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
     return _this;
   };
+
 
   //---------------------------------------------------------------------
   // qrcode.stringToBytes
@@ -1625,6 +1646,27 @@ var qrcode = function() {
     img += '/>';
 
     return img;
+  };
+
+  var drawOnCanvas = function(canvas, width, height, getPixel) {
+    // Set the canvas size
+    canvas.width = width;
+    canvas.height = height;
+    // Get a drawing context
+    var ctx = canvas.getContext("2d");
+    // Fill the background with black
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0,0,width,height);
+    // Draw the white pixels
+    ctx.fillStyle = "#fff";
+    for(var x = 0; x < width; x++)
+    {
+      for(var y = 0; y < height; y++)
+      {
+        if(getPixel(x,y))
+          ctx.fillRect(x,y,1,1);
+      }
+    }
   };
 
   //---------------------------------------------------------------------
