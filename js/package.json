@@ -18,9 +18,9 @@
   ],
   "license": "MIT",
   "directories": {
--   "test": "test"
-- },
-- "scripts": {
--   "test": "mocha"
-- }
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
 }
