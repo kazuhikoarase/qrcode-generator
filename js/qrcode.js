@@ -23,7 +23,7 @@ var qrcode = function() {
 
   /**
    * qrcode
-   * @param typeNumber 1 to 10
+   * @param typeNumber 1 to 40
    * @param errorCorrectLevel 'L','M','Q','H'
    */
   var qrcode = function(typeNumber, errorCorrectLevel) {
@@ -1113,7 +1113,7 @@ var qrcode = function() {
       [2, 86, 68, 2, 87, 69],
       [4, 69, 43, 1, 70, 44],
       [6, 43, 19, 2, 44, 20],
-      [6, 43, 15, 2, 44, 16]
+      [6, 43, 15, 2, 44, 16],
 
       // 11
       [4, 101, 81],
@@ -1143,7 +1143,7 @@ var qrcode = function() {
       [5, 109, 87, 1, 110, 88],
       [5, 65, 41, 5, 66, 42],
       [5, 54, 24, 7, 55, 25],
-      [11, 36, 12],
+      [11, 36, 12, 7, 37, 13],
 
       // 16
       [5, 122, 98, 1, 123, 99],

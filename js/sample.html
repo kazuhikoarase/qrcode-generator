@@ -17,18 +17,7 @@
   <body onload="update_qrcode()">
     <form name="qrForm">
       <span>TypeNumber:</span>
-      <select name="t">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4" selected="selected">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-      </select>
+      <select name="t"></select>
       <span>ErrorCorrectLevel:</span>
       <select name="e">
         <option value="L">L(7%)</option>
@@ -42,5 +31,17 @@
       <input type="button" value="update" onclick="update_qrcode()"/>
       <div id="qr"></div>
     </form>
+    <script type="text/javascript">
+!function() {
+  var t = document.forms['qrForm'].elements['t'];
+  for (var i = 1; i <= 40; i += 1) {
+    var opt = document.createElement('option');
+    opt.appendChild(document.createTextNode(''+ i) );
+    opt.value = '' + i;
+    t.appendChild(opt);
+  }
+  t.value = '4';
+}();
+    </script>
   </body>
 </html>
