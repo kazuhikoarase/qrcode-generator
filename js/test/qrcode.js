@@ -36,7 +36,26 @@ describe('QRCode', function(){
 
 	it('should generate correct UTF8 text data', function(){
 		var sourceText = 'http://www.example.com/ążśźęćńół';
-		var correctTextData = [
+		var correctTextData1 = [
+			'█████████████████████████████████',
+			'██ ▄▄▄▄▄ █ ▄█▀▄██ ▀▄ ▄██ ▄▄▄▄▄ ██',
+			'██ █   █ █▀ █▀▄█▀▀█▄▄ ▄█ █   █ ██',
+			'██ █▄▄▄█ ███ ▀ █▄▀▄▄▀ ▀█ █▄▄▄█ ██',
+			'██▄▄▄▄▄▄▄█ ▀▄█▄▀▄▀ █▄▀▄█▄▄▄▄▄▄▄██',
+			'██▄█  ▀▄▄▄█▄▄█▀█▀▀▄█▀▀▀█ ▀▀▄█▄ ██',
+			'██▀▀▄▀▄█▄█  ▄▄█▄ ▄█  ███ ▀█▀▄▄▀██',
+			'██ ▄▀█▄▀▄  ▄▀▄ █ ▄▀▀█▀██▀██▄▄▀▀██',
+			'██  █▀ ▄▄▀▀ ▀█    █▀▄ ▀█▄▀▄▄▄ ▄██',
+			'██▄██ ▄▄▄▄▄█   ▀▄▄ ▀▀▄▄▄█▄▄█▀ ███',
+			'██▄█▄██▄▄▄ █ █▄▄▀█▀███▄▀▄▄█▄ ████',
+			'███▄▄██▄▄▄ ▀▀▄█ █▀ █ ▄ ▄▄▄   ▀▀██',
+			'██ ▄▄▄▄▄ █ █ ▀█▄█ ▀  ▄ █▄█ ▄█ ▀██',
+			'██ █   █ █▀▄▄ ▄▀ ▀▄█ █  ▄▄   ▄ ██',
+			'██ █▄▄▄█ █▄█▄▀█ ▀ ▀ ██  █ █▀▄▀▄██',
+			'██▄▄▄▄▄▄▄█▄▄█▄█▄███▄▄▄▄████▄█▄███',
+			'▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀'].join('\n');
+
+		var correctTextData2 = [
 			'██████████████████████████████████████████████████████████████████',
 			'██████████████████████████████████████████████████████████████████',
 			'████              ██    ████  ████  ██      ████              ████',
@@ -75,6 +94,7 @@ describe('QRCode', function(){
 		qr.addData(unescape(encodeURI(sourceText)));
 		qr.make();
 
-		assert.strictEqual(qr.createASCII(), correctTextData);
+		assert.strictEqual(qr.createASCII(), correctTextData1, 'ASCII QRCode of size 1 is incorrect');
+		assert.strictEqual(qr.createASCII(2), correctTextData2, 'ASCII QRCode of size 2 is incorrect');
 	});
 });
