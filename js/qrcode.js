@@ -529,6 +529,34 @@ var qrcode = function() {
 			return img;
 		};
 
+		_this.createASCII = function(cellSize, margin) {
+			cellSize = cellSize || 1;
+			margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+			var size = _this.getModuleCount() * cellSize + margin * 2;
+			var min = margin;
+			var max = size - margin;
+
+			var y, x, r, p;
+			var ascii = '';
+			for (y = 0; y < size; y += 1) {
+				r = Math.floor( (y - min) / cellSize);
+				for (x = 0; x < size; x += 1) {
+					p = 1;
+
+					if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor( (x - min) / cellSize))) {
+						p = 0;
+					}
+
+					// Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+					ascii += p ? '██' : '  ';
+				}
+				ascii += '\n';
+			}
+
+			return ascii.replace(/\n$/, '');
+		};
+
 		return _this;
 	};
 
