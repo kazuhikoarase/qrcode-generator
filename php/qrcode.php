@@ -1,7 +1,7 @@
 <?php
 
 //---------------------------------------------------------------
-// QRCode for PHP4
+// QRCode for PHP5
 //
 // Copyright (c) 2009 Kazuhiko Arase
 //
