@@ -2,9 +2,8 @@
   "name": "qrcode-generator",
   "version": "0.0.2",
   "main": "js/qrcode.js",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "components"
+  "files": [
+    "js/qrcode.js",
+    "package.json"
   ]
 }
