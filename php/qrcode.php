@@ -114,6 +114,16 @@ class QRCode {
 		return $this->moduleCount;
 	}
 
+        // used for converting fg/bg colors (e.g. #0000ff = 0x0000FF)
+        // added 2015.07.27 ~ DoktorJ
+        function hex2rgb($hex = 0x0) {
+                return array(
+                        'r' => floor($hex / 65536),
+                        'g' => floor($hex / 256) % 256,
+                        'b' => $hex % 256
+                );
+        }
+
 	function make() {
 		$this->makeImpl(false, $this->getBestMaskPattern() );
 	}
@@ -484,27 +494,48 @@ class QRCode {
 		return $qr;
 	}
 
-	function createImage($size = 2, $margin = 2) {
+        // added $fg (foreground), $bg (background), and $bgtrans (use transparent bg) parameters
+        // also added some simple error checking on parameters
+        // updated 2015.07.27 ~ DoktorJ
+	function createImage($size = 2, $margin = 2, $fg = 0x000000, $bg = 0xFFFFFF, $bgtrans = false) {
+
+                // size/margin EC
+                if (!is_numeric($size)) $size = 2;
+                if (!is_numeric($margin)) $margin = 2;
+                if ($size < 1) $size = 1;
+                if ($margin < 0) $margin = 0;
 		
 		$image_size = $this->getModuleCount() * $size + $margin * 2;
 		
 		$image = imagecreatetruecolor($image_size, $image_size);
 
-		$black = imagecolorallocate($image, 0, 0, 0); 
-		$white = imagecolorallocate($image, 255, 255, 255); 
+                // fg/bg EC
+                if ($fg < 0 || $fg > 0xFFFFFF) $fg = 0x0;
+                if ($bg < 0 || $bg > 0xFFFFFF) $bg = 0xFFFFFF;
 
-		imagefilledrectangle($image, 0, 0, $image_size, $image_size, $white);
+                // convert hexadecimal RGB to arrays for imagecolorallocate
+                $fgrgb = $this->hex2rgb($fg);
+                $bgrgb = $this->hex2rgb($bg);
+
+                // replace $black and $white with $fgc and $bgc
+                $fgc = imagecolorallocate($image, $fgrgb['r'], $fgrgb['g'], $fgrgb['b']);
+                $bgc = imagecolorallocate($image, $bgrgb['r'], $bgrgb['g'], $bgrgb['b']);
+                if ($bgtrans) imagecolortransparent($image, $bgc);
+
+                // update $white to $bgc
+		imagefilledrectangle($image, 0, 0, $image_size, $image_size, $bgc);
 
 		for ($r = 0; $r < $this->getModuleCount(); $r++) {
 			for ($c = 0; $c < $this->getModuleCount(); $c++) {
 				if ($this->isDark($r, $c) ) {
 				
+				        // update $black to $fgc
 					imagefilledrectangle($image,
 						$margin + $c * $size,
 						$margin + $r * $size, 
 						$margin + ($c + 1) * $size - 1, 
 						$margin + ($r + 1) * $size - 1,
-						$black);
+						$fgc);
 				}
 			} 
 		} 
@@ -512,7 +543,6 @@ class QRCode {
 		return $image;
 	}
 
-	
 	function printHTML($size = "2px") {
 
 		$style = "border-style:none;border-collapse:collapse;margin:0px;padding:0px;";
