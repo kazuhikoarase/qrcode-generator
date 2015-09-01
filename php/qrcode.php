@@ -569,63 +569,6 @@ class QRCode {
 // QRUtil
 //---------------------------------------------------------------
 
-$QR_PATTERN_POSITION_TABLE = array(
-    array(),
-    array(6, 18),
-    array(6, 22),
-    array(6, 26),
-    array(6, 30),
-    array(6, 34),
-    array(6, 22, 38),
-    array(6, 24, 42),
-    array(6, 26, 46),
-    array(6, 28, 50),
-    array(6, 30, 54),
-    array(6, 32, 58),
-    array(6, 34, 62),
-    array(6, 26, 46, 66),
-    array(6, 26, 48, 70),
-    array(6, 26, 50, 74),
-    array(6, 30, 54, 78),
-    array(6, 30, 56, 82),
-    array(6, 30, 58, 86),
-    array(6, 34, 62, 90),
-    array(6, 28, 50, 72, 94),
-    array(6, 26, 50, 74, 98),
-    array(6, 30, 54, 78, 102),
-    array(6, 28, 54, 80, 106),
-    array(6, 32, 58, 84, 110),
-    array(6, 30, 58, 86, 114),
-    array(6, 34, 62, 90, 118),
-    array(6, 26, 50, 74, 98, 122),
-    array(6, 30, 54, 78, 102, 126),
-    array(6, 26, 52, 78, 104, 130),
-    array(6, 30, 56, 82, 108, 134),
-    array(6, 34, 60, 86, 112, 138),
-    array(6, 30, 58, 86, 114, 142),
-    array(6, 34, 62, 90, 118, 146),
-    array(6, 30, 54, 78, 102, 126, 150),
-    array(6, 24, 50, 76, 102, 128, 154),
-    array(6, 28, 54, 80, 106, 132, 158),
-    array(6, 32, 58, 84, 110, 136, 162),
-    array(6, 26, 54, 82, 110, 138, 166),
-    array(6, 30, 58, 86, 114, 142, 170)
-);
-
-$QR_MAX_LENGTH = array(
-    array( array(41,  25,  17,  10),  array(34,  20,  14,  8),   array(27,  16,  11,  7),  array(17,  10,  7,   4) ),
-    array( array(77,  47,  32,  20),  array(63,  38,  26,  16),  array(48,  29,  20,  12), array(34,  20,  14,  8) ),
-    array( array(127, 77,  53,  32),  array(101, 61,  42,  26),  array(77,  47,  32,  20), array(58,  35,  24,  15) ),
-    array( array(187, 114, 78,  48),  array(149, 90,  62,  38),  array(111, 67,  46,  28), array(82,  50,  34,  21) ),
-    array( array(255, 154, 106, 65),  array(202, 122, 84,  52),  array(144, 87,  60,  37), array(106, 64,  44,  27) ),
-    array( array(322, 195, 134, 82),  array(255, 154, 106, 65),  array(178, 108, 74,  45), array(139, 84,  58,  36) ),
-    array( array(370, 224, 154, 95),  array(293, 178, 122, 75),  array(207, 125, 86,  53), array(154, 93,  64,  39) ),
-    array( array(461, 279, 192, 118), array(365, 221, 152, 93),  array(259, 157, 108, 66), array(202, 122, 84,  52) ),
-    array( array(552, 335, 230, 141), array(432, 262, 180, 111), array(312, 189, 130, 80), array(235, 143, 98,  60) ),
-    array( array(652, 395, 271, 167), array(513, 311, 213, 131), array(364, 221, 151, 93), array(288, 174, 119, 74) )
-);
-
-
 define("QR_G15", (1 << 10) | (1 << 8) | (1 << 5)
     | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0) );
 
@@ -637,14 +580,67 @@ define("QR_G15_MASK", (1 << 14) | (1 << 12) | (1 << 10)
 
 class QRUtil {
 
+	static $QR_MAX_LENGTH = array(
+		array( array(41,  25,  17,  10),  array(34,  20,  14,  8),   array(27,  16,  11,  7),  array(17,  10,  7,   4) ),
+		array( array(77,  47,  32,  20),  array(63,  38,  26,  16),  array(48,  29,  20,  12), array(34,  20,  14,  8) ),
+		array( array(127, 77,  53,  32),  array(101, 61,  42,  26),  array(77,  47,  32,  20), array(58,  35,  24,  15) ),
+		array( array(187, 114, 78,  48),  array(149, 90,  62,  38),  array(111, 67,  46,  28), array(82,  50,  34,  21) ),
+		array( array(255, 154, 106, 65),  array(202, 122, 84,  52),  array(144, 87,  60,  37), array(106, 64,  44,  27) ),
+		array( array(322, 195, 134, 82),  array(255, 154, 106, 65),  array(178, 108, 74,  45), array(139, 84,  58,  36) ),
+		array( array(370, 224, 154, 95),  array(293, 178, 122, 75),  array(207, 125, 86,  53), array(154, 93,  64,  39) ),
+		array( array(461, 279, 192, 118), array(365, 221, 152, 93),  array(259, 157, 108, 66), array(202, 122, 84,  52) ),
+		array( array(552, 335, 230, 141), array(432, 262, 180, 111), array(312, 189, 130, 80), array(235, 143, 98,  60) ),
+		array( array(652, 395, 271, 167), array(513, 311, 213, 131), array(364, 221, 151, 93), array(288, 174, 119, 74) )
+	);
+
+	static $QR_PATTERN_POSITION_TABLE = array(
+		array(),
+		array(6, 18),
+		array(6, 22),
+		array(6, 26),
+		array(6, 30),
+		array(6, 34),
+		array(6, 22, 38),
+		array(6, 24, 42),
+		array(6, 26, 46),
+		array(6, 28, 50),
+		array(6, 30, 54),
+		array(6, 32, 58),
+		array(6, 34, 62),
+		array(6, 26, 46, 66),
+		array(6, 26, 48, 70),
+		array(6, 26, 50, 74),
+		array(6, 30, 54, 78),
+		array(6, 30, 56, 82),
+		array(6, 30, 58, 86),
+		array(6, 34, 62, 90),
+		array(6, 28, 50, 72, 94),
+		array(6, 26, 50, 74, 98),
+		array(6, 30, 54, 78, 102),
+		array(6, 28, 54, 80, 106),
+		array(6, 32, 58, 84, 110),
+		array(6, 30, 58, 86, 114),
+		array(6, 34, 62, 90, 118),
+		array(6, 26, 50, 74, 98, 122),
+		array(6, 30, 54, 78, 102, 126),
+		array(6, 26, 52, 78, 104, 130),
+		array(6, 30, 56, 82, 108, 134),
+		array(6, 34, 60, 86, 112, 138),
+		array(6, 30, 58, 86, 114, 142),
+		array(6, 34, 62, 90, 118, 146),
+		array(6, 30, 54, 78, 102, 126, 150),
+		array(6, 24, 50, 76, 102, 128, 154),
+		array(6, 28, 54, 80, 106, 132, 158),
+		array(6, 32, 58, 84, 110, 136, 162),
+		array(6, 26, 54, 82, 110, 138, 166),
+		array(6, 30, 58, 86, 114, 142, 170)
+	);
+
     static function getPatternPosition($typeNumber) {
-        global $QR_PATTERN_POSITION_TABLE;
-        return $QR_PATTERN_POSITION_TABLE[$typeNumber - 1];
+        return self::$QR_PATTERN_POSITION_TABLE[$typeNumber - 1];
     }
 
     static function getMaxLength($typeNumber, $mode, $errorCorrectLevel) {
-
-        global $QR_MAX_LENGTH;
 
         $t = $typeNumber - 1;
         $e = 0;
@@ -668,7 +664,7 @@ class QRUtil {
             trigger_error("m:$mode", E_USER_ERROR);
         }
 
-        return $QR_MAX_LENGTH[$t][$e][$m];
+        return self::$QR_MAX_LENGTH[$t][$e][$m];
     }
 
     static function getErrorCorrectPolynomial($errorCorrectLength) {
@@ -903,79 +899,79 @@ class QRUtil {
 // QRRSBlock
 //---------------------------------------------------------------
 
-$QR_RS_BLOCK_TABLE = array(
-
-    // L
-    // M
-    // Q
-    // H
-
-    // 1
-    array(1, 26, 19),
-    array(1, 26, 16),
-    array(1, 26, 13),
-    array(1, 26, 9),
-
-    // 2
-    array(1, 44, 34),
-    array(1, 44, 28),
-    array(1, 44, 22),
-    array(1, 44, 16),
-
-    // 3
-    array(1, 70, 55),
-    array(1, 70, 44),
-    array(2, 35, 17),
-    array(2, 35, 13),
-
-    // 4
-    array(1, 100, 80),
-    array(2, 50, 32),
-    array(2, 50, 24),
-    array(4, 25, 9),
-
-    // 5
-    array(1, 134, 108),
-    array(2, 67, 43),
-    array(2, 33, 15, 2, 34, 16),
-    array(2, 33, 11, 2, 34, 12),
-
-    // 6
-    array(2, 86, 68),
-    array(4, 43, 27),
-    array(4, 43, 19),
-    array(4, 43, 15),
-
-    // 7
-    array(2, 98, 78),
-    array(4, 49, 31),
-    array(2, 32, 14, 4, 33, 15),
-    array(4, 39, 13, 1, 40, 14),
-
-    // 8
-    array(2, 121, 97),
-    array(2, 60, 38, 2, 61, 39),
-    array(4, 40, 18, 2, 41, 19),
-    array(4, 40, 14, 2, 41, 15),
-
-    // 9
-    array(2, 146, 116),
-    array(3, 58, 36, 2, 59, 37),
-    array(4, 36, 16, 4, 37, 17),
-    array(4, 36, 12, 4, 37, 13),
-
-    // 10
-    array(2, 86, 68, 2, 87, 69),
-    array(4, 69, 43, 1, 70, 44),
-    array(6, 43, 19, 2, 44, 20),
-    array(6, 43, 15, 2, 44, 16)
-
-);
-
 class QRRSBlock {
 
     var $totalCount;
     var $dataCount;
+
+	static $QR_RS_BLOCK_TABLE = array(
+
+		// L
+		// M
+		// Q
+		// H
+
+		// 1
+		array(1, 26, 19),
+		array(1, 26, 16),
+		array(1, 26, 13),
+		array(1, 26, 9),
+
+		// 2
+		array(1, 44, 34),
+		array(1, 44, 28),
+		array(1, 44, 22),
+		array(1, 44, 16),
+
+		// 3
+		array(1, 70, 55),
+		array(1, 70, 44),
+		array(2, 35, 17),
+		array(2, 35, 13),
+
+		// 4
+		array(1, 100, 80),
+		array(2, 50, 32),
+		array(2, 50, 24),
+		array(4, 25, 9),
+
+		// 5
+		array(1, 134, 108),
+		array(2, 67, 43),
+		array(2, 33, 15, 2, 34, 16),
+		array(2, 33, 11, 2, 34, 12),
+
+		// 6
+		array(2, 86, 68),
+		array(4, 43, 27),
+		array(4, 43, 19),
+		array(4, 43, 15),
+
+		// 7
+		array(2, 98, 78),
+		array(4, 49, 31),
+		array(2, 32, 14, 4, 33, 15),
+		array(4, 39, 13, 1, 40, 14),
+
+		// 8
+		array(2, 121, 97),
+		array(2, 60, 38, 2, 61, 39),
+		array(4, 40, 18, 2, 41, 19),
+		array(4, 40, 14, 2, 41, 15),
+
+		// 9
+		array(2, 146, 116),
+		array(3, 58, 36, 2, 59, 37),
+		array(4, 36, 16, 4, 37, 17),
+		array(4, 36, 12, 4, 37, 13),
+
+		// 10
+		array(2, 86, 68, 2, 87, 69),
+		array(4, 69, 43, 1, 70, 44),
+		array(6, 43, 19, 2, 44, 20),
+		array(6, 43, 15, 2, 44, 16)
+
+	);
 
     function QRRSBlock($totalCount, $dataCount) {
         $this->totalCount = $totalCount;
@@ -1013,17 +1009,15 @@ class QRRSBlock {
 
     static function getRsBlockTable($typeNumber, $errorCorrectLevel) {
 
-        global $QR_RS_BLOCK_TABLE;
-
         switch($errorCorrectLevel) {
         case QR_ERROR_CORRECT_LEVEL_L :
-            return $QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 0];
+            return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 0];
         case QR_ERROR_CORRECT_LEVEL_M :
-            return $QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 1];
+            return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 1];
         case QR_ERROR_CORRECT_LEVEL_Q :
-            return $QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 2];
+            return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 2];
         case QR_ERROR_CORRECT_LEVEL_H :
-            return $QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 3];
+            return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 3];
         default :
             trigger_error("tn:$typeNumber/ecl:$errorCorrectLevel", E_USER_ERROR);
         }
@@ -1295,33 +1289,30 @@ class QRData {
 // QRMath
 //---------------------------------------------------------------
 
-$QR_MATH_EXP_TABLE = null;
-$QR_MATH_LOG_TABLE = null;
-
 class QRMath {
+
+	static $QR_MATH_EXP_TABLE = null;
+	static $QR_MATH_LOG_TABLE = null;
 
     static function init() {
 
-        global $QR_MATH_EXP_TABLE;
-        global $QR_MATH_LOG_TABLE;
-
-        $QR_MATH_EXP_TABLE = QRMath::createNumArray(256);
+        self::$QR_MATH_EXP_TABLE = QRMath::createNumArray(256);
 
         for ($i = 0; $i < 8; $i++) {
-            $QR_MATH_EXP_TABLE[$i] = 1 << $i;
+            self::$QR_MATH_EXP_TABLE[$i] = 1 << $i;
         }
 
         for ($i = 8; $i < 256; $i++) {
-            $QR_MATH_EXP_TABLE[$i] = $QR_MATH_EXP_TABLE[$i - 4]
-                ^ $QR_MATH_EXP_TABLE[$i - 5]
-                ^ $QR_MATH_EXP_TABLE[$i - 6]
-                ^ $QR_MATH_EXP_TABLE[$i - 8];
+            self::$QR_MATH_EXP_TABLE[$i] = self::$QR_MATH_EXP_TABLE[$i - 4]
+                ^ self::$QR_MATH_EXP_TABLE[$i - 5]
+                ^ self::$QR_MATH_EXP_TABLE[$i - 6]
+                ^ self::$QR_MATH_EXP_TABLE[$i - 8];
         }
 
-        $QR_MATH_LOG_TABLE = QRMath::createNumArray(256);
+        self::$QR_MATH_LOG_TABLE = QRMath::createNumArray(256);
 
         for ($i = 0; $i < 255; $i++) {
-            $QR_MATH_LOG_TABLE[$QR_MATH_EXP_TABLE[$i] ] = $i;
+            self::$QR_MATH_LOG_TABLE[self::$QR_MATH_EXP_TABLE[$i] ] = $i;
         }
     }
 
@@ -1335,18 +1326,14 @@ class QRMath {
 
     static function glog($n) {
 
-        global $QR_MATH_LOG_TABLE;
-
         if ($n < 1) {
             trigger_error("log($n)", E_USER_ERROR);
         }
 
-        return $QR_MATH_LOG_TABLE[$n];
+        return self::$QR_MATH_LOG_TABLE[$n];
     }
 
     static function gexp($n) {
-
-        global $QR_MATH_EXP_TABLE;
 
         while ($n < 0) {
             $n += 255;
@@ -1356,7 +1343,7 @@ class QRMath {
             $n -= 255;
         }
 
-        return $QR_MATH_EXP_TABLE[$n];
+        return self::$QR_MATH_EXP_TABLE[$n];
     }
 }
 
