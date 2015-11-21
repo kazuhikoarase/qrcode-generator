@@ -285,7 +285,7 @@ namespace qrcode {
         var totalCount = rsBlock[i * 3 + 1];
         var dataCount = rsBlock[i * 3 + 2];
 
-        for (var j = 0; j < count; j++) {
+        for (var j = 0; j < count; j += 1) {
           list.push(new RSBlock(totalCount, dataCount) );
         }
       }

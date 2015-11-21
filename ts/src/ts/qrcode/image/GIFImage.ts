@@ -137,10 +137,12 @@ namespace qrcode.image {
         bitOut.write(clearCode, bitLength);
 
         var dataIndex = 0;
-        var s = String.fromCharCode(this.data[dataIndex++]);
+        var s = String.fromCharCode(this.data[dataIndex]);
+        dataIndex += 1;
 
         while (dataIndex < this.data.length) {
-          var c = String.fromCharCode(this.data[dataIndex++]);
+          var c = String.fromCharCode(this.data[dataIndex]);
+          dataIndex += 1;
           if (table.contains(s + c) ) {
               s = s + c;
           } else {
@@ -190,7 +192,7 @@ namespace qrcode.image {
       for (var i = 0; i < bytes.length; i += 1) {
         s += String.fromCharCode(bytes[i]);
       }
-      return 'data:image/gif;base64,'+ s;
+      return 'data:image/gif;base64,' + s;
     }
   }
 
