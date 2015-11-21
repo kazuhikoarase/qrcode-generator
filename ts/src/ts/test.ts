@@ -27,10 +27,10 @@ window.onload = function() {
   var qr = new qrcode.QRCode();
   qr.setTypeNumber(5);
   qr.setErrorCorrectLevel(qrcode.ErrorCorrectLevel.L);
-  qr.addData(new qrcode.QRAlphaNum('0123ABC') );
-  qr.addData(new qrcode.QRNumber('4567') );
-  qr.addData(new qrcode.QR8BitByte('[8BitByte :-)]') );
-  qr.addData(new qrcode.QRKanji('漢字') );
+  qr.addData(new qrcode.QRAlphaNum('0123ABC') ); // Alphabet and Number
+  qr.addData(new qrcode.QRNumber('4567') ); // Number only
+  qr.addData(new qrcode.QRKanji('漢字') ); // Kanji only
+  qr.addData(new qrcode.QR8BitByte('[8BitByte :-)]') ); // most useful for all users.
   qr.make();
 
   // img

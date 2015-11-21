@@ -1,5 +1,5 @@
 build.path.exportedFolder=
-build.path.sourceFolder=ts/src/typescript
-compiler.outputDirOption=ts/build/typescript
+build.path.sourceFolder=ts/src/ts
+compiler.outputDirOption=ts/build/ts
 compiler.outputFileOption=
 eclipse.preferences.version=1
