@@ -22,7 +22,7 @@ window.onload = function() {
   }
 
   // uncomment if UTF-8 support is required.
-  //qrcode.QRCode.stringToBytes = qrcode.stringToBytes_UTF8;
+  //qrcode.QRCode.stringToBytes = qrcode.text.stringToBytes_UTF8;
 
   var qr = new qrcode.QRCode();
   qr.setTypeNumber(5);
