@@ -1,5 +1,5 @@
-/// <reference path="io/ByteArrayInputStream.ts"  />
-/// <reference path="io/Base64DecodeInputStream.ts"/>
+/// <reference path="io/ByteArrayInputStream.ts" />
+/// <reference path="io/Base64DecodeInputStream.ts" />
 'use strict';
 namespace qrcode {
 
