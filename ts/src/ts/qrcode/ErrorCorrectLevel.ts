@@ -27,6 +27,4 @@ namespace qrcode {
      */
     public static H = 2;
   }
-
-
 }
