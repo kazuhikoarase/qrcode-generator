@@ -1,6 +1,6 @@
 /// <reference path="createStringToBytes.ts" />
 'use strict';
-namespace qrcode {
+namespace qrcode.text {
 
   /**
    * stringToBytes_SJIS

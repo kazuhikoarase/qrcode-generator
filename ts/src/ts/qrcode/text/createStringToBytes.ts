@@ -1,7 +1,7 @@
-/// <reference path="io/ByteArrayInputStream.ts" />
-/// <reference path="io/Base64DecodeInputStream.ts" />
+/// <reference path="../io/ByteArrayInputStream.ts" />
+/// <reference path="../io/Base64DecodeInputStream.ts" />
 'use strict';
-namespace qrcode {
+namespace qrcode.text {
 
   import ByteArrayInputStream = qrcode.io.ByteArrayInputStream;
   import Base64DecodeInputStream = qrcode.io.Base64DecodeInputStream;

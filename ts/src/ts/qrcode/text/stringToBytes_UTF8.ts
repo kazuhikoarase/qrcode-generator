@@ -1,5 +1,5 @@
 'use strict';
-namespace qrcode {
+namespace qrcode.text {
 
   /**
    * stringToBytes_UTF8

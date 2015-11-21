@@ -15,10 +15,11 @@
 //
 //---------------------------------------------------------------------
 
-/// <reference path="stringToBytes_SJIS.ts" />
-
+/// <reference path="text/stringToBytes_SJIS.ts" />
 'use strict';
 namespace qrcode {
+
+  import stringToBytes_SJIS = qrcode.text.stringToBytes_SJIS;
 
   /**
    * QRCode
