@@ -33,13 +33,13 @@ namespace qrcode {
 
     private typeNumber : number;
 
-    private modules : boolean[][];
-
-    private moduleCount : number;
-
     private errorCorrectLevel : ErrorCorrectLevel;
 
     private qrDataList : QRData[];
+
+    private modules : boolean[][];
+
+    private moduleCount : number;
 
     public constructor() {
       this.typeNumber = 1;
@@ -456,7 +456,7 @@ namespace qrcode {
       return data;
     }
 
-    public toDataURL(cellSize = 2, margin = 8) : string {
+    public toDataURL(cellSize = 2, margin = cellSize * 4) : string {
       var mods = this.getModuleCount();
       var size = cellSize * mods + margin * 2;
       var gif = new qrcode.image.GIFImage(size, size);

@@ -2,7 +2,8 @@
 
 window.onload = function() {
 
-  function createCanvas(qr : qrcode.QRCode, cellSize = 2, margin = 8) {
+  function createCanvas(qr : qrcode.QRCode,
+      cellSize = 2, margin = cellSize * 4) {
 
     var canvas = document.createElement('canvas');
     var size = qr.getModuleCount() * cellSize + margin * 2;
