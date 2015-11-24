@@ -36,8 +36,8 @@ window.onload = function() {
   var qr = new qrcode.QRCode();
   qr.setTypeNumber(5);
   qr.setErrorCorrectLevel(qrcode.ErrorCorrectLevel.L);
-  qr.addData(new qrcode.QRNumber('4567') ); // Number only
-  qr.addData(new qrcode.QRAlphaNum('0123ABC') ); // Alphabet and Number
+  qr.addData(new qrcode.QRNumber('0123') ); // Number only
+  qr.addData(new qrcode.QRAlphaNum('5678ABC') ); // Alphabet and Number
   qr.addData(new qrcode.QR8BitByte('[8BitByte :-)]') ); // most useful for all users.
   qr.addData(new qrcode.QRKanji('漢字') ); // Kanji only
   qr.make();
