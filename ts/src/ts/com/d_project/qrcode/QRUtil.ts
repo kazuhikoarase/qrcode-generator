@@ -1,5 +1,5 @@
 'use strict';
-namespace qrcode {
+namespace com.d_project.qrcode {
 
   /**
    * QRUtil

@@ -2,11 +2,11 @@
 /// <reference path="../io/ByteArrayOutputStream.ts" />
 /// <reference path="../io/Base64.ts" />
 'use strict';
-namespace qrcode.image {
+namespace com.d_project.image {
 
-  import OutputStream = qrcode.io.OutputStream;
-  import ByteArrayOutputStream = qrcode.io.ByteArrayOutputStream;
-  import Base64 = qrcode.io.Base64;
+  import OutputStream = com.d_project.io.OutputStream;
+  import ByteArrayOutputStream = com.d_project.io.ByteArrayOutputStream;
+  import Base64 = com.d_project.io.Base64;
 
   /**
    * GIF Image (B/W)

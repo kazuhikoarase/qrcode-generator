@@ -1,10 +1,10 @@
 /// <reference path="../io/ByteArrayInputStream.ts" />
 /// <reference path="../io/Base64DecodeInputStream.ts" />
 'use strict';
-namespace qrcode.text {
+namespace com.d_project.text {
 
-  import ByteArrayInputStream = qrcode.io.ByteArrayInputStream;
-  import Base64DecodeInputStream = qrcode.io.Base64DecodeInputStream;
+  import ByteArrayInputStream = com.d_project.io.ByteArrayInputStream;
+  import Base64DecodeInputStream = com.d_project.io.Base64DecodeInputStream;
 
   /**
    * createStringToBytes

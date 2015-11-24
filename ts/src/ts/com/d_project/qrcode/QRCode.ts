@@ -15,11 +15,11 @@
 //
 //---------------------------------------------------------------------
 
-/// <reference path="text/stringToBytes_SJIS.ts" />
+/// <reference path="../text/stringToBytes_SJIS.ts" />
 'use strict';
-namespace qrcode {
+namespace com.d_project.qrcode {
 
-  import stringToBytes_SJIS = qrcode.text.stringToBytes_SJIS;
+  import stringToBytes_SJIS = com.d_project.text.stringToBytes_SJIS;
 
   /**
    * QRCode
@@ -67,8 +67,14 @@ namespace qrcode {
       this.qrDataList = [];
     }
 
-    public addData(qrData : QRData) : void {
-      this.qrDataList.push(qrData);
+    public addData(qrData : QRData | string) : void {
+      if (qrData instanceof QRData) {
+        this.qrDataList.push(qrData);
+      } else if (typeof qrData === 'string') {
+        this.qrDataList.push(new QR8BitByte(qrData) );
+      } else {
+        throw typeof qrData;
+      }
     }
 
     private getDataCount() : number {
@@ -459,7 +465,7 @@ namespace qrcode {
     public toDataURL(cellSize = 2, margin = cellSize * 4) : string {
       var mods = this.getModuleCount();
       var size = cellSize * mods + margin * 2;
-      var gif = new qrcode.image.GIFImage(size, size);
+      var gif = new com.d_project.image.GIFImage(size, size);
       for (var y = 0; y < size; y += 1) {
         for (var x = 0; x < size; x += 1) {
           if (margin <= x && x < size - margin &&

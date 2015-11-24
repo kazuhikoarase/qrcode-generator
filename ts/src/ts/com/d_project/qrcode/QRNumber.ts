@@ -1,6 +1,6 @@
 /// <reference path="QRData.ts" />
 'use strict';
-namespace qrcode {
+namespace com.d_project.qrcode {
 
   /**
    * QRNumber

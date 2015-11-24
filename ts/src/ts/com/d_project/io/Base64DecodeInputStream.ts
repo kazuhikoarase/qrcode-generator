@@ -1,6 +1,6 @@
 /// <reference path="InputStream.ts"/>
 'use strict';
-namespace qrcode.io {
+namespace com.d_project.io {
 
   /**
    * Base64DecodeInputStream

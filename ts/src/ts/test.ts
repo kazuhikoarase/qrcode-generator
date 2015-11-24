@@ -1,9 +1,45 @@
+/// <reference path="com/d_project/qrcode/QRCode" />
+/// <reference path="com/d_project/qrcode/ErrorCorrectLevel" />
+/// <reference path="com/d_project/qrcode/QRNumber" />
+/// <reference path="com/d_project/qrcode/QRAlphaNum" />
+/// <reference path="com/d_project/qrcode/QR8BitByte" />
+/// <reference path="com/d_project/qrcode/QRKanji" />
+
 'use strict'
+namespace test {
 
-window.onload = function() {
+  import QRCode = com.d_project.qrcode.QRCode;
+  import ErrorCorrectLevel = com.d_project.qrcode.ErrorCorrectLevel;
+  import QRNumber = com.d_project.qrcode.QRNumber;
+  import QRAlphaNum = com.d_project.qrcode.QRAlphaNum;
+  import QR8BitByte = com.d_project.qrcode.QR8BitByte;
+  import QRKanji = com.d_project.qrcode.QRKanji;
 
-  function createCanvas(qr : qrcode.QRCode,
-      cellSize = 2, margin = cellSize * 4) {
+  export function run() : void {
+
+    // uncomment if UTF-8 support is required.
+    //QRCode.stringToBytes = com.d_project.text.stringToBytes_UTF8;
+
+    var qr = new QRCode();
+    qr.setTypeNumber(5);
+    qr.setErrorCorrectLevel(ErrorCorrectLevel.L);
+    qr.addData(new QRNumber('0123') ); // Number only
+    qr.addData(new QRAlphaNum('AB5678CD') ); // Alphabet and Number
+    qr.addData(new QR8BitByte('[8BitByte :)]') ); // most useful for usual purpose.
+    qr.addData('[here is 8BitByte too]');
+    qr.addData(new QRKanji('漢字') ); // Kanji(SJIS) only
+    qr.make();
+  
+    // img
+    var img = document.createElement('img');
+    img.setAttribute('src', qr.toDataURL() );
+    document.body.appendChild(img);
+  
+    // canvas
+    document.body.appendChild(createCanvas(qr, 2) );
+  }
+
+  function createCanvas(qr : QRCode, cellSize = 2, margin = cellSize * 4) {
 
     var canvas = document.createElement('canvas');
     var size = qr.getModuleCount() * cellSize + margin * 2;
@@ -29,24 +65,8 @@ window.onload = function() {
     }
     return canvas;
   }
+}
 
-  // uncomment if UTF-8 support is required.
-  //qrcode.QRCode.stringToBytes = qrcode.text.stringToBytes_UTF8;
-
-  var qr = new qrcode.QRCode();
-  qr.setTypeNumber(5);
-  qr.setErrorCorrectLevel(qrcode.ErrorCorrectLevel.L);
-  qr.addData(new qrcode.QRNumber('0123') ); // Number only
-  qr.addData(new qrcode.QRAlphaNum('5678ABC') ); // Alphabet and Number
-  qr.addData(new qrcode.QR8BitByte('[8BitByte :-)]') ); // most useful for all users.
-  qr.addData(new qrcode.QRKanji('漢字') ); // Kanji only
-  qr.make();
-
-  // img
-  var img = document.createElement('img');
-  img.setAttribute('src', qr.toDataURL() );
-  document.body.appendChild(img);
-
-  // canvas
-  document.body.appendChild(createCanvas(qr, 2) );
+window.onload = function() {
+  test.run();
 };

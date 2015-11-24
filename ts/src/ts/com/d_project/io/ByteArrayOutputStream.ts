@@ -1,6 +1,6 @@
 /// <reference path="OutputStream.ts" />
 'use strict';
-namespace qrcode.io {
+namespace com.d_project.io {
 
   /**
    * ByteArrayOutputStream
