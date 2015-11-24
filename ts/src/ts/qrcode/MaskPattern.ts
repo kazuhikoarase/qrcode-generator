@@ -7,6 +7,10 @@ namespace qrcode {
    */
   export class MaskPattern {
 
+    constructor() {
+      throw 'error';
+    }
+
     /**
      * mask pattern 000
      */

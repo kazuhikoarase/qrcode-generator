@@ -41,12 +41,9 @@ namespace qrcode {
 
     private qrDataList : QRData[];
 
-    public constructor(
-      typenumber : number = 1,
-      errorCorrectLevel : number = ErrorCorrectLevel.L
-    ) {
-      this.typeNumber = typenumber;
-      this.errorCorrectLevel = errorCorrectLevel;
+    public constructor() {
+      this.typeNumber = 1;
+      this.errorCorrectLevel = ErrorCorrectLevel.L;
       this.qrDataList = [];
     }
 
@@ -59,11 +56,11 @@ namespace qrcode {
     }
 
     public getErrorCorrectLevel() : number {
-        return this.errorCorrectLevel;
+      return this.errorCorrectLevel;
     }
 
     public setErrorCorrectLevel(errorCorrectLevel : number) {
-        this.errorCorrectLevel = errorCorrectLevel;
+      this.errorCorrectLevel = errorCorrectLevel;
     }
 
     public clearData() : void {
@@ -158,7 +155,9 @@ namespace qrcode {
 
       for (var col = this.moduleCount - 1; col > 0; col -= 2) {
 
-        if (col == 6) col--;
+        if (col == 6) {
+          col -= 1;
+        }
 
         while (true) {
 
@@ -179,7 +178,7 @@ namespace qrcode {
               }
 
               this.modules[row][col - c] = dark;
-              bitIndex--;
+              bitIndex -= 1;
 
               if (bitIndex == -1) {
                 byteIndex += 1;

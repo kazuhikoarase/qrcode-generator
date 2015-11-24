@@ -7,6 +7,10 @@ namespace qrcode {
    */
   export class Mode {
 
+    constructor() {
+      throw 'error';
+    }
+
     /**
      * number
      */

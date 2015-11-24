@@ -7,6 +7,10 @@ namespace qrcode {
    */
   export class ErrorCorrectLevel {
 
+    constructor() {
+      throw 'error';
+    }
+
     /**
      * 7%
      */
