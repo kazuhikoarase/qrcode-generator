@@ -271,7 +271,7 @@ namespace qrcode {
 
     public static getRSBlocks(
       typeNumber : number,
-      errorCorrectLevel : number
+      errorCorrectLevel : ErrorCorrectLevel
     ) : RSBlock[] {
 
       var rsBlock = RSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
@@ -295,7 +295,7 @@ namespace qrcode {
 
     private static getRsBlockTable(
       typeNumber : number,
-      errorCorrectLevel : number
+      errorCorrectLevel : ErrorCorrectLevel
     ) : number[] {
 
       switch(errorCorrectLevel) {

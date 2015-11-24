@@ -7,10 +7,10 @@ namespace qrcode {
    */
   export abstract class QRData {
 
-    constructor(private mode : number, private data : string) {
+    constructor(private mode : Mode, private data : string) {
     }
 
-    public getMode() : number {
+    public getMode() : Mode {
       return this.mode;
     }
 

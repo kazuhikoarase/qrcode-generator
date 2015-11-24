@@ -73,8 +73,8 @@ namespace qrcode {
 
     public static getMaxLength(
       typeNumber : number,
-      mode : number,
-      errorCorrectLevel : number
+      mode : Mode,
+      errorCorrectLevel : ErrorCorrectLevel
     ) : number {
 
         var t = typeNumber - 1;

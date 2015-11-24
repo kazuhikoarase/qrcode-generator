@@ -37,7 +37,7 @@ namespace qrcode {
 
     private moduleCount : number;
 
-    private errorCorrectLevel : number;
+    private errorCorrectLevel : ErrorCorrectLevel;
 
     private qrDataList : QRData[];
 
@@ -55,11 +55,11 @@ namespace qrcode {
       this.typeNumber = typeNumber;
     }
 
-    public getErrorCorrectLevel() : number {
+    public getErrorCorrectLevel() : ErrorCorrectLevel {
       return this.errorCorrectLevel;
     }
 
-    public setErrorCorrectLevel(errorCorrectLevel : number) {
+    public setErrorCorrectLevel(errorCorrectLevel : ErrorCorrectLevel) {
       this.errorCorrectLevel = errorCorrectLevel;
     }
 
@@ -320,7 +320,7 @@ namespace qrcode {
 
     public static createData(
       typeNumber : number,
-      errorCorrectLevel : number,
+      errorCorrectLevel : ErrorCorrectLevel,
       dataArray : QRData[]
     ) : number[] {
 
@@ -456,7 +456,7 @@ namespace qrcode {
       return data;
     }
 
-    public toDataUrl(cellSize = 2, margin = 8) : string {
+    public toDataURL(cellSize = 2, margin = 8) : string {
       var mods = this.getModuleCount();
       var size = cellSize * mods + margin * 2;
       var gif = new qrcode.image.GIFImage(size, size);

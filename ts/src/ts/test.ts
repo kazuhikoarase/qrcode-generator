@@ -3,10 +3,18 @@
 window.onload = function() {
 
   function createCanvas(qr : qrcode.QRCode, cellSize = 2, margin = 8) {
+
     var canvas = document.createElement('canvas');
-    canvas.width = qr.getModuleCount() * cellSize + margin * 2;
-    canvas.height = qr.getModuleCount() * cellSize + margin * 2;
+    var size = qr.getModuleCount() * cellSize + margin * 2;
+    canvas.width = size;
+    canvas.height = size;
     var ctx = canvas.getContext('2d');
+
+    // fill background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+
+    // draw cells
     ctx.fillStyle = '#000000';
     for (var row = 0; row < qr.getModuleCount(); row += 1) {
       for (var col = 0; col < qr.getModuleCount(); col += 1) {
@@ -35,7 +43,7 @@ window.onload = function() {
 
   // img
   var img = document.createElement('img');
-  img.setAttribute('src', qr.toDataUrl() );
+  img.setAttribute('src', qr.toDataURL() );
   document.body.appendChild(img);
 
   // canvas

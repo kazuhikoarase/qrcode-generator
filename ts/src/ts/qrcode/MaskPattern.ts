@@ -5,50 +5,46 @@ namespace qrcode {
    * MaskPattern
    * @author Kazuhiko Arase
    */
-  export class MaskPattern {
-
-    constructor() {
-      throw 'error';
-    }
+  export enum MaskPattern {
 
     /**
      * mask pattern 000
      */
-    public static PATTERN000 = 0;
+    PATTERN000 = 0b000,
 
     /**
      * mask pattern 001
      */
-    public static PATTERN001 = 1;
+    PATTERN001 = 0b001,
 
     /**
      * mask pattern 010
      */
-    public static PATTERN010 = 2;
+    PATTERN010 = 0b010,
 
     /**
      * mask pattern 011
      */
-    public static PATTERN011 = 3;
+    PATTERN011 = 0b011,
 
     /**
      * mask pattern 100
      */
-    public static PATTERN100 = 4;
+    PATTERN100 = 0b100,
 
     /**
      * mask pattern 101
      */
-    public static PATTERN101 = 5;
+    PATTERN101 = 0b101,
 
     /**
      * mask pattern 110
      */
-    public static PATTERN110 = 6;
+    PATTERN110 = 0b110,
 
     /**
      * mask pattern 111
      */
-    public static PATTERN111 = 7;
+    PATTERN111 = 0b111
   }
 }

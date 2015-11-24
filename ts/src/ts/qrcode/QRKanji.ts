@@ -3,7 +3,7 @@
 namespace qrcode {
 
   /**
-   * QRKanji
+   * QRKanji(SJIS only)
    * @author Kazuhiko Arase
    */
   export class QRKanji extends QRData {
