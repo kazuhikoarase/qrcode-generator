@@ -34,7 +34,7 @@ namespace qrcode.text {
         return b;
       };
       var count = 0;
-      var unicodeMap = {};
+      var unicodeMap : { [ch : string] : number; } = {};
       while (true) {
         var b0 = bin.readByte();
         if (b0 == -1) break;

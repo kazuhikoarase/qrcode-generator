@@ -198,7 +198,7 @@ namespace qrcode.image {
 
   class LZWTable {
 
-    private map = {};
+    private map : { [key : string] : number; } = {};
     private size : number = 0;
 
     constructor() {
