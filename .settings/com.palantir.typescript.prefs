@@ -1,0 +1,5 @@
+build.path.exportedFolder=
+build.path.sourceFolder=ts/src/ts
+compiler.outputDirOption=ts/build/ts
+compiler.outputFileOption=QRCode.js
+eclipse.preferences.version=1
