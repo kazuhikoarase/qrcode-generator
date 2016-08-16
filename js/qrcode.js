@@ -24,15 +24,15 @@ var qrcode = function() {
   /**
    * qrcode
    * @param typeNumber 1 to 40
-   * @param errorCorrectLevel 'L','M','Q','H'
+   * @param errorCorrectionLevel 'L','M','Q','H'
    */
-  var qrcode = function(typeNumber, errorCorrectLevel) {
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
 
     var PAD0 = 0xEC;
     var PAD1 = 0x11;
 
     var _typeNumber = typeNumber;
-    var _errorCorrectLevel = QRErrorCorrectLevel[errorCorrectLevel];
+    var _errorCorrectLevel = QRErrorCorrectLevel[errorCorrectionLevel];
     var _modules = null;
     var _moduleCount = 0;
     var _dataCache = null;
@@ -329,9 +329,9 @@ var qrcode = function() {
       return data;
     };
 
-    var createData = function(typeNumber, errorCorrectLevel, dataList) {
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
 
-      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
 
       var buffer = qrBitBuffer();
 
@@ -1273,9 +1273,9 @@ var qrcode = function() {
 
     var _this = {};
 
-    var getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
 
-      switch(errorCorrectLevel) {
+      switch(errorCorrectionLevel) {
       case QRErrorCorrectLevel.L :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
       case QRErrorCorrectLevel.M :
@@ -1289,13 +1289,13 @@ var qrcode = function() {
       }
     };
 
-    _this.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
 
-      var rsBlock = getRsBlockTable(typeNumber, errorCorrectLevel);
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
 
       if (typeof rsBlock == 'undefined') {
         throw new Error('bad rs block @ typeNumber:' + typeNumber +
-            '/errorCorrectLevel:' + errorCorrectLevel);
+            '/errorCorrectionLevel:' + errorCorrectionLevel);
       }
 
       var length = rsBlock.length / 3;
