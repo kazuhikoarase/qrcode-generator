@@ -32,7 +32,7 @@ var qrcode = function() {
     var PAD1 = 0x11;
 
     var _typeNumber = typeNumber;
-    var _errorCorrectLevel = QRErrorCorrectLevel[errorCorrectionLevel];
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
     var _modules = null;
     var _moduleCount = 0;
     var _dataCache = null;
@@ -66,7 +66,7 @@ var qrcode = function() {
       }
 
       if (_dataCache == null) {
-        _dataCache = createData(_typeNumber, _errorCorrectLevel, _dataList);
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
       }
 
       mapData(_dataCache, maskPattern);
@@ -178,7 +178,7 @@ var qrcode = function() {
 
     var setupTypeInfo = function(test, maskPattern) {
 
-      var data = (_errorCorrectLevel << 3) | maskPattern;
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
       var bits = QRUtil.getBCHTypeInfo(data);
 
       // vertical
@@ -595,10 +595,10 @@ var qrcode = function() {
   };
 
   //---------------------------------------------------------------------
-  // QRErrorCorrectLevel
+  // QRErrorCorrectionLevel
   //---------------------------------------------------------------------
 
-  var QRErrorCorrectLevel = {
+  var QRErrorCorrectionLevel = {
     L : 1,
     M : 0,
     Q : 3,
@@ -1276,13 +1276,13 @@ var qrcode = function() {
     var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
 
       switch(errorCorrectionLevel) {
-      case QRErrorCorrectLevel.L :
+      case QRErrorCorrectionLevel.L :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-      case QRErrorCorrectLevel.M :
+      case QRErrorCorrectionLevel.M :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-      case QRErrorCorrectLevel.Q :
+      case QRErrorCorrectionLevel.Q :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-      case QRErrorCorrectLevel.H :
+      case QRErrorCorrectionLevel.H :
         return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
       default :
         return undefined;

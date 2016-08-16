@@ -1,11 +1,11 @@
 
-var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
-  document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
+var draw_qrcode = function(text, typeNumber, errorCorrectionLevel) {
+  document.write(create_qrcode(text, typeNumber, errorCorrectionLevel) );
 };
 
-var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
+var create_qrcode = function(text, typeNumber, errorCorrectionLevel, table) {
 
-  var qr = qrcode(typeNumber || 4, errorCorrectLevel || 'M');
+  var qr = qrcode(typeNumber || 4, errorCorrectionLevel || 'M');
   qr.addData(text);
   qr.make();
 
