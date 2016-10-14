@@ -33,3 +33,7 @@ interface QRCode {
 }
 
 declare var qrcode : QRCodeFactory;
+
+declare module 'qrcode-generator' {
+  export = qrcode;
+}
