@@ -23,7 +23,7 @@ interface QRCodeFactory {
 }
 
 interface QRCode {
-  addData(data: string) : void;
+  addData(data: string, mode?: string) : void;
   make() : void;
   getModuleCount() : number;
   isDark(row: number, col: number) : boolean;

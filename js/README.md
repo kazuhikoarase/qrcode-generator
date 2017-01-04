@@ -44,12 +44,13 @@ Overwrite this function to encode using a multibyte charset.
 
 ###QRCode
 
-####addData(data) => <code>void</code>
+####addData(data, mode) => <code>void</code>
 Add a data to encode.
 
-| Param  | Type                | Description      |
-| -------| ------------------- | ---------------- |
-| data   | <code>string</code> | string to encode |
+| Param  | Type                | Description                                                |
+| -------| ------------------- | ---------------------------------------------------------- |
+| data   | <code>string</code> | string to encode                                           |
+| mode   | <code>string</code> | Mode ('Numeric', 'Alphanumeric', 'Byte'(default), 'Kanji') |
 
 ####make() => <code>void</code>
 Make a QR Code.
