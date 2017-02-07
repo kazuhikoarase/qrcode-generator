@@ -1,11 +1,8 @@
-'use strict';
-namespace com.d_project.qrcode {
-
-  /**
-   * MaskPattern
-   * @author Kazuhiko Arase
-   */
-  export enum MaskPattern {
+/**
+ * MaskPattern
+ * @author Kazuhiko Arase
+ */
+enum MaskPattern {
 
     /**
      * mask pattern 000
@@ -46,5 +43,6 @@ namespace com.d_project.qrcode {
      * mask pattern 111
      */
     PATTERN111 = 0b111
-  }
 }
+
+export default MaskPattern;
