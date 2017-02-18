@@ -1,16 +1,17 @@
 
-var draw_qrcode = function(text, typeNumber, errorCorrectLevel) {
-	document.write(create_qrcode(text, typeNumber, errorCorrectLevel) );
+var draw_qrcode = function(text, typeNumber, errorCorrectionLevel) {
+  document.write(create_qrcode(text, typeNumber, errorCorrectionLevel) );
 };
 
-var create_qrcode = function(text, typeNumber, errorCorrectLevel, table) {
+var create_qrcode = function(text, typeNumber, errorCorrectionLevel, mode) {
 
-	var qr = qrcode(typeNumber || 4, errorCorrectLevel || 'M');
-	qr.addData(text);
-	qr.make();
+  var qr = qrcode(typeNumber || 4, errorCorrectionLevel || 'M');
+  qr.addData(text, mode);
+  qr.make();
 
-//	return qr.createTableTag();
-	return qr.createImgTag();
+//  return qr.createTableTag();
+//  return qr.createSvgTag();
+  return qr.createImgTag();
 };
 
 var update_qrcode = function() {
@@ -19,5 +20,6 @@ var update_qrcode = function() {
     replace(/^[\s\u3000]+|[\s\u3000]+$/g, '');
   var t = form.elements['t'].value;
   var e = form.elements['e'].value;
-	document.getElementById('qr').innerHTML = create_qrcode(text, t, e);
+  var m = form.elements['m'].value;
+  document.getElementById('qr').innerHTML = create_qrcode(text, t, e, m);
 };

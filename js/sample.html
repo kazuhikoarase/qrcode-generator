@@ -18,12 +18,19 @@
     <form name="qrForm">
       <span>TypeNumber:</span>
       <select name="t"></select>
-      <span>ErrorCorrectLevel:</span>
+      <span>ErrorCorrectionLevel:</span>
       <select name="e">
         <option value="L">L(7%)</option>
         <option value="M" selected="selected">M(15%)</option>
         <option value="Q">Q(25%)</option>
         <option value="H">H(30%)</option>
+      </select>
+      <span>Mode:</span>
+      <select name="m">
+        <option value="Numeric">Numeric</option>
+        <option value="Alphanumeric">Alphanumeric</option>
+        <option value="Byte" selected>Byte</option>
+        <option value="Kanji">Kanji</option>
       </select>
       <br/>
       <textarea name="msg" rows="10" cols="40">here comes qr!</textarea>
