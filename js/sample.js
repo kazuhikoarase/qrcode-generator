@@ -3,7 +3,10 @@ var draw_qrcode = function(text, typeNumber, errorCorrectionLevel) {
   document.write(create_qrcode(text, typeNumber, errorCorrectionLevel) );
 };
 
-var create_qrcode = function(text, typeNumber, errorCorrectionLevel, mode) {
+var create_qrcode = function(text, typeNumber, errorCorrectionLevel, mode,
+    mb) {
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs[mb];
 
   var qr = qrcode(typeNumber || 4, errorCorrectionLevel || 'M');
   qr.addData(text, mode);
@@ -21,5 +24,6 @@ var update_qrcode = function() {
   var t = form.elements['t'].value;
   var e = form.elements['e'].value;
   var m = form.elements['m'].value;
-  document.getElementById('qr').innerHTML = create_qrcode(text, t, e, m);
+  var mb = form.elements['mb'].value;
+  document.getElementById('qr').innerHTML = create_qrcode(text, t, e, m, mb);
 };

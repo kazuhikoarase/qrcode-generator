@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=Utf-8">
     <script type="text/javascript" src="qrcode.js"></script>
     <!-- SJIS Support (optional) -->
+    <script type="text/javascript" src="qrcode_SJIS.js"></script>
 <!--
     <script type="text/javascript" src="qrcode_SJIS.js"></script>
 -->
@@ -31,6 +32,12 @@
         <option value="Alphanumeric">Alphanumeric</option>
         <option value="Byte" selected>Byte</option>
         <option value="Kanji">Kanji</option>
+      </select>
+      <span>Mutibyte:</span>
+      <select name="mb">
+        <option value="default">None</option>
+        <option value="SJIS">SJIS</option>
+        <option value="UTF-8" selected>UTF-8</option>
       </select>
       <br/>
       <textarea name="msg" rows="10" cols="40">here comes qr!</textarea>
