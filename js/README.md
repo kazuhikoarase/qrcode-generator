@@ -52,7 +52,7 @@ Add a data to encode.
 | data   | <code>string</code> | string to encode                                           |
 | mode   | <code>string</code> | Mode ('Numeric', 'Alphanumeric', 'Byte'(default), 'Kanji') |
 
-####make() => <code>void</code>
+#### make() => <code>void</code>
 Make a QR Code.
 
 #### getModuleCount() => <code>number</code>
