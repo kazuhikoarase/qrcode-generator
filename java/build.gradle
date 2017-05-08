@@ -1,0 +1,34 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.6
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+jar {
+  baseName "qrcode"
+}
+
+task all {
+  dependsOn 'clean'
+  dependsOn 'jar'
+}
+
+uploadArchives {
+  repositories {
+    flatDir {
+      dirs 'repos'
+    }
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'javax.servlet:javax.servlet-api:3.0.1'
+  testCompile 'junit:junit:4.12'
+}
