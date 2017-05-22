@@ -465,7 +465,7 @@ var qrcode = function() {
       return qrHtml;
     };
 
-    _this.createSvgTag = function(cellSize, margin) {
+    _this.createSvgTag = function(cellSize, margin, displaySize) {
 
       cellSize = cellSize || 2;
       margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
@@ -475,9 +475,11 @@ var qrcode = function() {
       rect = 'l' + cellSize + ',0 0,' + cellSize +
         ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
 
+      displaySize = (typeof displaySize == 'undefined') ? size : (typeof displaySize == "number") ? displaySize : -1;
+
       qrSvg += '<svg';
-      qrSvg += ' width="' + size + 'px"';
-      qrSvg += ' height="' + size + 'px"';
+      qrSvg += displaySize > 0 ? ' width="' + displaySize + 'px" height="' + displaySize + 'px"' : '';
+      qrSvg += ' viewBox="0 0 '+size+' '+size+'" ';
       qrSvg += ' xmlns="http://www.w3.org/2000/svg"';
       qrSvg += '>';
       qrSvg += '<path d="';
