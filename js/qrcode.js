@@ -475,11 +475,12 @@ var qrcode = function() {
       rect = 'l' + cellSize + ',0 0,' + cellSize +
         ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
 
-      qrSvg += '<svg';
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
       qrSvg += ' width="' + size + 'px"';
       qrSvg += ' height="' + size + 'px"';
-      qrSvg += ' xmlns="http://www.w3.org/2000/svg"';
-      qrSvg += '>';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet">';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
       qrSvg += '<path d="';
 
       for (r = 0; r < _this.getModuleCount(); r += 1) {
