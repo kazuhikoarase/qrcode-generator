@@ -1,10 +1,29 @@
 
+var body_loadHander = function() {
+
+  var crtOpt = function(value, label) {
+    var opt = document.createElement('option');
+    opt.appendChild(document.createTextNode(label) );
+    opt.value = value;
+    return opt;
+  };
+
+  var t = document.forms['qrForm'].elements['t'];
+  t.appendChild(crtOpt('' + 0, 'Auto Detect') );
+  for (var i = 1; i <= 40; i += 1) {
+    t.appendChild(crtOpt('' + i, '' + i) );
+  }
+  t.value = '0';
+
+  update_qrcode();
+};
+
 var draw_qrcode = function(text, typeNumber, errorCorrectionLevel) {
   document.write(create_qrcode(text, typeNumber, errorCorrectionLevel) );
 };
 
-var create_qrcode = function(text, typeNumber, errorCorrectionLevel, mode,
-    mb) {
+var create_qrcode = function(text, typeNumber,
+    errorCorrectionLevel, mode, mb) {
 
   qrcode.stringToBytes = qrcode.stringToBytesFuncs[mb];
 
@@ -25,5 +44,6 @@ var update_qrcode = function() {
   var e = form.elements['e'].value;
   var m = form.elements['m'].value;
   var mb = form.elements['mb'].value;
-  document.getElementById('qr').innerHTML = create_qrcode(text, t, e, m, mb);
+  document.getElementById('qr').innerHTML =
+    create_qrcode(text, t, e, m, mb);
 };

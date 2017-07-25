@@ -13,9 +13,9 @@
     <script type="text/javascript" src="qrcode_UTF8.js"></script>
 -->
     <script type="text/javascript" src="sample.js"></script>
-    <title>QR Code for JavaScript</title>
+    <title>QR Code Generator for JavaScript</title>
   </head>
-  <body onload="update_qrcode()">
+  <body onload="body_loadHander()">
     <form name="qrForm">
       <span>TypeNumber:</span>
       <select name="t"></select>
@@ -45,17 +45,5 @@
       <input type="button" value="update" onclick="update_qrcode()"/>
       <div id="qr"></div>
     </form>
-    <script type="text/javascript">
-!function() {
-  var t = document.forms['qrForm'].elements['t'];
-  for (var i = 1; i <= 40; i += 1) {
-    var opt = document.createElement('option');
-    opt.appendChild(document.createTextNode(''+ i) );
-    opt.value = '' + i;
-    t.appendChild(opt);
-  }
-  t.value = '4';
-}();
-    </script>
   </body>
 </html>
