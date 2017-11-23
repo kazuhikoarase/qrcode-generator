@@ -1070,10 +1070,6 @@ class QRNumber extends QRData {
         }
     }
 
-    function getLength() {
-        return strlen($this->getData() );
-    }
-
     static function parseInt($s) {
 
         $num = 0;
@@ -1164,10 +1160,6 @@ class QRAlphaNum extends QRData {
         }
     }
 
-    function getLength() {
-        return strlen($this->getData() );
-    }
-
     static function getCode($c) {
 
         if (QRUtil::toCharCode('0') <= $c
@@ -1213,9 +1205,6 @@ class QR8BitByte extends QRData {
         }
     }
 
-    function getLength() {
-        return strlen($this->getData() );
-    }
 }
 
 //---------------------------------------------------------------
@@ -1244,7 +1233,9 @@ abstract class QRData {
 	/**
 	 * @return int
 	 */
-    abstract function getLength();
+	function getLength() {
+		return strlen($this->getData() );
+	}
 
 	/**
 	 * @param \QRBitBuffer $buffer
