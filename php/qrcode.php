@@ -208,9 +208,7 @@ class QRCode {
                             $dark = ( ( ($data[$byteIndex] >> $bitIndex) & 1) == 1);
                         }
 
-                        $mask = QRUtil::getMask($maskPattern, $row, $col - $c);
-
-                        if ($mask) {
+                        if (QRUtil::getMask($maskPattern, $row, $col - $c)) {
                             $dark = !$dark;
                         }
 
@@ -253,13 +251,8 @@ class QRCode {
                 for ($r = -2; $r <= 2; $r++) {
 
                     for ($c = -2; $c <= 2; $c++) {
-
-                        if ($r == -2 || $r == 2 || $c == -2 || $c == 2
-                                || ($r == 0 && $c == 0) ) {
-                            $this->modules[$row + $r][$col + $c] = true;
-                        } else {
-                            $this->modules[$row + $r][$col + $c] = false;
-                        }
+                        $this->modules[$row + $r][$col + $c] =
+	                        $r == -2 || $r == 2 || $c == -2 || $c == 2 || ($r == 0 && $c == 0);
                     }
                 }
             }
@@ -277,31 +270,24 @@ class QRCode {
                     continue;
                 }
 
-                if ( (0 <= $r && $r <= 6 && ($c == 0 || $c == 6) )
-                        || (0 <= $c && $c <= 6 && ($r == 0 || $r == 6) )
-                        || (2 <= $r && $r <= 4 && 2 <= $c && $c <= 4) ) {
-                    $this->modules[$row + $r][$col + $c] = true;
-                } else {
-                    $this->modules[$row + $r][$col + $c] = false;
-                }
+	            $this->modules[$row + $r][$col + $c] =
+		               (0 <= $r && $r <= 6 && ($c == 0 || $c == 6) )
+		            || (0 <= $c && $c <= 6 && ($r == 0 || $r == 6) )
+		            || (2 <= $r && $r <= 4 &&  2 <= $c && $c <= 4);
             }
         }
     }
 
     function setupTimingPattern() {
 
-        for ($r = 8; $r < $this->moduleCount - 8; $r++) {
-            if ($this->modules[$r][6] !== null) {
-                continue;
-            }
-            $this->modules[$r][6] = ($r % 2 == 0);
-        }
+        for ($i = 8; $i < $this->moduleCount - 8; $i++) {
 
-        for ($c = 8; $c < $this->moduleCount - 8; $c++) {
-            if ($this->modules[6][$c] !== null) {
+            if ($this->modules[$i][6] !== null || $this->modules[6][$i] !== null) {
                 continue;
             }
-            $this->modules[6][$c] = ($c % 2 == 0);
+
+            $this->modules[$i][6] = ($i % 2 == 0);
+            $this->modules[6][$i] = ($i % 2 == 0);
         }
     }
 
@@ -312,10 +298,6 @@ class QRCode {
         for ($i = 0; $i < 18; $i++) {
             $mod = (!$test && ( ($bits >> $i) & 1) == 1);
             $this->modules[(int)floor($i / 3)][$i % 3 + $this->moduleCount - 8 - 3] = $mod;
-        }
-
-        for ($i = 0; $i < 18; $i++) {
-            $mod = (!$test && ( ($bits >> $i) & 1) == 1);
             $this->modules[$i % 3 + $this->moduleCount - 8 - 3][floor($i / 3)] = $mod;
         }
     }
@@ -336,11 +318,6 @@ class QRCode {
             } else {
                 $this->modules[$this->moduleCount - 15 + $i][8] = $mod;
             }
-        }
-
-        for ($i = 0; $i < 15; $i++) {
-
-            $mod = (!$test && ( ($bits >> $i) & 1) == 1);
 
             if ($i < 8) {
                 $this->modules[8][$this->moduleCount - $i - 1] = $mod;
@@ -424,7 +401,8 @@ class QRCode {
         $dcdata = QRCode::createNullArray(count($rsBlocks) );
         $ecdata = QRCode::createNullArray(count($rsBlocks) );
 
-        for ($r = 0; $r < count($rsBlocks); $r++) {
+        $rsBlockCount = count($rsBlocks);
+        for ($r = 0; $r < $rsBlockCount; $r++) {
 
             $dcCount = $rsBlocks[$r]->getDataCount();
             $ecCount = $rsBlocks[$r]->getTotalCount() - $dcCount;
@@ -433,7 +411,8 @@ class QRCode {
             $maxEcCount = max($maxEcCount, $ecCount);
 
             $dcdata[$r] = QRCode::createNullArray($dcCount);
-            for ($i = 0; $i < count($dcdata[$r]); $i++) {
+            $dcDataCount = count($dcdata[$r]);
+            for ($i = 0; $i < $dcDataCount; $i++) {
                 $bdata = $buffer->getBuffer();
                 $dcdata[$r][$i] = 0xff & $bdata[$i + $offset];
             }
@@ -444,14 +423,16 @@ class QRCode {
 
             $modPoly = $rawPoly->mod($rsPoly);
             $ecdata[$r] = QRCode::createNullArray($rsPoly->getLength() - 1);
-            for ($i = 0; $i < count($ecdata[$r]); $i++) {
+
+	        $ecDataCount = count($ecdata[$r]);
+	        for ($i = 0; $i < $ecDataCount; $i++) {
                 $modIndex = $i + $modPoly->getLength() - count($ecdata[$r]);
                 $ecdata[$r][$i] = ($modIndex >= 0)? $modPoly->get($modIndex) : 0;
             }
         }
 
         $totalCodeCount = 0;
-        for ($i = 0; $i < count($rsBlocks); $i++) {
+        for ($i = 0; $i < $rsBlockCount; $i++) {
             $totalCodeCount += $rsBlocks[$i]->getTotalCount();
         }
 
@@ -460,7 +441,7 @@ class QRCode {
         $index = 0;
 
         for ($i = 0; $i < $maxDcCount; $i++) {
-            for ($r = 0; $r < count($rsBlocks); $r++) {
+            for ($r = 0; $r < $rsBlockCount; $r++) {
                 if ($i < count($dcdata[$r]) ) {
                     $data[$index++] = $dcdata[$r][$i];
                 }
@@ -468,7 +449,7 @@ class QRCode {
         }
 
         for ($i = 0; $i < $maxEcCount; $i++) {
-            for ($r = 0; $r < count($rsBlocks); $r++) {
+            for ($r = 0; $r < $rsBlockCount; $r++) {
                 if ($i < count($ecdata[$r]) ) {
                     $data[$index++] = $ecdata[$r][$i];
                 }
@@ -732,11 +713,7 @@ class QRUtil {
 
                     for ($c = -1; $c <= 1; $c++) {
 
-                        if ($col + $c < 0 || $moduleCount <= $col + $c) {
-                            continue;
-                        }
-
-                        if ($r == 0 && $c == 0) {
+                        if (($col + $c < 0 || $moduleCount <= $col + $c) || ($r == 0 && $c == 0)) {
                             continue;
                         }
 
