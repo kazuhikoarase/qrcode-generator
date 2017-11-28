@@ -14,8 +14,8 @@ $qr = new QRCode();
 // QR_ERROR_CORRECT_LEVEL_H : 30%
 $qr->setErrorCorrectLevel(QR_ERROR_CORRECT_LEVEL_L);
 // 型番(大きさ)を設定
-// 1～10
-$qr->setTypeNumber(3);
+// 1～40
+$qr->setTypeNumber(4);
 // データ(文字列※)を設定
 // ※日本語はSJIS
 $qr->addData("QRコード");
