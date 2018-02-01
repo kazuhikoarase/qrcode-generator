@@ -1,0 +1,41 @@
+BODY, TH, TD, INPUT, SELECT, TEXTAREA {
+  font-size: 10pt;
+  font-family: Verdana, Arial, sans-serif;
+}
+
+H1 { font-size: 18pt; }
+H2 { font-size: 14pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; }
+H5 { font-size: 9pt; }
+H6 { font-size: 8pt; }
+
+BODY {
+  color: #333333;
+  background-color: #ffffff;
+}
+
+DIV.page-header {
+  margin: 16px 0px 16px 0px;
+}
+
+DIV.page-footer {
+  margin: 16px 0px 16px 0px;
+  text-align: right;
+}
+
+DIV.section {
+  margin: 16px 0px 16px 0px;
+}
+
+#dataCaps TABLE {
+  border-collapse: collapse;
+}
+
+#dataCaps TABLE,
+#dataCaps TABLE TH,
+#dataCaps TABLE TD {
+  margin: 0px;
+  padding: 0px 4px 0px 4px;
+  border: 1px solid #000000;
+}
