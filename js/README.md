@@ -84,3 +84,4 @@ Helper functions for HTML.
 
 The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED
 <br/>http://www.denso-wave.com/qrcode/faqpatent-e.html
+#### renderTo2dContext(context, cellSize) => <code>void</code>
