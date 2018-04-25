@@ -526,7 +526,7 @@ var qrcode = function() {
       return qrSvg;
     };
 
-    _this.createImgTag = function(cellSize, margin) {
+    _this.createDataURL = function(cellSize, margin) {
 
       cellSize = cellSize || 2;
       margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
@@ -535,7 +535,7 @@ var qrcode = function() {
       var min = margin;
       var max = size - margin;
 
-      return createImgTag(size, size, function(x, y) {
+      return createDataURL(size, size, function(x, y) {
         if (min <= x && x < max && min <= y && y < max) {
           var c = Math.floor( (x - min) / cellSize);
           var r = Math.floor( (y - min) / cellSize);
@@ -544,6 +544,34 @@ var qrcode = function() {
           return 1;
         }
       } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += alt;
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
     };
 
     _this.renderTo2dContext = function(context, cellSize) {
@@ -2049,8 +2077,7 @@ var qrcode = function() {
     return _this;
   };
 
-  var createImgTag = function(width, height, getPixel, alt) {
-
+  var createDataURL = function(width, height, getPixel) {
     var gif = gifImage(width, height);
     for (var y = 0; y < height; y += 1) {
       for (var x = 0; x < width; x += 1) {
@@ -2068,26 +2095,7 @@ var qrcode = function() {
     }
     base64.flush();
 
-    var img = '';
-    img += '<img';
-    img += '\u0020src="';
-    img += 'data:image/gif;base64,';
-    img += base64;
-    img += '"';
-    img += '\u0020width="';
-    img += width;
-    img += '"';
-    img += '\u0020height="';
-    img += height;
-    img += '"';
-    if (alt) {
-      img += '\u0020alt="';
-      img += alt;
-      img += '"';
-    }
-    img += '/>';
-
-    return img;
+    return 'data:image/gif;base64,' + base64;
   };
 
   //---------------------------------------------------------------------
