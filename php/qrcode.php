@@ -470,7 +470,7 @@ class QRCode {
         $qrData = $qr->getData(0);
         $length = $qrData->getLength();
 
-        for ($typeNumber = 1; $typeNumber <= 10; $typeNumber++) {
+        for ($typeNumber = 1; $typeNumber <= 40; $typeNumber++) {
             if ($length <= QRUtil::getMaxLength($typeNumber, $mode, $errorCorrectLevel) ) {
                 $qr->setTypeNumber($typeNumber);
                 break;
