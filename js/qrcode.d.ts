@@ -42,6 +42,7 @@ interface QRCode {
   isDark(row: number, col: number) : boolean;
   createImgTag(cellSize?: number, margin?: number) : string;
   createSvgTag(cellSize?: number, margin?: number) : string;
+  createDataURL(cellSize?: number, margin?: number) : string;
   createTableTag(cellSize?: number, margin?: number) : string;
   renderTo2dContext(context: CanvasRenderingContext2D, cellSize?: number): void;
 }
