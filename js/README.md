@@ -72,6 +72,7 @@ _[Note] call make() before this function._
 #### createImgTag(cellSize, margin, alt) => <code>string</code>
 #### createSvgTag(cellSize, margin) => <code>string</code>
 #### createTableTag(cellSize, margin) => <code>string</code>
+#### createASCII(cellSize, margin) => <code>string</code>
 Helper functions for HTML.
  _[Note] call make() before these functions._
 
