@@ -1569,7 +1569,7 @@ class QRPolynomial {
             if ($i > 0) {
                 $buffer .= ",";
             }
-            $buffer .= QRMath::glog($this->get(i) );
+            $buffer .= QRMath::glog($this->get($i) );
         }
 
         return $buffer;
