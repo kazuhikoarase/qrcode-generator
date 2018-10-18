@@ -666,16 +666,22 @@ var qrcode = function() {
       return ascii.substring(0, ascii.length-1);
     };
 
-    _this.renderTo2dContext = function(context, cellSize) {
+    _this.renderTo2dContext = function (context, cellSize, position) {
       cellSize = cellSize || 2;
+      position = position || { x: 0, y: 0 };
       var length = _this.getModuleCount();
       for (var row = 0; row < length; row++) {
         for (var col = 0; col < length; col++) {
-          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
-          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+          context.fillStyle = _this.isDark(row, col) ? "black" : "white";
+          context.fillRect(
+            row * cellSize + position.x,
+            col * cellSize + position.y,
+            cellSize,
+            cellSize
+          );
         }
       }
-    }
+    };
 
     return _this;
   };
