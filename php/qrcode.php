@@ -551,6 +551,67 @@ class QRCode {
 
         print("</table>");
     }
+
+    public function toHtml($size = "2px", $color = '#000', $background = null) {
+
+        $class = uniqid('qr');
+        $html = "<style>.$class,.$class tr,.$class td"
+            . '{border-style:none!important;border-collapse:collapse!important;margin:0!important;padding:0!important}'
+            . ".$class td{width:$size!important;height:$size!important;}</style><table class='$class'>";
+
+        $bg = $background === null ? '' : ' style="background-color:' . $background . '"';
+
+        for ($r = 0, $moduleCount = $this->getModuleCount(); $r < $moduleCount; $r++) {
+
+            $html .= '<tr>';
+
+            for ($c = 0; $c < $moduleCount; $c++) {
+                $html .= '<td' . ($this->isDark($r, $c) ? " style='background-color:$color'" : $bg) . '/>';
+            }
+
+            $html .= '</tr>';
+        }
+
+        return $html . '</table>';
+    }
+
+    public function toSvg($scale = 5, $color = '#000', $background = null, $opacity = 1) {
+
+        $moduleCount = $this->getModuleCount();
+		$length = $moduleCount * $scale;
+
+        $bg = $background === null ? '' : ' style="background-color:' . $background . '"';
+
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'
+                . $length . '" height="' . $length . '" viewBox="0 0 ' . $length . ' ' . $length . '">'
+		       . $bg . '<defs><style><![CDATA[path{shape-rendering:crispEdges;stroke:' . $color
+		       . '!important;fill:' . $color . '!important;fill-opacity:' . $opacity
+		       . '}]]></style></defs>';
+
+        for ($r = 0; $r < $moduleCount; $r++) {
+			$path = '';
+			$count = 0;
+            $len = $r * $scale;
+            for ($c = 0; $c < $moduleCount; $c++) {
+                if($this->isDark($r, $c)) {
+                    if($count == 0) {
+                        $start = $c * $scale;
+                        $path .= 'M' .$start. ' ' .$len;
+                    }
+                    $count++;
+                    if ($c == $moduleCount - 1) {
+                        $path .= ' h'.($count * $scale).' v'.$scale.' h-'.($count * $scale).'Z ';
+                    }
+                } elseif ($count > 0) {
+                    $path .= ' h'.($count * $scale).' v'.$scale.' h-'.($count * $scale).'Z ';
+                    $count = 0;
+                }
+            }
+            $svg .= '<path d="' . rtrim($path) . '" />';
+        }
+
+        return $svg . '</svg>';
+    }
 }
 
 //---------------------------------------------------------------
