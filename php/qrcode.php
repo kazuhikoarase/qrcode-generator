@@ -577,20 +577,21 @@ class QRCode {
 
     public function toSvg($scale = 5, $color = '#000', $background = null, $opacity = 1) {
 
+        $class = uniqid('qr');
         $moduleCount = $this->getModuleCount();
-		$length = $moduleCount * $scale;
+	$length = $moduleCount * $scale;
 
         $bg = $background === null ? '' : ' style="background-color:' . $background . '"';
 
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'
-                . $length . '" height="' . $length . '" viewBox="0 0 ' . $length . ' ' . $length . '">'
-		       . $bg . '<defs><style><![CDATA[path{shape-rendering:crispEdges;stroke:' . $color
-		       . '!important;fill:' . $color . '!important;fill-opacity:' . $opacity
-		       . '}]]></style></defs>';
+	$svg = '<svg class="' . $class . '" xmlns="http://www.w3.org/2000/svg" version="1.1" width="'
+	    . $length . '" height="' . $length . '" viewBox="0 0 ' . $length . ' ' . $length . '">'
+	    . $bg . '<defs><style><![CDATA[.' . $class . ' path{shape-rendering:crispEdges;stroke:' . $color
+	    . '!important;fill:' . $color . '!important;fill-opacity:' . $opacity
+	    . '}]]></style></defs>';
 
         for ($r = 0; $r < $moduleCount; $r++) {
-			$path = '';
-			$count = 0;
+	    $path = '';
+	    $count = 0;
             $len = $r * $scale;
             for ($c = 0; $c < $moduleCount; $c++) {
                 if($this->isDark($r, $c)) {
