@@ -585,8 +585,8 @@ class QRCode {
 
 	$svg = '<svg class="' . $class . '" xmlns="http://www.w3.org/2000/svg" version="1.1" width="'
 	    . $length . '" height="' . $length . '" viewBox="0 0 ' . $length . ' ' . $length . '">'
-	    . $bg . '<defs><style><![CDATA[.' . $class . ' path{shape-rendering:crispEdges;stroke:' . $color
-	    . '!important;fill:' . $color . '!important;fill-opacity:' . $opacity
+	    . $bg . '<defs><style><![CDATA[.' . $class . ' path{shape-rendering:crispEdges;stroke-width:0;fill:'
+	    . $color . '!important;fill-opacity:' . $opacity
 	    . '}]]></style></defs>';
 
         for ($r = 0; $r < $moduleCount; $r++) {
