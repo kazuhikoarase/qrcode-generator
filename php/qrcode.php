@@ -601,14 +601,14 @@ class QRCode {
                     }
                     $count++;
                     if ($c == $moduleCount - 1) {
-                        $path .= ' h'.($count * $scale).' v'.$scale.' h-'.($count * $scale).'Z ';
+                        $path .= 'h'.($count * $scale).'v'.$scale.'h-'.($count * $scale).'Z';
                     }
                 } elseif ($count > 0) {
-                    $path .= ' h'.($count * $scale).' v'.$scale.' h-'.($count * $scale).'Z ';
+                    $path .= 'h'.($count * $scale).'v'.$scale.'h-'.($count * $scale).'Z';
                     $count = 0;
                 }
             }
-            $svg .= '<path d="' . rtrim($path) . '" />';
+            $svg .= '<path d="' . $path . '" />';
         }
 
         return $svg . '</svg>';
