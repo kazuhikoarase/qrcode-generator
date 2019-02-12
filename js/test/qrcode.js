@@ -56,6 +56,23 @@ describe('QRCode', function(){
 			'▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀'].join('\n');
 
 		var correctTextData2 = [
+			' ▄▄▄▄▄ █ ▄█▀▄██ ▀▄ ▄██ ▄▄▄▄▄ ',
+			' █   █ █▀ █▀▄█▀▀█▄▄ ▄█ █   █ ',
+			' █▄▄▄█ ███ ▀ █▄▀▄▄▀ ▀█ █▄▄▄█ ',
+			'▄▄▄▄▄▄▄█ ▀▄█▄▀▄▀ █▄▀▄█▄▄▄▄▄▄▄',
+			'▄█  ▀▄▄▄█▄▄█▀█▀▀▄█▀▀▀█ ▀▀▄█▄ ',
+			'▀▀▄▀▄█▄█  ▄▄█▄ ▄█  ███ ▀█▀▄▄▀',
+			' ▄▀█▄▀▄  ▄▀▄ █ ▄▀▀█▀██▀██▄▄▀▀',
+			'  █▀ ▄▄▀▀ ▀█    █▀▄ ▀█▄▀▄▄▄ ▄',
+			'▄██ ▄▄▄▄▄█   ▀▄▄ ▀▀▄▄▄█▄▄█▀ █',
+			'▄█▄██▄▄▄ █ █▄▄▀█▀███▄▀▄▄█▄ ██',
+			'█▄▄██▄▄▄ ▀▀▄█ █▀ █ ▄ ▄▄▄   ▀▀',
+			' ▄▄▄▄▄ █ █ ▀█▄█ ▀  ▄ █▄█ ▄█ ▀',
+			' █   █ █▀▄▄ ▄▀ ▀▄█ █  ▄▄   ▄ ',
+			' █▄▄▄█ █▄█▄▀█ ▀ ▀ ██  █ █▀▄▀▄',
+			'       ▀  ▀ ▀ ▀▀▀    ▀▀▀▀ ▀ ▀'].join('\n');
+
+		var correctTextData3 = [
 			'██████████████████████████████████████████████████████████████████',
 			'██████████████████████████████████████████████████████████████████',
 			'████              ██    ████  ████  ██      ████              ████',
@@ -95,6 +112,7 @@ describe('QRCode', function(){
 		qr.make();
 
 		assert.strictEqual(qr.createASCII(), correctTextData1, 'ASCII QRCode of size 1 is incorrect');
-		assert.strictEqual(qr.createASCII(2), correctTextData2, 'ASCII QRCode of size 2 is incorrect');
+		assert.strictEqual(qr.createASCII(1, 0), correctTextData2, 'ASCII QRCode of size 1 without margin is incorrect');
+		assert.strictEqual(qr.createASCII(2), correctTextData3, 'ASCII QRCode of size 2 is incorrect');
 	});
 });
