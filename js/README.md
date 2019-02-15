@@ -82,6 +82,15 @@ Helper functions for HTML.
 | margin   | <code>number</code> | default: cellSize * 4 |
 | alt      | <code>string</code> | (optional)            |
 
+#### createSvgTag(opts) => <code>string</code>
+
+| Param         | Type                 | Description           |
+| ------------- | -------------------- | --------------------- |
+| opts          | <code>object</code>  | default: {}           |
+| opts.cellSize | <code>number</code>  | default: 2            |
+| opts.margin   | <code>number</code>  | default: cellSize * 4 |
+| opts.scalable | <code>boolean</code> | default: false        |
+
 #### renderTo2dContext(context, cellSize) => <code>void</code>
 
 --
