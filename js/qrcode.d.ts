@@ -41,7 +41,7 @@ interface QRCode {
   getModuleCount() : number;
   isDark(row: number, col: number) : boolean;
   createImgTag(cellSize?: number, margin?: number) : string;
-  createSvgTag(cellSize?: number, margin?: number) : string;
+  createSvgTag(cellSize?: number, margin?: number, displaySize?: any) : string;
   createDataURL(cellSize?: number, margin?: number) : string;
   createTableTag(cellSize?: number, margin?: number) : string;
   createASCII(cellSize?: number, margin?: number) : string;
