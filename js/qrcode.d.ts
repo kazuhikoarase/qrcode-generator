@@ -42,6 +42,8 @@ interface QRCode {
   isDark(row: number, col: number) : boolean;
   createImgTag(cellSize?: number, margin?: number) : string;
   createSvgTag(cellSize?: number, margin?: number) : string;
+  createSvgTag(opts? : { cellSize?: number, margin?: number,
+      scalable?: boolean }) : string;
   createDataURL(cellSize?: number, margin?: number) : string;
   createTableTag(cellSize?: number, margin?: number) : string;
   createASCII(cellSize?: number, margin?: number) : string;

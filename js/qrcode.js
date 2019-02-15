@@ -494,6 +494,15 @@ var qrcode = function() {
 
     _this.createSvgTag = function(cellSize, margin) {
 
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+      }
+
       cellSize = cellSize || 2;
       margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
       var size = _this.getModuleCount() * cellSize + margin * 2;
@@ -503,8 +512,7 @@ var qrcode = function() {
         ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
 
       qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
-      qrSvg += ' width="' + size + 'px"';
-      qrSvg += ' height="' + size + 'px"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
       qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
       qrSvg += ' preserveAspectRatio="xMinYMin meet">';
       qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
