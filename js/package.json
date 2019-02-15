@@ -1,6 +1,6 @@
 {
   "name": "qrcode-generator",
-  "version": "1.2.0",
+  "version": "1.4.2",
   "description": "QR Code Generator implementation in JavaScript.",
   "author": "Kazuhiko Arase",
   "main": "qrcode.js",
@@ -17,5 +17,14 @@
     "qrcode",
     "generator"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
 }

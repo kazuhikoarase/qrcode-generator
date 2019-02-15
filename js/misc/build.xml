@@ -1,0 +1,23 @@
+<project default="gen">
+
+  <property name="src" location="src" />
+  <property name="build" location="build" />
+
+  <target name="clean">
+    <delete dir="${build}"/>
+  </target>
+  
+  <target name="gen">
+    <mkdir dir="${build}" />
+    <javac srcdir="${src}" destdir="${build}"
+      encoding="UTF-8" includeantruntime="false" />
+    <copy todir="${build}">
+      <fileset dir="${src}">
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+    <java dir="${build}" classpath="${build}"
+      classname="GenSJISSupport" />
+  </target>
+
+</project>
