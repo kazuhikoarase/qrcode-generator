@@ -95,5 +95,7 @@ Helper functions for HTML.
 
 --
 
+This implementation is based on JIS X 0510:1999.
+
 The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED
 <br/>http://www.denso-wave.com/qrcode/faqpatent-e.html
