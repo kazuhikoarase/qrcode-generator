@@ -492,7 +492,7 @@ var qrcode = function() {
       return qrHtml;
     };
 
-    _this.createSvgTag = function(cellSize, margin) {
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
 
       var opts = {};
       if (typeof arguments[0] == 'object') {
@@ -501,10 +501,23 @@ var qrcode = function() {
         // overwrite cellSize and margin.
         cellSize = opts.cellSize;
         margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
       }
 
       cellSize = cellSize || 2;
       margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
       var size = _this.getModuleCount() * cellSize + margin * 2;
       var c, mc, r, mr, qrSvg='', rect;
 
@@ -514,7 +527,11 @@ var qrcode = function() {
       qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
       qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
       qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
-      qrSvg += ' preserveAspectRatio="xMinYMin meet">';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' + [title.id, alt.id].join(' ').trim() + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + title.id + '">' + title.text + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + alt.id + '">' + alt.text + '</description>' : '';
       qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
       qrSvg += '<path d="';
 
