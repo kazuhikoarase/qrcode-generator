@@ -1,38 +1,31 @@
 <?hh // partial
 
-require_once("qrcode.php");
+require_once(__DIR__.'/../vendor/hh_autoload.php');
 
 <<__EntryPoint>>
 function sample_html(): noreturn {
     //---------------------------------------------------------
 
-    print("<h4>�����I�Ɍ^�Ԃ��w��</h4>");
+    // QR in Japanese 1234:! Kanji
+    print("<h4>日本語のQR 1234:! 漢字</h4>");
 
     $qr = new QRCode();
-    // �G���[�������x����ݒ�
     // QR_ERROR_CORRECT_LEVEL_L : 7%
     // QR_ERROR_CORRECT_LEVEL_M : 15%
     // QR_ERROR_CORRECT_LEVEL_Q : 25%
     // QR_ERROR_CORRECT_LEVEL_H : 30%
     $qr->setErrorCorrectLevel(QR_ERROR_CORRECT_LEVEL_L);
-    // �^��(�傫��)��ݒ�
-    // 1�`40
     $qr->setTypeNumber(4);
-    // �f�[�^(������)��ݒ�
-    // �����{���SJIS
-    $qr->addData("QR�R�[�h");
-    // QR�R�[�h���쐬
+    $qr->addData("日本語のQR 1234:!</h4>");
     $qr->make();
-    // HTML�o��
     $qr->printHTML();
 
     //---------------------------------------------------------
 
-    print("<h4>�^�Ԏ���</h4>");
+    // QR quick 1234:!
+    print("<h4>QRクイック 1234:!</h4>");
 
-    // �^�Ԃ��ŏ��ƂȂ�QR�R�[�h���쐬
-    $qr = QRCode::getMinimumQRCode("QR�R�[�h", QR_ERROR_CORRECT_LEVEL_L);
-    // HTML�o��
+    $qr = QRCode::getMinimumQRCode("QRクイック", QR_ERROR_CORRECT_LEVEL_L);
     $qr->printHTML();
 
     exit(0);

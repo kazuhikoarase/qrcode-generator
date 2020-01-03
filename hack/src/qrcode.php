@@ -354,7 +354,11 @@ class QRCode {
         $this->modules[$this->moduleCount - 8][8] = !$test;
     }
 
-    public static function createData($typeNumber, $errorCorrectLevel, $dataArray) {
+    public static function createData(
+        $typeNumber,
+        $errorCorrectLevel,
+        $dataArray,
+    ) {
 
         $rsBlocks = QRRSBlock::getRSBlocks($typeNumber, $errorCorrectLevel);
 
