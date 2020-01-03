@@ -29,18 +29,17 @@ class QRCode {
 
     public int $typeNumber;
 
-    public varray<darray<int, ?bool>> $modules = [];
+    public vec<dict<int, ?bool>> $modules = vec[];
 
     public int $moduleCount = 0;
 
     public int $errorCorrectLevel;
 
-    public varray<QRData> $qrDataList = [];
+    public vec<QRData> $qrDataList = vec[];
 
     public function __construct() {
         $this->typeNumber = 1;
         $this->errorCorrectLevel = QR_ERROR_CORRECT_LEVEL_H;
-        $this->qrDataList = [];
     }
 
     public function getTypeNumber(): int {
@@ -89,7 +88,7 @@ class QRCode {
     }
 
     public function clearData(): void {
-        $this->qrDataList = [];
+        $this->qrDataList = vec[];
     }
 
     public function addDataImpl(QRData $qrData): void {
@@ -152,23 +151,13 @@ class QRCode {
         return $pattern;
     }
 
-    public static function createNullArray(int $length): varray<null> {
-        $nullArray = [];
-        for ($i = 0; $i < $length; $i++) {
-            $nullArray[] = null;
-        }
-        return $nullArray;
-    }
-
     public function makeImpl(bool $test, int $maskPattern): void {
 
         $this->moduleCount = $this->typeNumber * 4 + 17;
 
-        $this->modules = [];
+        $this->modules = vec[];
         for ($i = 0; $i < $this->moduleCount; $i++) {
-            $this->modules[] = darray(
-                QRCode::createNullArray($this->moduleCount),
-            );
+            $this->modules[] = dict(Vec\fill($this->moduleCount, null));
         }
 
         $this->setupPositionProbePattern(0, 0);
@@ -195,7 +184,10 @@ class QRCode {
         $this->mapData($data, $maskPattern);
     }
 
-    public function mapData(varray<int> $data, int $maskPattern): void {
+    public function mapData(
+        KeyedContainer<int, int> $data,
+        int $maskPattern,
+    ): void {
 
         $inc = -1;
         $row = $this->moduleCount - 1;
@@ -361,16 +353,14 @@ class QRCode {
     public static function createData(
         int $typeNumber,
         int $errorCorrectLevel,
-        varray<QRData> $dataArray,
-    ): varray<int> {
+        Traversable<QRData> $dataArray,
+    ): vec<int> {
 
         $rsBlocks = QRRSBlock::getRSBlocks($typeNumber, $errorCorrectLevel);
 
         $buffer = new QRBitBuffer();
 
-        for ($i = 0; $i < C\count($dataArray); $i++) {
-            /** @var \QRData $data */
-            $data = $dataArray[$i];
+        foreach ($dataArray as $data) {
             $buffer->put($data->getMode(), 4);
             $buffer->put(
                 $data->getLength(),
@@ -419,24 +409,18 @@ class QRCode {
         return QRCode::createBytes($buffer, $rsBlocks);
     }
 
-    /**
-     * @param \QRBitBuffer $buffer
-     * @param \QRRSBlock[] $rsBlocks
-     *
-     * @return array
-     */
     public static function createBytes(
         QRBitBuffer $buffer,
-        varray<QRRSBlock> $rsBlocks,
-    ): varray<int> {
+        KeyedContainer<int, QRRSBlock> $rsBlocks,
+    ): vec<int> {
 
         $offset = 0;
 
         $maxDcCount = 0;
         $maxEcCount = 0;
 
-        $dcdata = QRCode::createNullArray(C\count($rsBlocks));
-        $ecdata = QRCode::createNullArray(C\count($rsBlocks));
+        $dcdata = Vec\fill(C\count($rsBlocks), vec[]);
+        $ecdata = Vec\fill(C\count($rsBlocks), vec[]);
 
         $rsBlockCount = C\count($rsBlocks);
         for ($r = 0; $r < $rsBlockCount; $r++) {
@@ -447,9 +431,7 @@ class QRCode {
             $maxDcCount = Math\maxva($maxDcCount, $dcCount);
             $maxEcCount = Math\maxva($maxEcCount, $ecCount);
 
-            $dcdata[$r] = QRCode::createNullArray($dcCount);
-            // The whole array is not safe, but the $r'th element is nonnull.
-            $dcdata = lie<varray<varray<null>>>($dcdata);
+            $dcdata[$r] = Vec\fill($dcCount, 0);
             $dcDataCount = C\count($dcdata[$r]);
             for ($i = 0; $i < $dcDataCount; $i++) {
                 $bdata = $buffer->getBuffer();
@@ -464,9 +446,7 @@ class QRCode {
             );
 
             $modPoly = $rawPoly->mod($rsPoly);
-            $ecdata[$r] = QRCode::createNullArray($rsPoly->getLength() - 1);
-            // The whole array is not safe, but the $r'th element is nonnull.
-            $ecdata = lie<varray<varray<int>>>($ecdata);
+            $ecdata[$r] = Vec\fill($rsPoly->getLength() - 1, null);
 
             $ecDataCount = C\count($ecdata[$r]);
             for ($i = 0; $i < $ecDataCount; $i++) {
@@ -482,7 +462,7 @@ class QRCode {
             $totalCodeCount += $rsBlocks[$i]->getTotalCount();
         }
 
-        $data = QRCode::createNullArray($totalCodeCount);
+        $data = Vec\fill($totalCodeCount, 0);
 
         $index = 0;
 
@@ -505,7 +485,7 @@ class QRCode {
         }
 
         // All indexes have been written to.
-        return lie<varray<int>>($data);
+        return lie<vec<int>>($data);
     }
 
     public static function getMinimumQRCode(
@@ -642,103 +622,113 @@ const int QR_G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
 class QRUtil {
 
-    static array<array<array<int>>> $QR_MAX_LENGTH = [
-        [[41, 25, 17, 10], [34, 20, 14, 8], [27, 16, 11, 7], [17, 10, 7, 4]],
-        [[77, 47, 32, 20], [63, 38, 26, 16], [48, 29, 20, 12], [34, 20, 14, 8]],
-        [
-            [127, 77, 53, 32],
-            [101, 61, 42, 26],
-            [77, 47, 32, 20],
-            [58, 35, 24, 15],
+    static vec<vec<vec<int>>> $QR_MAX_LENGTH = vec[
+        vec[
+            vec[41, 25, 17, 10],
+            vec[34, 20, 14, 8],
+            vec[27, 16, 11, 7],
+            vec[17, 10, 7, 4],
         ],
-        [
-            [187, 114, 78, 48],
-            [149, 90, 62, 38],
-            [111, 67, 46, 28],
-            [82, 50, 34, 21],
+        vec[
+            vec[77, 47, 32, 20],
+            vec[63, 38, 26, 16],
+            vec[48, 29, 20, 12],
+            vec[34, 20, 14, 8],
         ],
-        [
-            [255, 154, 106, 65],
-            [202, 122, 84, 52],
-            [144, 87, 60, 37],
-            [106, 64, 44, 27],
+        vec[
+            vec[127, 77, 53, 32],
+            vec[101, 61, 42, 26],
+            vec[77, 47, 32, 20],
+            vec[58, 35, 24, 15],
         ],
-        [
-            [322, 195, 134, 82],
-            [255, 154, 106, 65],
-            [178, 108, 74, 45],
-            [139, 84, 58, 36],
+        vec[
+            vec[187, 114, 78, 48],
+            vec[149, 90, 62, 38],
+            vec[111, 67, 46, 28],
+            vec[82, 50, 34, 21],
         ],
-        [
-            [370, 224, 154, 95],
-            [293, 178, 122, 75],
-            [207, 125, 86, 53],
-            [154, 93, 64, 39],
+        vec[
+            vec[255, 154, 106, 65],
+            vec[202, 122, 84, 52],
+            vec[144, 87, 60, 37],
+            vec[106, 64, 44, 27],
         ],
-        [
-            [461, 279, 192, 118],
-            [365, 221, 152, 93],
-            [259, 157, 108, 66],
-            [202, 122, 84, 52],
+        vec[
+            vec[322, 195, 134, 82],
+            vec[255, 154, 106, 65],
+            vec[178, 108, 74, 45],
+            vec[139, 84, 58, 36],
         ],
-        [
-            [552, 335, 230, 141],
-            [432, 262, 180, 111],
-            [312, 189, 130, 80],
-            [235, 143, 98, 60],
+        vec[
+            vec[370, 224, 154, 95],
+            vec[293, 178, 122, 75],
+            vec[207, 125, 86, 53],
+            vec[154, 93, 64, 39],
         ],
-        [
-            [652, 395, 271, 167],
-            [513, 311, 213, 131],
-            [364, 221, 151, 93],
-            [288, 174, 119, 74],
+        vec[
+            vec[461, 279, 192, 118],
+            vec[365, 221, 152, 93],
+            vec[259, 157, 108, 66],
+            vec[202, 122, 84, 52],
+        ],
+        vec[
+            vec[552, 335, 230, 141],
+            vec[432, 262, 180, 111],
+            vec[312, 189, 130, 80],
+            vec[235, 143, 98, 60],
+        ],
+        vec[
+            vec[652, 395, 271, 167],
+            vec[513, 311, 213, 131],
+            vec[364, 221, 151, 93],
+            vec[288, 174, 119, 74],
         ],
     ];
 
-    static varray<varray<int>> $QR_PATTERN_POSITION_TABLE = [
-        [],
-        [6, 18],
-        [6, 22],
-        [6, 26],
-        [6, 30],
-        [6, 34],
-        [6, 22, 38],
-        [6, 24, 42],
-        [6, 26, 46],
-        [6, 28, 50],
-        [6, 30, 54],
-        [6, 32, 58],
-        [6, 34, 62],
-        [6, 26, 46, 66],
-        [6, 26, 48, 70],
-        [6, 26, 50, 74],
-        [6, 30, 54, 78],
-        [6, 30, 56, 82],
-        [6, 30, 58, 86],
-        [6, 34, 62, 90],
-        [6, 28, 50, 72, 94],
-        [6, 26, 50, 74, 98],
-        [6, 30, 54, 78, 102],
-        [6, 28, 54, 80, 106],
-        [6, 32, 58, 84, 110],
-        [6, 30, 58, 86, 114],
-        [6, 34, 62, 90, 118],
-        [6, 26, 50, 74, 98, 122],
-        [6, 30, 54, 78, 102, 126],
-        [6, 26, 52, 78, 104, 130],
-        [6, 30, 56, 82, 108, 134],
-        [6, 34, 60, 86, 112, 138],
-        [6, 30, 58, 86, 114, 142],
-        [6, 34, 62, 90, 118, 146],
-        [6, 30, 54, 78, 102, 126, 150],
-        [6, 24, 50, 76, 102, 128, 154],
-        [6, 28, 54, 80, 106, 132, 158],
-        [6, 32, 58, 84, 110, 136, 162],
-        [6, 26, 54, 82, 110, 138, 166],
-        [6, 30, 58, 86, 114, 142, 170],
+    static vec<vec<int>> $QR_PATTERN_POSITION_TABLE = vec[
+        vec[],
+        vec[6, 18],
+        vec[6, 22],
+        vec[6, 26],
+        vec[6, 30],
+        vec[6, 34],
+        vec[6, 22, 38],
+        vec[6, 24, 42],
+        vec[6, 26, 46],
+        vec[6, 28, 50],
+        vec[6, 30, 54],
+        vec[6, 32, 58],
+        vec[6, 34, 62],
+        vec[6, 26, 46, 66],
+        vec[6, 26, 48, 70],
+        vec[6, 26, 50, 74],
+        vec[6, 30, 54, 78],
+        vec[6, 30, 56, 82],
+        vec[6, 30, 58, 86],
+        vec[6, 34, 62, 90],
+        vec[6, 28, 50, 72, 94],
+        vec[6, 26, 50, 74, 98],
+        vec[6, 30, 54, 78, 102],
+        vec[6, 28, 54, 80, 106],
+        vec[6, 32, 58, 84, 110],
+        vec[6, 30, 58, 86, 114],
+        vec[6, 34, 62, 90, 118],
+        vec[6, 26, 50, 74, 98, 122],
+        vec[6, 30, 54, 78, 102, 126],
+        vec[6, 26, 52, 78, 104, 130],
+        vec[6, 30, 56, 82, 108, 134],
+        vec[6, 34, 60, 86, 112, 138],
+        vec[6, 30, 58, 86, 114, 142],
+        vec[6, 34, 62, 90, 118, 146],
+        vec[6, 30, 54, 78, 102, 126, 150],
+        vec[6, 24, 50, 76, 102, 128, 154],
+        vec[6, 28, 54, 80, 106, 132, 158],
+        vec[6, 32, 58, 84, 110, 136, 162],
+        vec[6, 26, 54, 82, 110, 138, 166],
+        vec[6, 30, 58, 86, 114, 142, 170],
     ];
 
-    public static function getPatternPosition(int $typeNumber): varray<int> {
+    public static function getPatternPosition(int $typeNumber): vec<int> {
         return self::$QR_PATTERN_POSITION_TABLE[$typeNumber - 1];
     }
 
@@ -828,11 +818,6 @@ class QRUtil {
         }
     }
 
-    /**
-     * @param \QRCode $qrCode
-     *
-     * @return float|int
-     */
     public static function getLostPoint(QRCode $qrCode): num {
 
         $moduleCount = $qrCode->getModuleCount();
@@ -1067,7 +1052,7 @@ class QRRSBlock {
     public int $totalCount;
     public int $dataCount;
 
-    public static varray<varray<int>> $QR_RS_BLOCK_TABLE = [
+    public static vec<vec<int>> $QR_RS_BLOCK_TABLE = vec[
 
         // L
         // M
@@ -1075,244 +1060,244 @@ class QRRSBlock {
         // H
 
         // 1
-        [1, 26, 19],
-        [1, 26, 16],
-        [1, 26, 13],
-        [1, 26, 9],
+        vec[1, 26, 19],
+        vec[1, 26, 16],
+        vec[1, 26, 13],
+        vec[1, 26, 9],
 
         // 2
-        [1, 44, 34],
-        [1, 44, 28],
-        [1, 44, 22],
-        [1, 44, 16],
+        vec[1, 44, 34],
+        vec[1, 44, 28],
+        vec[1, 44, 22],
+        vec[1, 44, 16],
 
         // 3
-        [1, 70, 55],
-        [1, 70, 44],
-        [2, 35, 17],
-        [2, 35, 13],
+        vec[1, 70, 55],
+        vec[1, 70, 44],
+        vec[2, 35, 17],
+        vec[2, 35, 13],
 
         // 4
-        [1, 100, 80],
-        [2, 50, 32],
-        [2, 50, 24],
-        [4, 25, 9],
+        vec[1, 100, 80],
+        vec[2, 50, 32],
+        vec[2, 50, 24],
+        vec[4, 25, 9],
 
         // 5
-        [1, 134, 108],
-        [2, 67, 43],
-        [2, 33, 15, 2, 34, 16],
-        [2, 33, 11, 2, 34, 12],
+        vec[1, 134, 108],
+        vec[2, 67, 43],
+        vec[2, 33, 15, 2, 34, 16],
+        vec[2, 33, 11, 2, 34, 12],
 
         // 6
-        [2, 86, 68],
-        [4, 43, 27],
-        [4, 43, 19],
-        [4, 43, 15],
+        vec[2, 86, 68],
+        vec[4, 43, 27],
+        vec[4, 43, 19],
+        vec[4, 43, 15],
 
         // 7
-        [2, 98, 78],
-        [4, 49, 31],
-        [2, 32, 14, 4, 33, 15],
-        [4, 39, 13, 1, 40, 14],
+        vec[2, 98, 78],
+        vec[4, 49, 31],
+        vec[2, 32, 14, 4, 33, 15],
+        vec[4, 39, 13, 1, 40, 14],
 
         // 8
-        [2, 121, 97],
-        [2, 60, 38, 2, 61, 39],
-        [4, 40, 18, 2, 41, 19],
-        [4, 40, 14, 2, 41, 15],
+        vec[2, 121, 97],
+        vec[2, 60, 38, 2, 61, 39],
+        vec[4, 40, 18, 2, 41, 19],
+        vec[4, 40, 14, 2, 41, 15],
 
         // 9
-        [2, 146, 116],
-        [3, 58, 36, 2, 59, 37],
-        [4, 36, 16, 4, 37, 17],
-        [4, 36, 12, 4, 37, 13],
+        vec[2, 146, 116],
+        vec[3, 58, 36, 2, 59, 37],
+        vec[4, 36, 16, 4, 37, 17],
+        vec[4, 36, 12, 4, 37, 13],
 
         // 10
-        [2, 86, 68, 2, 87, 69],
-        [4, 69, 43, 1, 70, 44],
-        [6, 43, 19, 2, 44, 20],
-        [6, 43, 15, 2, 44, 16],
+        vec[2, 86, 68, 2, 87, 69],
+        vec[4, 69, 43, 1, 70, 44],
+        vec[6, 43, 19, 2, 44, 20],
+        vec[6, 43, 15, 2, 44, 16],
 
         // 11
-        [4, 101, 81],
-        [1, 80, 50, 4, 81, 51],
-        [4, 50, 22, 4, 51, 23],
-        [3, 36, 12, 8, 37, 13],
+        vec[4, 101, 81],
+        vec[1, 80, 50, 4, 81, 51],
+        vec[4, 50, 22, 4, 51, 23],
+        vec[3, 36, 12, 8, 37, 13],
 
         // 12
-        [2, 116, 92, 2, 117, 93],
-        [6, 58, 36, 2, 59, 37],
-        [4, 46, 20, 6, 47, 21],
-        [7, 42, 14, 4, 43, 15],
+        vec[2, 116, 92, 2, 117, 93],
+        vec[6, 58, 36, 2, 59, 37],
+        vec[4, 46, 20, 6, 47, 21],
+        vec[7, 42, 14, 4, 43, 15],
 
         // 13
-        [4, 133, 107],
-        [8, 59, 37, 1, 60, 38],
-        [8, 44, 20, 4, 45, 21],
-        [12, 33, 11, 4, 34, 12],
+        vec[4, 133, 107],
+        vec[8, 59, 37, 1, 60, 38],
+        vec[8, 44, 20, 4, 45, 21],
+        vec[12, 33, 11, 4, 34, 12],
 
         // 14
-        [3, 145, 115, 1, 146, 116],
-        [4, 64, 40, 5, 65, 41],
-        [11, 36, 16, 5, 37, 17],
-        [11, 36, 12, 5, 37, 13],
+        vec[3, 145, 115, 1, 146, 116],
+        vec[4, 64, 40, 5, 65, 41],
+        vec[11, 36, 16, 5, 37, 17],
+        vec[11, 36, 12, 5, 37, 13],
 
         // 15
-        [5, 109, 87, 1, 110, 88],
-        [5, 65, 41, 5, 66, 42],
-        [5, 54, 24, 7, 55, 25],
-        [11, 36, 12, 7, 37, 13],
+        vec[5, 109, 87, 1, 110, 88],
+        vec[5, 65, 41, 5, 66, 42],
+        vec[5, 54, 24, 7, 55, 25],
+        vec[11, 36, 12, 7, 37, 13],
 
         // 16
-        [5, 122, 98, 1, 123, 99],
-        [7, 73, 45, 3, 74, 46],
-        [15, 43, 19, 2, 44, 20],
-        [3, 45, 15, 13, 46, 16],
+        vec[5, 122, 98, 1, 123, 99],
+        vec[7, 73, 45, 3, 74, 46],
+        vec[15, 43, 19, 2, 44, 20],
+        vec[3, 45, 15, 13, 46, 16],
 
         // 17
-        [1, 135, 107, 5, 136, 108],
-        [10, 74, 46, 1, 75, 47],
-        [1, 50, 22, 15, 51, 23],
-        [2, 42, 14, 17, 43, 15],
+        vec[1, 135, 107, 5, 136, 108],
+        vec[10, 74, 46, 1, 75, 47],
+        vec[1, 50, 22, 15, 51, 23],
+        vec[2, 42, 14, 17, 43, 15],
 
         // 18
-        [5, 150, 120, 1, 151, 121],
-        [9, 69, 43, 4, 70, 44],
-        [17, 50, 22, 1, 51, 23],
-        [2, 42, 14, 19, 43, 15],
+        vec[5, 150, 120, 1, 151, 121],
+        vec[9, 69, 43, 4, 70, 44],
+        vec[17, 50, 22, 1, 51, 23],
+        vec[2, 42, 14, 19, 43, 15],
 
         // 19
-        [3, 141, 113, 4, 142, 114],
-        [3, 70, 44, 11, 71, 45],
-        [17, 47, 21, 4, 48, 22],
-        [9, 39, 13, 16, 40, 14],
+        vec[3, 141, 113, 4, 142, 114],
+        vec[3, 70, 44, 11, 71, 45],
+        vec[17, 47, 21, 4, 48, 22],
+        vec[9, 39, 13, 16, 40, 14],
 
         // 20
-        [3, 135, 107, 5, 136, 108],
-        [3, 67, 41, 13, 68, 42],
-        [15, 54, 24, 5, 55, 25],
-        [15, 43, 15, 10, 44, 16],
+        vec[3, 135, 107, 5, 136, 108],
+        vec[3, 67, 41, 13, 68, 42],
+        vec[15, 54, 24, 5, 55, 25],
+        vec[15, 43, 15, 10, 44, 16],
 
         // 21
-        [4, 144, 116, 4, 145, 117],
-        [17, 68, 42],
-        [17, 50, 22, 6, 51, 23],
-        [19, 46, 16, 6, 47, 17],
+        vec[4, 144, 116, 4, 145, 117],
+        vec[17, 68, 42],
+        vec[17, 50, 22, 6, 51, 23],
+        vec[19, 46, 16, 6, 47, 17],
 
         // 22
-        [2, 139, 111, 7, 140, 112],
-        [17, 74, 46],
-        [7, 54, 24, 16, 55, 25],
-        [34, 37, 13],
+        vec[2, 139, 111, 7, 140, 112],
+        vec[17, 74, 46],
+        vec[7, 54, 24, 16, 55, 25],
+        vec[34, 37, 13],
 
         // 23
-        [4, 151, 121, 5, 152, 122],
-        [4, 75, 47, 14, 76, 48],
-        [11, 54, 24, 14, 55, 25],
-        [16, 45, 15, 14, 46, 16],
+        vec[4, 151, 121, 5, 152, 122],
+        vec[4, 75, 47, 14, 76, 48],
+        vec[11, 54, 24, 14, 55, 25],
+        vec[16, 45, 15, 14, 46, 16],
 
         // 24
-        [6, 147, 117, 4, 148, 118],
-        [6, 73, 45, 14, 74, 46],
-        [11, 54, 24, 16, 55, 25],
-        [30, 46, 16, 2, 47, 17],
+        vec[6, 147, 117, 4, 148, 118],
+        vec[6, 73, 45, 14, 74, 46],
+        vec[11, 54, 24, 16, 55, 25],
+        vec[30, 46, 16, 2, 47, 17],
 
         // 25
-        [8, 132, 106, 4, 133, 107],
-        [8, 75, 47, 13, 76, 48],
-        [7, 54, 24, 22, 55, 25],
-        [22, 45, 15, 13, 46, 16],
+        vec[8, 132, 106, 4, 133, 107],
+        vec[8, 75, 47, 13, 76, 48],
+        vec[7, 54, 24, 22, 55, 25],
+        vec[22, 45, 15, 13, 46, 16],
 
         // 26
-        [10, 142, 114, 2, 143, 115],
-        [19, 74, 46, 4, 75, 47],
-        [28, 50, 22, 6, 51, 23],
-        [33, 46, 16, 4, 47, 17],
+        vec[10, 142, 114, 2, 143, 115],
+        vec[19, 74, 46, 4, 75, 47],
+        vec[28, 50, 22, 6, 51, 23],
+        vec[33, 46, 16, 4, 47, 17],
 
         // 27
-        [8, 152, 122, 4, 153, 123],
-        [22, 73, 45, 3, 74, 46],
-        [8, 53, 23, 26, 54, 24],
-        [12, 45, 15, 28, 46, 16],
+        vec[8, 152, 122, 4, 153, 123],
+        vec[22, 73, 45, 3, 74, 46],
+        vec[8, 53, 23, 26, 54, 24],
+        vec[12, 45, 15, 28, 46, 16],
 
         // 28
-        [3, 147, 117, 10, 148, 118],
-        [3, 73, 45, 23, 74, 46],
-        [4, 54, 24, 31, 55, 25],
-        [11, 45, 15, 31, 46, 16],
+        vec[3, 147, 117, 10, 148, 118],
+        vec[3, 73, 45, 23, 74, 46],
+        vec[4, 54, 24, 31, 55, 25],
+        vec[11, 45, 15, 31, 46, 16],
 
         // 29
-        [7, 146, 116, 7, 147, 117],
-        [21, 73, 45, 7, 74, 46],
-        [1, 53, 23, 37, 54, 24],
-        [19, 45, 15, 26, 46, 16],
+        vec[7, 146, 116, 7, 147, 117],
+        vec[21, 73, 45, 7, 74, 46],
+        vec[1, 53, 23, 37, 54, 24],
+        vec[19, 45, 15, 26, 46, 16],
 
         // 30
-        [5, 145, 115, 10, 146, 116],
-        [19, 75, 47, 10, 76, 48],
-        [15, 54, 24, 25, 55, 25],
-        [23, 45, 15, 25, 46, 16],
+        vec[5, 145, 115, 10, 146, 116],
+        vec[19, 75, 47, 10, 76, 48],
+        vec[15, 54, 24, 25, 55, 25],
+        vec[23, 45, 15, 25, 46, 16],
 
         // 31
-        [13, 145, 115, 3, 146, 116],
-        [2, 74, 46, 29, 75, 47],
-        [42, 54, 24, 1, 55, 25],
-        [23, 45, 15, 28, 46, 16],
+        vec[13, 145, 115, 3, 146, 116],
+        vec[2, 74, 46, 29, 75, 47],
+        vec[42, 54, 24, 1, 55, 25],
+        vec[23, 45, 15, 28, 46, 16],
 
         // 32
-        [17, 145, 115],
-        [10, 74, 46, 23, 75, 47],
-        [10, 54, 24, 35, 55, 25],
-        [19, 45, 15, 35, 46, 16],
+        vec[17, 145, 115],
+        vec[10, 74, 46, 23, 75, 47],
+        vec[10, 54, 24, 35, 55, 25],
+        vec[19, 45, 15, 35, 46, 16],
 
         // 33
-        [17, 145, 115, 1, 146, 116],
-        [14, 74, 46, 21, 75, 47],
-        [29, 54, 24, 19, 55, 25],
-        [11, 45, 15, 46, 46, 16],
+        vec[17, 145, 115, 1, 146, 116],
+        vec[14, 74, 46, 21, 75, 47],
+        vec[29, 54, 24, 19, 55, 25],
+        vec[11, 45, 15, 46, 46, 16],
 
         // 34
-        [13, 145, 115, 6, 146, 116],
-        [14, 74, 46, 23, 75, 47],
-        [44, 54, 24, 7, 55, 25],
-        [59, 46, 16, 1, 47, 17],
+        vec[13, 145, 115, 6, 146, 116],
+        vec[14, 74, 46, 23, 75, 47],
+        vec[44, 54, 24, 7, 55, 25],
+        vec[59, 46, 16, 1, 47, 17],
 
         // 35
-        [12, 151, 121, 7, 152, 122],
-        [12, 75, 47, 26, 76, 48],
-        [39, 54, 24, 14, 55, 25],
-        [22, 45, 15, 41, 46, 16],
+        vec[12, 151, 121, 7, 152, 122],
+        vec[12, 75, 47, 26, 76, 48],
+        vec[39, 54, 24, 14, 55, 25],
+        vec[22, 45, 15, 41, 46, 16],
 
         // 36
-        [6, 151, 121, 14, 152, 122],
-        [6, 75, 47, 34, 76, 48],
-        [46, 54, 24, 10, 55, 25],
-        [2, 45, 15, 64, 46, 16],
+        vec[6, 151, 121, 14, 152, 122],
+        vec[6, 75, 47, 34, 76, 48],
+        vec[46, 54, 24, 10, 55, 25],
+        vec[2, 45, 15, 64, 46, 16],
 
         // 37
-        [17, 152, 122, 4, 153, 123],
-        [29, 74, 46, 14, 75, 47],
-        [49, 54, 24, 10, 55, 25],
-        [24, 45, 15, 46, 46, 16],
+        vec[17, 152, 122, 4, 153, 123],
+        vec[29, 74, 46, 14, 75, 47],
+        vec[49, 54, 24, 10, 55, 25],
+        vec[24, 45, 15, 46, 46, 16],
 
         // 38
-        [4, 152, 122, 18, 153, 123],
-        [13, 74, 46, 32, 75, 47],
-        [48, 54, 24, 14, 55, 25],
-        [42, 45, 15, 32, 46, 16],
+        vec[4, 152, 122, 18, 153, 123],
+        vec[13, 74, 46, 32, 75, 47],
+        vec[48, 54, 24, 14, 55, 25],
+        vec[42, 45, 15, 32, 46, 16],
 
         // 39
-        [20, 147, 117, 4, 148, 118],
-        [40, 75, 47, 7, 76, 48],
-        [43, 54, 24, 22, 55, 25],
-        [10, 45, 15, 67, 46, 16],
+        vec[20, 147, 117, 4, 148, 118],
+        vec[40, 75, 47, 7, 76, 48],
+        vec[43, 54, 24, 22, 55, 25],
+        vec[10, 45, 15, 67, 46, 16],
 
         // 40
-        [19, 148, 118, 6, 149, 119],
-        [18, 75, 47, 31, 76, 48],
-        [34, 54, 24, 34, 55, 25],
-        [20, 45, 15, 61, 46, 16],
+        vec[19, 148, 118, 6, 149, 119],
+        vec[18, 75, 47, 31, 76, 48],
+        vec[34, 54, 24, 34, 55, 25],
+        vec[20, 45, 15, 61, 46, 16],
 
     ];
 
@@ -1332,12 +1317,12 @@ class QRRSBlock {
     public static function getRSBlocks(
         int $typeNumber,
         int $errorCorrectLevel,
-    ): varray<QRRSBlock> {
+    ): vec<QRRSBlock> {
 
         $rsBlock = QRRSBlock::getRsBlockTable($typeNumber, $errorCorrectLevel);
         $length = C\count($rsBlock) / 3;
 
-        $list = [];
+        $list = vec[];
 
         for ($i = 0; $i < $length; $i++) {
 
@@ -1356,7 +1341,7 @@ class QRRSBlock {
     public static function getRsBlockTable(
         int $typeNumber,
         int $errorCorrectLevel,
-    ): varray<int> {
+    ): vec<int> {
 
         switch ($errorCorrectLevel) {
             case QR_ERROR_CORRECT_LEVEL_L:
@@ -1583,16 +1568,10 @@ abstract class QRData {
         return $this->data;
     }
 
-    /**
-     * @return int
-     */
     public function getLength(): int {
         return Str\length($this->getData());
     }
 
-    /**
-     * @param \QRBitBuffer $buffer
-     */
     public abstract function write(QRBitBuffer $buffer): void;
 
     public function getLengthInBits(int $type): int {
@@ -1661,13 +1640,13 @@ abstract class QRData {
 
 class QRMath {
 
-    private static varray<int> $QR_MATH_EXP_TABLE = [];
-    private static varray<int> $QR_MATH_LOG_TABLE = [];
+    private static vec<int> $QR_MATH_EXP_TABLE = vec[];
+    private static vec<int> $QR_MATH_LOG_TABLE = vec[];
 
     <<__Memoize>>
     public static function init(): void {
 
-        self::$QR_MATH_EXP_TABLE = QRMath::createNumArray(256);
+        self::$QR_MATH_EXP_TABLE = Vec\fill(256, 0);
 
         for ($i = 0; $i < 8; $i++) {
             self::$QR_MATH_EXP_TABLE[$i] = 1 << $i;
@@ -1680,19 +1659,11 @@ class QRMath {
                 self::$QR_MATH_EXP_TABLE[$i - 8];
         }
 
-        self::$QR_MATH_LOG_TABLE = QRMath::createNumArray(256);
+        self::$QR_MATH_LOG_TABLE = Vec\fill(256, 0);
 
         for ($i = 0; $i < 255; $i++) {
             self::$QR_MATH_LOG_TABLE[self::$QR_MATH_EXP_TABLE[$i]] = $i;
         }
-    }
-
-    public static function createNumArray(int $length): varray<int> {
-        $num_array = [];
-        for ($i = 0; $i < $length; $i++) {
-            $num_array[] = 0;
-        }
-        return $num_array;
     }
 
     public static function glog(int $n): int {
@@ -1724,9 +1695,12 @@ class QRMath {
 
 class QRPolynomial {
 
-    public varray<int> $num;
+    public vec<int> $num;
 
-    public function __construct(varray<?int> $num, int $shift = 0) {
+    public function __construct(
+        KeyedContainer<int, ?int> $num,
+        int $shift = 0,
+    ) {
 
         $offset = 0;
 
@@ -1734,7 +1708,7 @@ class QRPolynomial {
             $offset++;
         }
 
-        $this->num = QRMath::createNumArray(C\count($num) - $offset + $shift);
+        $this->num = Vec\fill(C\count($num) - $offset + $shift, 0);
         for ($i = 0; $i < C\count($num) - $offset; $i++) {
             $this->num[$i] = $num[$i + $offset] as int;
         }
@@ -1781,14 +1755,9 @@ class QRPolynomial {
         return $buffer;
     }
 
-    /**
-     * @param \QRPolynomial $e
-     *
-     * @return \QRPolynomial
-     */
     public function multiply(QRPolynomial $e): QRPolynomial {
 
-        $num = QRMath::createNumArray($this->getLength() + $e->getLength() - 1);
+        $num = Vec\fill($this->getLength() + $e->getLength() - 1, 0);
 
         for ($i = 0; $i < $this->getLength(); $i++) {
             $vi = QRMath::glog($this->get($i));
@@ -1801,11 +1770,6 @@ class QRPolynomial {
         return new QRPolynomial($num);
     }
 
-    /**
-     * @param \QRPolynomial $e
-     *
-     * @return $this|\QRPolynomial
-     */
     public function mod(QRPolynomial $e): QRPolynomial {
 
         if ($this->getLength() - $e->getLength() < 0) {
@@ -1814,7 +1778,7 @@ class QRPolynomial {
 
         $ratio = QRMath::glog($this->get(0)) - QRMath::glog($e->get(0));
 
-        $num = QRMath::createNumArray($this->getLength());
+        $num = Vec\fill($this->getLength(), 0);
         for ($i = 0; $i < $this->getLength(); $i++) {
             $num[$i] = $this->get($i);
         }
@@ -1869,15 +1833,15 @@ const int QR_ERROR_CORRECT_LEVEL_H = 2;
 
 class QRBitBuffer {
 
-    public varray<int> $buffer;
+    public vec<int> $buffer;
     public int $length;
 
     public function __construct() {
-        $this->buffer = [];
+        $this->buffer = vec[];
         $this->length = 0;
     }
 
-    public function getBuffer(): varray<int> {
+    public function getBuffer(): vec<int> {
         return $this->buffer;
     }
 
