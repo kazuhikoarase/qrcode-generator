@@ -20,8 +20,10 @@
 // QRCode
 //---------------------------------------------------------------
 
-define("QR_PAD0", 0xEC);
-define("QR_PAD1", 0x11);
+use namespace HH\Lib\{C, Dict, Math, Vec};
+
+const int QR_PAD0 = 0xEC;
+const int QR_PAD1 = 0x11;
 
 class QRCode {
 
@@ -119,8 +121,8 @@ class QRCode {
     // added 2015.07.27 ~ DoktorJ
     public function hex2rgb($hex = 0x0) {
         return array(
-            'r' => floor($hex / 65536),
-            'g' => floor($hex / 256) % 256,
+            'r' => Math\int_div($hex, 65536),
+            'g' => Math\int_div($hex, 256) % 256,
             'b' => $hex % 256,
         );
     }
@@ -149,7 +151,7 @@ class QRCode {
         return $pattern;
     }
 
-    public function createNullArray($length) {
+    public static function createNullArray($length) {
         $nullArray = array();
         for ($i = 0; $i < $length; $i++) {
             $nullArray[] = null;
@@ -352,7 +354,7 @@ class QRCode {
         $this->modules[$this->moduleCount - 8][8] = !$test;
     }
 
-    public function createData($typeNumber, $errorCorrectLevel, $dataArray) {
+    public static function createData($typeNumber, $errorCorrectLevel, $dataArray) {
 
         $rsBlocks = QRRSBlock::getRSBlocks($typeNumber, $errorCorrectLevel);
 
@@ -419,7 +421,7 @@ class QRCode {
      * @return array
      * @hacklang Reference used for $buffer and $rsBlocks
      */
-    public function createBytes($buffer, $rsBlocks) {
+    public static function createBytes($buffer, $rsBlocks) {
 
         $offset = 0;
 
@@ -613,24 +615,19 @@ class QRCode {
 // QRUtil
 //---------------------------------------------------------------
 
-define(
-    "QR_G15",
-    (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
-);
+const int QR_G15 =
+    (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
 
-define(
-    "QR_G18",
-    (1 << 12) |
-        (1 << 11) |
-        (1 << 10) |
-        (1 << 9) |
-        (1 << 8) |
-        (1 << 5) |
-        (1 << 2) |
-        (1 << 0),
-);
+const int QR_G18 = (1 << 12) |
+    (1 << 11) |
+    (1 << 10) |
+    (1 << 9) |
+    (1 << 8) |
+    (1 << 5) |
+    (1 << 2) |
+    (1 << 0);
 
-define("QR_G15_MASK", (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1));
+const int QR_G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
 class QRUtil {
 
@@ -815,7 +812,7 @@ class QRUtil {
             case QR_MASK_PATTERN011:
                 return ($i + $j) % 3 == 0;
             case QR_MASK_PATTERN100:
-                return (floor($i / 2) + floor($j / 3)) % 2 == 0;
+                return (Math\int_div($i, 2) + Math\int_div($j, 3)) % 2 == 0;
             case QR_MASK_PATTERN101:
                 return ($i * $j) % 2 + ($i * $j) % 3 == 0;
             case QR_MASK_PATTERN110:
@@ -1590,7 +1587,7 @@ abstract class QRData {
      * @param \QRBitBuffer $buffer
      */
     // @hacklang Reference used
-    abstract function write($buffer);
+    public abstract function write($buffer);
 
     public function getLengthInBits($type) {
 
@@ -1831,35 +1828,35 @@ class QRPolynomial {
 // Mode
 //---------------------------------------------------------------
 
-define("QR_MODE_NUMBER", 1 << 0);
-define("QR_MODE_ALPHA_NUM", 1 << 1);
-define("QR_MODE_8BIT_BYTE", 1 << 2);
-define("QR_MODE_KANJI", 1 << 3);
+const int QR_MODE_NUMBER = 1 << 0;
+const int QR_MODE_ALPHA_NUM = 1 << 1;
+const int QR_MODE_8BIT_BYTE = 1 << 2;
+const int QR_MODE_KANJI = 1 << 3;
 
 //---------------------------------------------------------------
 // MaskPattern
 //---------------------------------------------------------------
 
-define("QR_MASK_PATTERN000", 0);
-define("QR_MASK_PATTERN001", 1);
-define("QR_MASK_PATTERN010", 2);
-define("QR_MASK_PATTERN011", 3);
-define("QR_MASK_PATTERN100", 4);
-define("QR_MASK_PATTERN101", 5);
-define("QR_MASK_PATTERN110", 6);
-define("QR_MASK_PATTERN111", 7);
+const int QR_MASK_PATTERN000 = 0;
+const int QR_MASK_PATTERN001 = 1;
+const int QR_MASK_PATTERN010 = 2;
+const int QR_MASK_PATTERN011 = 3;
+const int QR_MASK_PATTERN100 = 4;
+const int QR_MASK_PATTERN101 = 5;
+const int QR_MASK_PATTERN110 = 6;
+const int QR_MASK_PATTERN111 = 7;
 
 //---------------------------------------------------------------
 // ErrorCorrectLevel
 
 // 7%.
-define("QR_ERROR_CORRECT_LEVEL_L", 1);
+const int QR_ERROR_CORRECT_LEVEL_L = 1;
 // 15%.
-define("QR_ERROR_CORRECT_LEVEL_M", 0);
+const int QR_ERROR_CORRECT_LEVEL_M = 0;
 // 25%.
-define("QR_ERROR_CORRECT_LEVEL_Q", 3);
+const int QR_ERROR_CORRECT_LEVEL_Q = 3;
 // 30%.
-define("QR_ERROR_CORRECT_LEVEL_H", 2);
+const int QR_ERROR_CORRECT_LEVEL_H = 2;
 
 
 //---------------------------------------------------------------
