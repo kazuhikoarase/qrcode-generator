@@ -1,4 +1,4 @@
-<?hh // partial
+<?hh // strict
 
 //---------------------------------------------------------------
 // QRCode for PHP5
@@ -27,15 +27,15 @@ const int QR_PAD1 = 0x11;
 
 class QRCode {
 
-    public $typeNumber;
+    public int $typeNumber;
 
-    public $modules;
+    public varray<darray<int, ?bool>> $modules = [];
 
-    public $moduleCount;
+    public int $moduleCount = 0;
 
-    public $errorCorrectLevel;
+    public int $errorCorrectLevel;
 
-    public $qrDataList;
+    public varray<QRData> $qrDataList = [];
 
     public function __construct() {
         $this->typeNumber = 1;
@@ -43,23 +43,23 @@ class QRCode {
         $this->qrDataList = [];
     }
 
-    public function getTypeNumber() {
+    public function getTypeNumber(): int {
         return $this->typeNumber;
     }
 
-    public function setTypeNumber($typeNumber) {
+    public function setTypeNumber(int $typeNumber): void {
         $this->typeNumber = $typeNumber;
     }
 
-    public function getErrorCorrectLevel() {
+    public function getErrorCorrectLevel(): int {
         return $this->errorCorrectLevel;
     }
 
-    public function setErrorCorrectLevel($errorCorrectLevel) {
+    public function setErrorCorrectLevel(int $errorCorrectLevel): void {
         $this->errorCorrectLevel = $errorCorrectLevel;
     }
 
-    public function addData($data, $mode = 0) {
+    public function addData(string $data, int $mode = 0): void {
 
         if ($mode == 0) {
             $mode = QRUtil::getMode($data);
@@ -88,50 +88,51 @@ class QRCode {
         }
     }
 
-    public function clearData() {
+    public function clearData(): void {
         $this->qrDataList = [];
     }
 
-    // @hacklang Reference used
-    public function addDataImpl($qrData) {
+    public function addDataImpl(QRData $qrData): void {
         $this->qrDataList[] = $qrData;
     }
 
-    public function getDataCount() {
+    public function getDataCount(): int {
         return count($this->qrDataList);
     }
 
-    public function getData($index) {
+    public function getData(int $index): QRData {
         return $this->qrDataList[$index];
     }
 
-    public function isDark($row, $col) {
+    public function isDark(int $row, int $col): bool {
         if ($this->modules[$row][$col] !== null) {
-            return $this->modules[$row][$col];
+            return $this->modules[$row][$col] as nonnull;
         } else {
             return false;
         }
     }
 
-    public function getModuleCount() {
+    public function getModuleCount(): int {
         return $this->moduleCount;
     }
 
     // used for converting fg/bg colors (e.g. #0000ff = 0x0000FF)
     // added 2015.07.27 ~ DoktorJ
-    public function hex2rgb($hex = 0x0) {
-        return [
+    public function hex2rgb(
+        int $hex = 0x0,
+    ): shape('r' => int, 'b' => int, 'g' => int) {
+        return shape(
             'r' => Math\int_div($hex, 65536),
             'g' => Math\int_div($hex, 256) % 256,
             'b' => $hex % 256,
-        ];
+        );
     }
 
-    public function make() {
+    public function make(): void {
         $this->makeImpl(false, $this->getBestMaskPattern());
     }
 
-    public function getBestMaskPattern() {
+    public function getBestMaskPattern(): int {
 
         $minLostPoint = 0;
         $pattern = 0;
@@ -151,7 +152,7 @@ class QRCode {
         return $pattern;
     }
 
-    public static function createNullArray($length) {
+    public static function createNullArray(int $length): varray<null> {
         $nullArray = [];
         for ($i = 0; $i < $length; $i++) {
             $nullArray[] = null;
@@ -159,13 +160,15 @@ class QRCode {
         return $nullArray;
     }
 
-    public function makeImpl($test, $maskPattern) {
+    public function makeImpl(bool $test, int $maskPattern): void {
 
         $this->moduleCount = $this->typeNumber * 4 + 17;
 
         $this->modules = [];
         for ($i = 0; $i < $this->moduleCount; $i++) {
-            $this->modules[] = QRCode::createNullArray($this->moduleCount);
+            $this->modules[] = darray(
+                QRCode::createNullArray($this->moduleCount),
+            );
         }
 
         $this->setupPositionProbePattern(0, 0);
@@ -192,8 +195,7 @@ class QRCode {
         $this->mapData($data, $maskPattern);
     }
 
-    // @hacklang Reference used for $data
-    public function mapData($data, $maskPattern) {
+    public function mapData(varray<int> $data, int $maskPattern): void {
 
         $inc = -1;
         $row = $this->moduleCount - 1;
@@ -243,7 +245,7 @@ class QRCode {
         }
     }
 
-    public function setupPositionAdjustPattern() {
+    public function setupPositionAdjustPattern(): void {
 
         $pos = QRUtil::getPatternPosition($this->typeNumber);
 
@@ -272,7 +274,7 @@ class QRCode {
         }
     }
 
-    public function setupPositionProbePattern($row, $col) {
+    public function setupPositionProbePattern(int $row, int $col): void {
 
         for ($r = -1; $r <= 7; $r++) {
 
@@ -296,7 +298,7 @@ class QRCode {
         }
     }
 
-    public function setupTimingPattern() {
+    public function setupTimingPattern(): void {
 
         for ($i = 8; $i < $this->moduleCount - 8; $i++) {
 
@@ -311,7 +313,7 @@ class QRCode {
         }
     }
 
-    public function setupTypeNumber($test) {
+    public function setupTypeNumber(bool $test): void {
 
         $bits = QRUtil::getBCHTypeNumber($this->typeNumber);
 
@@ -320,12 +322,14 @@ class QRCode {
             $this->modules[(int)floor($i / 3)][
                 $i % 3 + $this->moduleCount - 8 - 3
             ] = $mod;
-            $this->modules[$i % 3 + $this->moduleCount - 8 - 3][floor($i / 3)] =
-                $mod;
+            $this->modules[$i % 3 + $this->moduleCount - 8 - 3][Math\int_div(
+                $i,
+                3,
+            )] = $mod;
         }
     }
 
-    public function setupTypeInfo($test, $maskPattern) {
+    public function setupTypeInfo(bool $test, int $maskPattern): void {
 
         $data = ($this->errorCorrectLevel << 3) | $maskPattern;
         $bits = QRUtil::getBCHTypeInfo($data);
@@ -355,10 +359,10 @@ class QRCode {
     }
 
     public static function createData(
-        $typeNumber,
-        $errorCorrectLevel,
-        $dataArray,
-    ) {
+        int $typeNumber,
+        int $errorCorrectLevel,
+        varray<QRData> $dataArray,
+    ): varray<int> {
 
         $rsBlocks = QRRSBlock::getRSBlocks($typeNumber, $errorCorrectLevel);
 
@@ -423,9 +427,11 @@ class QRCode {
      * @param \QRRSBlock[] $rsBlocks
      *
      * @return array
-     * @hacklang Reference used for $buffer and $rsBlocks
      */
-    public static function createBytes($buffer, $rsBlocks) {
+    public static function createBytes(
+        QRBitBuffer $buffer,
+        varray<QRRSBlock> $rsBlocks,
+    ): varray<int> {
 
         $offset = 0;
 
@@ -445,6 +451,8 @@ class QRCode {
             $maxEcCount = max($maxEcCount, $ecCount);
 
             $dcdata[$r] = QRCode::createNullArray($dcCount);
+            // The whole array is not safe, but the $r'th element is nonnull.
+            $dcdata = lie<varray<varray<null>>>($dcdata);
             $dcDataCount = count($dcdata[$r]);
             for ($i = 0; $i < $dcDataCount; $i++) {
                 $bdata = $buffer->getBuffer();
@@ -453,10 +461,15 @@ class QRCode {
             $offset += $dcCount;
 
             $rsPoly = QRUtil::getErrorCorrectPolynomial($ecCount);
-            $rawPoly = new QRPolynomial($dcdata[$r], $rsPoly->getLength() - 1);
+            $rawPoly = new QRPolynomial(
+                $dcdata[$r] as nonnull,
+                $rsPoly->getLength() - 1,
+            );
 
             $modPoly = $rawPoly->mod($rsPoly);
             $ecdata[$r] = QRCode::createNullArray($rsPoly->getLength() - 1);
+            // The whole array is not safe, but the $r'th element is nonnull.
+            $ecdata = lie<varray<varray<int>>>($ecdata);
 
             $ecDataCount = count($ecdata[$r]);
             for ($i = 0; $i < $ecDataCount; $i++) {
@@ -479,7 +492,7 @@ class QRCode {
         for ($i = 0; $i < $maxDcCount; $i++) {
             for ($r = 0; $r < $rsBlockCount; $r++) {
                 if ($i < count($dcdata[$r])) {
-                    $data[$index] = $dcdata[$r][$i];
+                    $data[$index] = $dcdata[$r] as nonnull[$i];
                     $index++;
                 }
             }
@@ -488,16 +501,20 @@ class QRCode {
         for ($i = 0; $i < $maxEcCount; $i++) {
             for ($r = 0; $r < $rsBlockCount; $r++) {
                 if ($i < count($ecdata[$r])) {
-                    $data[$index] = $ecdata[$r][$i];
+                    $data[$index] = $ecdata[$r] as nonnull[$i];
                     $index++;
                 }
             }
         }
 
-        return $data;
+        // All indexes have been written to.
+        return lie<varray<int>>($data);
     }
 
-    public static function getMinimumQRCode($data, $errorCorrectLevel) {
+    public static function getMinimumQRCode(
+        string $data,
+        int $errorCorrectLevel,
+    ): QRCode {
 
         $mode = QRUtil::getMode($data);
 
@@ -527,12 +544,12 @@ class QRCode {
     // also added some simple error checking on parameters
     // updated 2015.07.27 ~ DoktorJ
     public function createImage(
-        $size = 2,
-        $margin = 2,
-        $fg = 0x000000,
-        $bg = 0xFFFFFF,
-        $bgtrans = false,
-    ) {
+        int $size = 2,
+        int $margin = 2,
+        int $fg = 0x000000,
+        int $bg = 0xFFFFFF,
+        bool $bgtrans = false,
+    ): resource {
 
         // size/margin EC
         if (!is_numeric($size)) $size = 2;
@@ -590,7 +607,7 @@ class QRCode {
         return $image;
     }
 
-    public function printHTML($size = "2px") {
+    public function printHTML(string $size = "2px"): void {
 
         $style =
             "border-style:none;border-collapse:collapse;margin:0px;padding:0px;";
@@ -635,19 +652,9 @@ const int QR_G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
 class QRUtil {
 
-    static $QR_MAX_LENGTH = [
-        [
-            [41, 25, 17, 10],
-            [34, 20, 14, 8],
-            [27, 16, 11, 7],
-            [17, 10, 7, 4],
-        ],
-        [
-            [77, 47, 32, 20],
-            [63, 38, 26, 16],
-            [48, 29, 20, 12],
-            [34, 20, 14, 8],
-        ],
+    static array<array<array<int>>> $QR_MAX_LENGTH = [
+        [[41, 25, 17, 10], [34, 20, 14, 8], [27, 16, 11, 7], [17, 10, 7, 4]],
+        [[77, 47, 32, 20], [63, 38, 26, 16], [48, 29, 20, 12], [34, 20, 14, 8]],
         [
             [127, 77, 53, 32],
             [101, 61, 42, 26],
@@ -698,7 +705,7 @@ class QRUtil {
         ],
     ];
 
-    static $QR_PATTERN_POSITION_TABLE = [
+    static varray<varray<int>> $QR_PATTERN_POSITION_TABLE = [
         [],
         [6, 18],
         [6, 22],
@@ -741,15 +748,15 @@ class QRUtil {
         [6, 30, 58, 86, 114, 142, 170],
     ];
 
-    public static function getPatternPosition($typeNumber) {
+    public static function getPatternPosition(int $typeNumber): varray<int> {
         return self::$QR_PATTERN_POSITION_TABLE[$typeNumber - 1];
     }
 
     public static function getMaxLength(
-        $typeNumber,
-        $mode,
-        $errorCorrectLevel,
-    ) {
+        int $typeNumber,
+        int $mode,
+        int $errorCorrectLevel,
+    ): int {
 
         $t = $typeNumber - 1;
         $e = 0;
@@ -792,7 +799,9 @@ class QRUtil {
         return self::$QR_MAX_LENGTH[$t][$e][$m];
     }
 
-    public static function getErrorCorrectPolynomial($errorCorrectLength) {
+    public static function getErrorCorrectPolynomial(
+        int $errorCorrectLength,
+    ): QRPolynomial {
 
         $a = new QRPolynomial([1]);
 
@@ -803,7 +812,7 @@ class QRUtil {
         return $a;
     }
 
-    public static function getMask($maskPattern, $i, $j) {
+    public static function getMask(int $maskPattern, int $i, int $j): bool {
 
         switch ($maskPattern) {
 
@@ -825,7 +834,7 @@ class QRUtil {
                 return (($i * $j) % 3 + ($i + $j) % 2) % 2 == 0;
 
             default:
-                trigger_error("mask:$maskPattern", E_USER_ERROR);
+                invariant_violation("mask:%d", $maskPattern);
         }
     }
 
@@ -834,7 +843,7 @@ class QRUtil {
      *
      * @return float|int
      */
-    public static function getLostPoint($qrCode) {
+    public static function getLostPoint(QRCode $qrCode): num {
 
         $moduleCount = $qrCode->getModuleCount();
 
@@ -944,7 +953,7 @@ class QRUtil {
         return $lostPoint;
     }
 
-    public static function getMode($s) {
+    public static function getMode(string $s): int {
         if (QRUtil::isAlphaNum($s)) {
             if (QRUtil::isNumber($s)) {
                 return QR_MODE_NUMBER;
@@ -957,7 +966,7 @@ class QRUtil {
         }
     }
 
-    public static function isNumber($s) {
+    public static function isNumber(string $s): bool {
         for ($i = 0; $i < strlen($s); $i++) {
             $c = ord($s[$i]);
             if (
@@ -972,7 +981,7 @@ class QRUtil {
         return true;
     }
 
-    public static function isAlphaNum($s) {
+    public static function isAlphaNum(string $s): bool {
         for ($i = 0; $i < strlen($s); $i++) {
             $c = ord($s[$i]);
             if (
@@ -992,7 +1001,7 @@ class QRUtil {
         return true;
     }
 
-    public static function isKanji($s) {
+    public static function isKanji(string $s): bool {
 
         $data = $s;
 
@@ -1019,11 +1028,11 @@ class QRUtil {
         return true;
     }
 
-    public static function toCharCode($s) {
+    public static function toCharCode(string $s): int {
         return ord($s[0]);
     }
 
-    public static function getBCHTypeInfo($data) {
+    public static function getBCHTypeInfo(int $data): int {
         $d = $data << 10;
         while (QRUtil::getBCHDigit($d) - QRUtil::getBCHDigit(QR_G15) >= 0) {
             $d ^= (
@@ -1034,7 +1043,7 @@ class QRUtil {
         return (($data << 10) | $d) ^ QR_G15_MASK;
     }
 
-    public static function getBCHTypeNumber($data) {
+    public static function getBCHTypeNumber(int $data): int {
         $d = $data << 12;
         while (QRUtil::getBCHDigit($d) - QRUtil::getBCHDigit(QR_G18) >= 0) {
             $d ^= (
@@ -1045,7 +1054,7 @@ class QRUtil {
         return ($data << 12) | $d;
     }
 
-    public static function getBCHDigit($data) {
+    public static function getBCHDigit(int $data): int {
 
         $digit = 0;
 
@@ -1064,10 +1073,10 @@ class QRUtil {
 
 class QRRSBlock {
 
-    public $totalCount;
-    public $dataCount;
+    public int $totalCount;
+    public int $dataCount;
 
-    static $QR_RS_BLOCK_TABLE = [
+    public static varray<varray<int>> $QR_RS_BLOCK_TABLE = [
 
         // L
         // M
@@ -1316,20 +1325,23 @@ class QRRSBlock {
 
     ];
 
-    public function __construct($totalCount, $dataCount) {
+    public function __construct(int $totalCount, int $dataCount) {
         $this->totalCount = $totalCount;
         $this->dataCount = $dataCount;
     }
 
-    public function getDataCount() {
+    public function getDataCount(): int {
         return $this->dataCount;
     }
 
-    public function getTotalCount() {
+    public function getTotalCount(): int {
         return $this->totalCount;
     }
 
-    public static function getRSBlocks($typeNumber, $errorCorrectLevel) {
+    public static function getRSBlocks(
+        int $typeNumber,
+        int $errorCorrectLevel,
+    ): varray<QRRSBlock> {
 
         $rsBlock = QRRSBlock::getRsBlockTable($typeNumber, $errorCorrectLevel);
         $length = count($rsBlock) / 3;
@@ -1350,7 +1362,10 @@ class QRRSBlock {
         return $list;
     }
 
-    public static function getRsBlockTable($typeNumber, $errorCorrectLevel) {
+    public static function getRsBlockTable(
+        int $typeNumber,
+        int $errorCorrectLevel,
+    ): varray<int> {
 
         switch ($errorCorrectLevel) {
             case QR_ERROR_CORRECT_LEVEL_L:
@@ -1362,9 +1377,10 @@ class QRRSBlock {
             case QR_ERROR_CORRECT_LEVEL_H:
                 return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 3];
             default:
-                trigger_error(
-                    "tn:$typeNumber/ecl:$errorCorrectLevel",
-                    E_USER_ERROR,
+                invariant_violation(
+                    "tn:%d/ecl:%d",
+                    $typeNumber,
+                    $errorCorrectLevel,
                 );
         }
     }
@@ -1376,12 +1392,11 @@ class QRRSBlock {
 
 class QRNumber extends QRData {
 
-    public function __construct($data) {
+    public function __construct(string $data) {
         parent::__construct(QR_MODE_NUMBER, $data);
     }
 
-    // @haclang Reference used
-    public function write($buffer) {
+    public function write(QRBitBuffer $buffer): void {
 
         $data = $this->getData();
 
@@ -1405,7 +1420,7 @@ class QRNumber extends QRData {
         }
     }
 
-    public static function parseInt($s) {
+    public static function parseInt(string $s): int {
 
         $num = 0;
         for ($i = 0; $i < strlen($s); $i++) {
@@ -1414,13 +1429,13 @@ class QRNumber extends QRData {
         return $num;
     }
 
-    public static function parseIntAt($c) {
+    public static function parseIntAt(int $c): int {
 
         if (QRUtil::toCharCode('0') <= $c && $c <= QRUtil::toCharCode('9')) {
             return $c - QRUtil::toCharCode('0');
         }
 
-        trigger_error("illegal char : $c", E_USER_ERROR);
+        invariant_violation("illegal char : %d", $c);
     }
 }
 
@@ -1430,12 +1445,11 @@ class QRNumber extends QRData {
 
 class QRKanji extends QRData {
 
-    public function __construct($data) {
+    public function __construct(string $data) {
         parent::__construct(QR_MODE_KANJI, $data);
     }
 
-    // @hacklang Reference used
-    public function write($buffer) {
+    public function write(QRBitBuffer $buffer): void {
 
         $data = $this->getData();
 
@@ -1465,8 +1479,8 @@ class QRKanji extends QRData {
         }
     }
 
-    public function getLength() {
-        return floor(strlen($this->getData()) / 2);
+    public function getLength(): int {
+        return Math\int_div(strlen($this->getData()), 2);
     }
 }
 
@@ -1476,12 +1490,11 @@ class QRKanji extends QRData {
 
 class QRAlphaNum extends QRData {
 
-    public function __construct($data) {
+    public function __construct(string $data) {
         parent::__construct(QR_MODE_ALPHA_NUM, $data);
     }
 
-    // @hacklang Reference used
-    public function write($buffer) {
+    public function write(QRBitBuffer $buffer): void {
 
         $i = 0;
         $c = $this->getData();
@@ -1500,7 +1513,7 @@ class QRAlphaNum extends QRData {
         }
     }
 
-    public static function getCode($c) {
+    public static function getCode(int $c): int {
 
         if (QRUtil::toCharCode('0') <= $c && $c <= QRUtil::toCharCode('9')) {
             return $c - QRUtil::toCharCode('0');
@@ -1529,7 +1542,7 @@ class QRAlphaNum extends QRData {
                 case QRUtil::toCharCode(':'):
                     return 44;
                 default:
-                    trigger_error("illegal char : $c", E_USER_ERROR);
+                    invariant_violation("illegal char : %s", $c);
             }
         }
 
@@ -1542,12 +1555,11 @@ class QRAlphaNum extends QRData {
 
 class QR8BitByte extends QRData {
 
-    public function __construct($data) {
+    public function __construct(string $data) {
         parent::__construct(QR_MODE_8BIT_BYTE, $data);
     }
 
-    // @hacklang Reference used
-    public function write($buffer) {
+    public function write(QRBitBuffer $buffer): void {
 
         $data = $this->getData();
         for ($i = 0; $i < strlen($data); $i++) {
@@ -1563,37 +1575,36 @@ class QR8BitByte extends QRData {
 
 abstract class QRData {
 
-    public $mode;
+    public int $mode;
 
-    public $data;
+    public string $data;
 
-    public function __construct($mode, $data) {
+    public function __construct(int $mode, string $data) {
         $this->mode = $mode;
         $this->data = $data;
     }
 
-    public function getMode() {
+    public function getMode(): int {
         return $this->mode;
     }
 
-    public function getData() {
+    public function getData(): string {
         return $this->data;
     }
 
     /**
      * @return int
      */
-    public function getLength() {
+    public function getLength(): int {
         return strlen($this->getData());
     }
 
     /**
      * @param \QRBitBuffer $buffer
      */
-    // @hacklang Reference used
-    public abstract function write($buffer);
+    public abstract function write(QRBitBuffer $buffer): void;
 
-    public function getLengthInBits($type) {
+    public function getLengthInBits(int $type): int {
 
         if (1 <= $type && $type < 10) {
 
@@ -1609,7 +1620,7 @@ abstract class QRData {
                 case QR_MODE_KANJI:
                     return 8;
                 default:
-                    trigger_error("mode:$this->mode", E_USER_ERROR);
+                    invariant_violation("mode:%d", $this->mode);
             }
 
         } else if ($type < 27) {
@@ -1626,7 +1637,7 @@ abstract class QRData {
                 case QR_MODE_KANJI:
                     return 10;
                 default:
-                    trigger_error("mode:$this->mode", E_USER_ERROR);
+                    invariant_violation("mode:%d", $this->mode);
             }
 
         } else if ($type < 41) {
@@ -1643,11 +1654,11 @@ abstract class QRData {
                 case QR_MODE_KANJI:
                     return 12;
                 default:
-                    trigger_error("mode:$this->mode", E_USER_ERROR);
+                    invariant_violation("mode:%d", $this->mode);
             }
 
         } else {
-            trigger_error("mode:$this->mode", E_USER_ERROR);
+            invariant_violation("mode:%d", $this->mode);
         }
     }
 
@@ -1659,10 +1670,11 @@ abstract class QRData {
 
 class QRMath {
 
-    static $QR_MATH_EXP_TABLE = null;
-    static $QR_MATH_LOG_TABLE = null;
+    private static varray<int> $QR_MATH_EXP_TABLE = [];
+    private static varray<int> $QR_MATH_LOG_TABLE = [];
 
-    public static function init() {
+    <<__Memoize>>
+    public static function init(): void {
 
         self::$QR_MATH_EXP_TABLE = QRMath::createNumArray(256);
 
@@ -1684,7 +1696,7 @@ class QRMath {
         }
     }
 
-    public static function createNumArray($length) {
+    public static function createNumArray(int $length): varray<int> {
         $num_array = [];
         for ($i = 0; $i < $length; $i++) {
             $num_array[] = 0;
@@ -1692,8 +1704,8 @@ class QRMath {
         return $num_array;
     }
 
-    public static function glog($n) {
-
+    public static function glog(int $n): int {
+        self::init();
         if ($n < 1) {
             trigger_error("log($n)", E_USER_ERROR);
         }
@@ -1701,8 +1713,8 @@ class QRMath {
         return self::$QR_MATH_LOG_TABLE[$n];
     }
 
-    public static function gexp($n) {
-
+    public static function gexp(int $n): int {
+        self::init();
         while ($n < 0) {
             $n += 255;
         }
@@ -1715,18 +1727,15 @@ class QRMath {
     }
 }
 
-// init static table
-QRMath::init();
-
 //---------------------------------------------------------------
 // QRPolynomial
 //---------------------------------------------------------------
 
 class QRPolynomial {
 
-    public $num;
+    public varray<int> $num;
 
-    public function __construct($num, $shift = 0) {
+    public function __construct(varray<?int> $num, int $shift = 0) {
 
         $offset = 0;
 
@@ -1736,24 +1745,24 @@ class QRPolynomial {
 
         $this->num = QRMath::createNumArray(count($num) - $offset + $shift);
         for ($i = 0; $i < count($num) - $offset; $i++) {
-            $this->num[$i] = $num[$i + $offset];
+            $this->num[$i] = $num[$i + $offset] as int;
         }
     }
 
-    public function get($index) {
+    public function get(int $index): int {
         return $this->num[$index];
     }
 
-    public function getLength() {
+    public function getLength(): int {
         return count($this->num);
     }
 
     // PHP5
-    public function __toString() {
+    public function __toString(): string {
         return $this->toString();
     }
 
-    public function toString() {
+    public function toString(): string {
 
         $buffer = "";
 
@@ -1767,7 +1776,7 @@ class QRPolynomial {
         return $buffer;
     }
 
-    public function toLogString() {
+    public function toLogString(): string {
 
         $buffer = "";
 
@@ -1786,7 +1795,7 @@ class QRPolynomial {
      *
      * @return \QRPolynomial
      */
-    public function multiply($e) {
+    public function multiply(QRPolynomial $e): QRPolynomial {
 
         $num = QRMath::createNumArray($this->getLength() + $e->getLength() - 1);
 
@@ -1806,7 +1815,7 @@ class QRPolynomial {
      *
      * @return $this|\QRPolynomial
      */
-    public function mod($e) {
+    public function mod(QRPolynomial $e): QRPolynomial {
 
         if ($this->getLength() - $e->getLength() < 0) {
             return $this;
@@ -1869,23 +1878,23 @@ const int QR_ERROR_CORRECT_LEVEL_H = 2;
 
 class QRBitBuffer {
 
-    public $buffer;
-    public $length;
+    public varray<int> $buffer;
+    public int $length;
 
     public function __construct() {
         $this->buffer = [];
         $this->length = 0;
     }
 
-    public function getBuffer() {
+    public function getBuffer(): varray<int> {
         return $this->buffer;
     }
 
-    public function getLengthInBits() {
+    public function getLengthInBits(): int {
         return $this->length;
     }
 
-    public function __toString() {
+    public function __toString(): string {
         $buffer = "";
         for ($i = 0; $i < $this->getLengthInBits(); $i++) {
             $buffer .= $this->get($i) ? '1' : '0';
@@ -1893,19 +1902,19 @@ class QRBitBuffer {
         return $buffer;
     }
 
-    public function get($index) {
+    public function get(int $index): bool {
         $bufIndex = (int)floor($index / 8);
         return (($this->buffer[$bufIndex] >> (7 - $index % 8)) & 1) == 1;
     }
 
-    public function put($num, $length) {
+    public function put(int $num, int $length): void {
 
         for ($i = 0; $i < $length; $i++) {
             $this->putBit((($num >> ($length - $i - 1)) & 1) == 1);
         }
     }
 
-    public function putBit($bit) {
+    public function putBit(bool $bit): void {
 
         $bufIndex = (int)floor($this->length / 8);
         if (count($this->buffer) <= $bufIndex) {
