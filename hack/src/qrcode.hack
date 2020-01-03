@@ -446,7 +446,7 @@ class QRCode {
 
             $rsPoly = QRUtil::getErrorCorrectPolynomial($ecCount);
             $rawPoly = new QRPolynomial(
-                $dcdata[$r] as nonnull,
+                $dcdata[$r],
                 $rsPoly->getLength() - 1,
             );
 
@@ -473,8 +473,8 @@ class QRCode {
 
         for ($i = 0; $i < $maxDcCount; $i++) {
             for ($r = 0; $r < $rsBlockCount; $r++) {
-                if ($i < C\count($dcdata[$r] as nonnull)) {
-                    $data[$index] = $dcdata[$r] as nonnull[$i];
+                if ($i < C\count($dcdata[$r])) {
+                    $data[$index] = $dcdata[$r][$i];
                     $index++;
                 }
             }
@@ -482,8 +482,8 @@ class QRCode {
 
         for ($i = 0; $i < $maxEcCount; $i++) {
             for ($r = 0; $r < $rsBlockCount; $r++) {
-                if ($i < C\count($ecdata[$r] as nonnull)) {
-                    $data[$index] = $ecdata[$r] as nonnull[$i];
+                if ($i < C\count($ecdata[$r])) {
+                    $data[$index] = $ecdata[$r][$i];
                     $index++;
                 }
             }
@@ -1725,7 +1725,7 @@ class QRPolynomial {
     public vec<int> $num;
 
     public function __construct(
-        KeyedContainer<int, ?int> $num,
+        KeyedContainer<int, int> $num,
         int $shift = 0,
     ) {
 
@@ -1737,7 +1737,7 @@ class QRPolynomial {
 
         $this->num = Vec\fill(C\count($num) - $offset + $shift, 0);
         for ($i = 0; $i < C\count($num) - $offset; $i++) {
-            $this->num[$i] = $num[$i + $offset] as int;
+            $this->num[$i] = $num[$i + $offset];
         }
     }
 
