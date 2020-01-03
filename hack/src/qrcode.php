@@ -446,7 +446,7 @@ class QRCode {
             );
 
             $modPoly = $rawPoly->mod($rsPoly);
-            $ecdata[$r] = Vec\fill($rsPoly->getLength() - 1, null);
+            $ecdata[$r] = Vec\fill($rsPoly->getLength() - 1, 0);
 
             $ecDataCount = C\count($ecdata[$r]);
             for ($i = 0; $i < $ecDataCount; $i++) {
@@ -484,8 +484,7 @@ class QRCode {
             }
         }
 
-        // All indexes have been written to.
-        return lie<vec<int>>($data);
+        return  $data;
     }
 
     public static function getMinimumQRCode(
