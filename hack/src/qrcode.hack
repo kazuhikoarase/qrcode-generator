@@ -2,7 +2,7 @@
 // QRCode for HHVM 4
 //
 // Copyright (c) 2009 Kazuhiko Arase
-// Copyright (c) 2019 Lexidor Digital
+// Copyright (c) 2020 Lexidor Digital
 //
 // URL: http://www.d-project.com/
 //
