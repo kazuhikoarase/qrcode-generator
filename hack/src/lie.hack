@@ -1,3 +1,4 @@
+namespace Kazuhikoarase\QrcodeGenerator\_Private;
 
 function reified_cast<<<__Enforceable>> reify T>(mixed $in): T {
     return $in as T;

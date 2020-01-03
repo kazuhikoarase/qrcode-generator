@@ -1,5 +1,7 @@
 <?hh // strict
 
+use namespace Kazuhikoarase\QrcodeGenerator;
+
 require_once(__DIR__.'/../vendor/hh_autoload.php');
 
 <<__EntryPoint>>
@@ -11,12 +13,12 @@ function sample_html(): noreturn {
     // QR in Japanese 1234:! Kanji
     print("<h4>日本語のQR 1234:! 漢字</h4>");
 
-    $qr = new QRCode();
+    $qr = new QrcodeGenerator\QRCode();
     // QR_ERROR_CORRECT_LEVEL_L : 7%
     // QR_ERROR_CORRECT_LEVEL_M : 15%
     // QR_ERROR_CORRECT_LEVEL_Q : 25%
     // QR_ERROR_CORRECT_LEVEL_H : 30%
-    $qr->setErrorCorrectLevel(QR_ERROR_CORRECT_LEVEL_L);
+    $qr->setErrorCorrectLevel(QrcodeGenerator\QR_ERROR_CORRECT_LEVEL_L);
     $qr->setTypeNumber(4);
     $qr->addData("日本語のQR 1234:!</h4>");
     $qr->make();
@@ -27,7 +29,10 @@ function sample_html(): noreturn {
     // QR quick 1234:!
     print("<h4>QRクイック 1234:!</h4>");
 
-    $qr = QRCode::getMinimumQRCode("QRクイック", QR_ERROR_CORRECT_LEVEL_L);
+    $qr = QrcodeGenerator\QRCode::getMinimumQRCode(
+        "QRクイック",
+        QrcodeGenerator\QR_ERROR_CORRECT_LEVEL_L,
+    );
     $qr->printHTML();
 
     exit(0);

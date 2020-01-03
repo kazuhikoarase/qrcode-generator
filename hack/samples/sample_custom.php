@@ -1,12 +1,14 @@
 <?hh // strict
 
+use namespace Kazuhikoarase\QrcodeGenerator;
+
 require_once(__DIR__.'/../vendor/hh_autoload.php');
 
 <<__EntryPoint>>
 function sample_custom(): noreturn {
-    $qr = QRCode::getMinimumQRCode(
+    $qr = QrcodeGenerator\QRCode::getMinimumQRCode(
         "日本語のQR 1234:! 漢字",
-        QR_ERROR_CORRECT_LEVEL_L,
+        QrcodeGenerator\QR_ERROR_CORRECT_LEVEL_L,
     );
 
     header("Content-type: text/xml");
