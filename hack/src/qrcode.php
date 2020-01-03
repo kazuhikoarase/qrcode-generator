@@ -20,7 +20,7 @@
 // QRCode
 //---------------------------------------------------------------
 
-use namespace HH\Lib\{C, Dict, Math, Str, Vec};
+use namespace HH\Lib\{C, Math, Str, Vec};
 
 const int QR_PAD0 = 0xEC;
 const int QR_PAD1 = 0x11;
@@ -60,7 +60,7 @@ class QRCode {
 
     public function addData(string $data, int $mode = 0): void {
 
-        if ($mode == 0) {
+        if ($mode === 0) {
             $mode = QRUtil::getMode($data);
         }
 
@@ -142,7 +142,7 @@ class QRCode {
 
             $lostPoint = QRUtil::getLostPoint($this);
 
-            if ($i == 0 || $minLostPoint > $lostPoint) {
+            if ($i === 0 || $minLostPoint > $lostPoint) {
                 $minLostPoint = $lostPoint;
                 $pattern = $i;
             }
@@ -196,7 +196,9 @@ class QRCode {
 
         for ($col = $this->moduleCount - 1; $col > 0; $col -= 2) {
 
-            if ($col == 6) $col--;
+            if ($col === 6) {
+                $col--;
+            }
 
             while (true) {
 
@@ -208,7 +210,7 @@ class QRCode {
 
                         if ($byteIndex < C\count($data)) {
                             $dark = (
-                                (($data[$byteIndex] >> $bitIndex) & 1) == 1
+                                (($data[$byteIndex] >> $bitIndex) & 1) === 1
                             );
                         }
 
@@ -219,7 +221,7 @@ class QRCode {
                         $this->modules[$row][$col - $c] = $dark;
                         $bitIndex--;
 
-                        if ($bitIndex == -1) {
+                        if ($bitIndex === -1) {
                             $byteIndex++;
                             $bitIndex = 7;
                         }
@@ -255,11 +257,11 @@ class QRCode {
                 for ($r = -2; $r <= 2; $r++) {
 
                     for ($c = -2; $c <= 2; $c++) {
-                        $this->modules[$row + $r][$col + $c] = $r == -2 ||
-                            $r == 2 ||
-                            $c == -2 ||
-                            $c == 2 ||
-                            ($r == 0 && $c == 0);
+                        $this->modules[$row + $r][$col + $c] = $r === -2 ||
+                            $r === 2 ||
+                            $c === -2 ||
+                            $c === 2 ||
+                            ($r === 0 && $c === 0);
                     }
                 }
             }
@@ -282,9 +284,9 @@ class QRCode {
                 }
 
                 $this->modules[$row + $r][$col + $c] = (
-                    0 <= $r && $r <= 6 && ($c == 0 || $c == 6)
+                    0 <= $r && $r <= 6 && ($c === 0 || $c === 6)
                 ) ||
-                    (0 <= $c && $c <= 6 && ($r == 0 || $r == 6)) ||
+                    (0 <= $c && $c <= 6 && ($r === 0 || $r === 6)) ||
                     (2 <= $r && $r <= 4 && 2 <= $c && $c <= 4);
             }
         }
@@ -300,8 +302,8 @@ class QRCode {
                 continue;
             }
 
-            $this->modules[$i][6] = ($i % 2 == 0);
-            $this->modules[6][$i] = ($i % 2 == 0);
+            $this->modules[$i][6] = ($i % 2 === 0);
+            $this->modules[6][$i] = ($i % 2 === 0);
         }
     }
 
@@ -310,7 +312,7 @@ class QRCode {
         $bits = QRUtil::getBCHTypeNumber($this->typeNumber);
 
         for ($i = 0; $i < 18; $i++) {
-            $mod = (!$test && (($bits >> $i) & 1) == 1);
+            $mod = (!$test && (($bits >> $i) & 1) === 1);
             $this->modules[(int)Math\floor($i / 3)][
                 $i % 3 + $this->moduleCount - 8 - 3
             ] = $mod;
@@ -328,7 +330,7 @@ class QRCode {
 
         for ($i = 0; $i < 15; $i++) {
 
-            $mod = (!$test && (($bits >> $i) & 1) == 1);
+            $mod = (!$test && (($bits >> $i) & 1) === 1);
 
             if ($i < 6) {
                 $this->modules[$i][8] = $mod;
@@ -388,7 +390,7 @@ class QRCode {
         }
 
         // padding
-        while ($buffer->getLengthInBits() % 8 != 0) {
+        while ($buffer->getLengthInBits() % 8 !== 0) {
             $buffer->putBit(false);
         }
 
@@ -484,7 +486,7 @@ class QRCode {
             }
         }
 
-        return  $data;
+        return $data;
     }
 
     public static function getMinimumQRCode(
@@ -528,10 +530,18 @@ class QRCode {
     ): resource {
 
         // size/margin EC
-        if (!is_numeric($size)) $size = 2;
-        if (!is_numeric($margin)) $margin = 2;
-        if ($size < 1) $size = 1;
-        if ($margin < 0) $margin = 0;
+        if (!is_numeric($size)) {
+            $size = 2;
+        }
+        if (!is_numeric($margin)) {
+            $margin = 2;
+        }
+        if ($size < 1) {
+            $size = 1;
+        }
+        if ($margin < 0) {
+            $margin = 0;
+        }
 
         $image_size = $this->getModuleCount() * $size + $margin * 2;
 
@@ -539,8 +549,12 @@ class QRCode {
             |> reified_cast<resource>($$);
 
         // fg/bg EC
-        if ($fg < 0 || $fg > 0xFFFFFF) $fg = 0x0;
-        if ($bg < 0 || $bg > 0xFFFFFF) $bg = 0xFFFFFF;
+        if ($fg < 0 || $fg > 0xFFFFFF) {
+            $fg = 0x0;
+        }
+        if ($bg < 0 || $bg > 0xFFFFFF) {
+            $bg = 0xFFFFFF;
+        }
 
         // convert hexadecimal RGB to arrays for imagecolorallocate
         $fgrgb = $this->hex2rgb($fg);
@@ -551,7 +565,9 @@ class QRCode {
             |> reified_cast<int>($$);
         $bgc = imagecolorallocate($image, $bgrgb['r'], $bgrgb['g'], $bgrgb['b'])
             |> reified_cast<int>($$);
-        if ($bgtrans) imagecolortransparent($image, $bgc);
+        if ($bgtrans) {
+            imagecolortransparent($image, $bgc);
+        }
 
         // update $white to $bgc
         imagefilledrectangle($image, 0, 0, $image_size, $image_size, $bgc);
@@ -581,16 +597,24 @@ class QRCode {
         $style =
             "border-style:none;border-collapse:collapse;margin:0px;padding:0px;";
 
-        print_string("<table style='$style'>");
+        print_string("<table style='".$style."'>");
 
         for ($r = 0; $r < $this->getModuleCount(); $r++) {
 
-            print_string("<tr style='$style'>");
+            print_string("<tr style='".$style."'>");
 
             for ($c = 0; $c < $this->getModuleCount(); $c++) {
                 $color = $this->isDark($r, $c) ? "#000000" : "#ffffff";
                 print_string(
-                    "<td style='$style;width:$size;height:$size;background-color:$color'></td>",
+                    "<td style='".
+                    $style.
+                    ";width:".
+                    $size.
+                    ";height:".
+                    $size.
+                    ";background-color:".
+                    $color.
+                    "'></td>",
                 );
             }
 
@@ -782,10 +806,10 @@ class QRUtil {
         int $errorCorrectLength,
     ): QRPolynomial {
 
-        $a = new QRPolynomial([1]);
+        $a = new QRPolynomial(vec[1]);
 
         for ($i = 0; $i < $errorCorrectLength; $i++) {
-            $a = $a->multiply(new QRPolynomial([1, QRMath::gexp($i)]));
+            $a = $a->multiply(new QRPolynomial(vec[1, QRMath::gexp($i)]));
         }
 
         return $a;
@@ -796,21 +820,21 @@ class QRUtil {
         switch ($maskPattern) {
 
             case QR_MASK_PATTERN000:
-                return ($i + $j) % 2 == 0;
+                return ($i + $j) % 2 === 0;
             case QR_MASK_PATTERN001:
-                return $i % 2 == 0;
+                return $i % 2 === 0;
             case QR_MASK_PATTERN010:
-                return $j % 3 == 0;
+                return $j % 3 === 0;
             case QR_MASK_PATTERN011:
-                return ($i + $j) % 3 == 0;
+                return ($i + $j) % 3 === 0;
             case QR_MASK_PATTERN100:
-                return (Math\int_div($i, 2) + Math\int_div($j, 3)) % 2 == 0;
+                return (Math\int_div($i, 2) + Math\int_div($j, 3)) % 2 === 0;
             case QR_MASK_PATTERN101:
-                return ($i * $j) % 2 + ($i * $j) % 3 == 0;
+                return ($i * $j) % 2 + ($i * $j) % 3 === 0;
             case QR_MASK_PATTERN110:
-                return (($i * $j) % 2 + ($i * $j) % 3) % 2 == 0;
+                return (($i * $j) % 2 + ($i * $j) % 3) % 2 === 0;
             case QR_MASK_PATTERN111:
-                return (($i * $j) % 3 + ($i + $j) % 2) % 2 == 0;
+                return (($i * $j) % 3 + ($i + $j) % 2) % 2 === 0;
 
             default:
                 invariant_violation("mask:%d", $maskPattern);
@@ -843,12 +867,12 @@ class QRUtil {
 
                         if (
                             ($col + $c < 0 || $moduleCount <= $col + $c) ||
-                            ($r == 0 && $c == 0)
+                            ($r === 0 && $c === 0)
                         ) {
                             continue;
                         }
 
-                        if ($dark == $qrCode->isDark($row + $r, $col + $c)) {
+                        if ($dark === $qrCode->isDark($row + $r, $col + $c)) {
                             $sameCount++;
                         }
                     }
@@ -865,11 +889,19 @@ class QRUtil {
         for ($row = 0; $row < $moduleCount - 1; $row++) {
             for ($col = 0; $col < $moduleCount - 1; $col++) {
                 $count = 0;
-                if ($qrCode->isDark($row, $col)) $count++;
-                if ($qrCode->isDark($row + 1, $col)) $count++;
-                if ($qrCode->isDark($row, $col + 1)) $count++;
-                if ($qrCode->isDark($row + 1, $col + 1)) $count++;
-                if ($count == 0 || $count == 4) {
+                if ($qrCode->isDark($row, $col)) {
+                    $count++;
+                }
+                if ($qrCode->isDark($row + 1, $col)) {
+                    $count++;
+                }
+                if ($qrCode->isDark($row, $col + 1)) {
+                    $count++;
+                }
+                if ($qrCode->isDark($row + 1, $col + 1)) {
+                    $count++;
+                }
+                if ($count === 0 || $count === 4) {
                     $lostPoint += 3;
                 }
             }
@@ -1033,7 +1065,7 @@ class QRUtil {
 
         $digit = 0;
 
-        while ($data != 0) {
+        while ($data !== 0) {
             $digit++;
             $data >>= 1;
         }
@@ -1371,6 +1403,7 @@ class QRNumber extends QRData {
         parent::__construct(QR_MODE_NUMBER, $data);
     }
 
+    <<__Override>>
     public function write(QRBitBuffer $buffer): void {
 
         $data = $this->getData();
@@ -1385,10 +1418,10 @@ class QRNumber extends QRData {
 
         if ($i < Str\length($data)) {
 
-            if (Str\length($data) - $i == 1) {
+            if (Str\length($data) - $i === 1) {
                 $num = QRNumber::parseInt(Str\slice($data, $i, $i + 1));
                 $buffer->put($num, 4);
-            } else if (Str\length($data) - $i == 2) {
+            } else if (Str\length($data) - $i === 2) {
                 $num = QRNumber::parseInt(Str\slice($data, $i, $i + 2));
                 $buffer->put($num, 7);
             }
@@ -1424,6 +1457,7 @@ class QRKanji extends QRData {
         parent::__construct(QR_MODE_KANJI, $data);
     }
 
+    <<__Override>>
     public function write(QRBitBuffer $buffer): void {
 
         $data = $this->getData();
@@ -1454,6 +1488,7 @@ class QRKanji extends QRData {
         }
     }
 
+    <<__Override>>
     public function getLength(): int {
         return Math\int_div(Str\length($this->getData()), 2);
     }
@@ -1469,6 +1504,7 @@ class QRAlphaNum extends QRData {
         parent::__construct(QR_MODE_ALPHA_NUM, $data);
     }
 
+    <<__Override>>
     public function write(QRBitBuffer $buffer): void {
 
         $i = 0;
@@ -1534,6 +1570,7 @@ class QR8BitByte extends QRData {
         parent::__construct(QR_MODE_8BIT_BYTE, $data);
     }
 
+    <<__Override>>
     public function write(QRBitBuffer $buffer): void {
 
         $data = $this->getData();
@@ -1703,7 +1740,7 @@ class QRPolynomial {
 
         $offset = 0;
 
-        while ($offset < C\count($num) && $num[$offset] == 0) {
+        while ($offset < C\count($num) && $num[$offset] === 0) {
             $offset++;
         }
 
@@ -1858,13 +1895,13 @@ class QRBitBuffer {
 
     public function get(int $index): bool {
         $bufIndex = (int)Math\floor($index / 8);
-        return (($this->buffer[$bufIndex] >> (7 - $index % 8)) & 1) == 1;
+        return (($this->buffer[$bufIndex] >> (7 - $index % 8)) & 1) === 1;
     }
 
     public function put(int $num, int $length): void {
 
         for ($i = 0; $i < $length; $i++) {
-            $this->putBit((($num >> ($length - $i - 1)) & 1) == 1);
+            $this->putBit((($num >> ($length - $i - 1)) & 1) === 1);
         }
     }
 
