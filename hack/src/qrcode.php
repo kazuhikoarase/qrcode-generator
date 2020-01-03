@@ -97,7 +97,7 @@ class QRCode {
     }
 
     public function getDataCount(): int {
-        return count($this->qrDataList);
+        return C\count($this->qrDataList);
     }
 
     public function getData(int $index): QRData {
@@ -214,7 +214,7 @@ class QRCode {
 
                         $dark = false;
 
-                        if ($byteIndex < count($data)) {
+                        if ($byteIndex < C\count($data)) {
                             $dark = (
                                 (($data[$byteIndex] >> $bitIndex) & 1) == 1
                             );
@@ -249,9 +249,9 @@ class QRCode {
 
         $pos = QRUtil::getPatternPosition($this->typeNumber);
 
-        for ($i = 0; $i < count($pos); $i++) {
+        for ($i = 0; $i < C\count($pos); $i++) {
 
-            for ($j = 0; $j < count($pos); $j++) {
+            for ($j = 0; $j < C\count($pos); $j++) {
 
                 $row = $pos[$i];
                 $col = $pos[$j];
@@ -319,7 +319,7 @@ class QRCode {
 
         for ($i = 0; $i < 18; $i++) {
             $mod = (!$test && (($bits >> $i) & 1) == 1);
-            $this->modules[(int)floor($i / 3)][
+            $this->modules[(int)Math\floor($i / 3)][
                 $i % 3 + $this->moduleCount - 8 - 3
             ] = $mod;
             $this->modules[$i % 3 + $this->moduleCount - 8 - 3][Math\int_div(
@@ -368,7 +368,7 @@ class QRCode {
 
         $buffer = new QRBitBuffer();
 
-        for ($i = 0; $i < count($dataArray); $i++) {
+        for ($i = 0; $i < C\count($dataArray); $i++) {
             /** @var \QRData $data */
             $data = $dataArray[$i];
             $buffer->put($data->getMode(), 4);
@@ -380,7 +380,7 @@ class QRCode {
         }
 
         $totalDataCount = 0;
-        for ($i = 0; $i < count($rsBlocks); $i++) {
+        for ($i = 0; $i < C\count($rsBlocks); $i++) {
             $totalDataCount += $rsBlocks[$i]->getDataCount();
         }
 
@@ -435,10 +435,10 @@ class QRCode {
         $maxDcCount = 0;
         $maxEcCount = 0;
 
-        $dcdata = QRCode::createNullArray(count($rsBlocks));
-        $ecdata = QRCode::createNullArray(count($rsBlocks));
+        $dcdata = QRCode::createNullArray(C\count($rsBlocks));
+        $ecdata = QRCode::createNullArray(C\count($rsBlocks));
 
-        $rsBlockCount = count($rsBlocks);
+        $rsBlockCount = C\count($rsBlocks);
         for ($r = 0; $r < $rsBlockCount; $r++) {
 
             $dcCount = $rsBlocks[$r]->getDataCount();
@@ -450,7 +450,7 @@ class QRCode {
             $dcdata[$r] = QRCode::createNullArray($dcCount);
             // The whole array is not safe, but the $r'th element is nonnull.
             $dcdata = lie<varray<varray<null>>>($dcdata);
-            $dcDataCount = count($dcdata[$r]);
+            $dcDataCount = C\count($dcdata[$r]);
             for ($i = 0; $i < $dcDataCount; $i++) {
                 $bdata = $buffer->getBuffer();
                 $dcdata[$r][$i] = 0xff & $bdata[$i + $offset];
@@ -468,9 +468,9 @@ class QRCode {
             // The whole array is not safe, but the $r'th element is nonnull.
             $ecdata = lie<varray<varray<int>>>($ecdata);
 
-            $ecDataCount = count($ecdata[$r]);
+            $ecDataCount = C\count($ecdata[$r]);
             for ($i = 0; $i < $ecDataCount; $i++) {
-                $modIndex = $i + $modPoly->getLength() - count($ecdata[$r]);
+                $modIndex = $i + $modPoly->getLength() - C\count($ecdata[$r]);
                 $ecdata[$r][$i] = ($modIndex >= 0)
                     ? $modPoly->get($modIndex)
                     : 0;
@@ -488,7 +488,7 @@ class QRCode {
 
         for ($i = 0; $i < $maxDcCount; $i++) {
             for ($r = 0; $r < $rsBlockCount; $r++) {
-                if ($i < count($dcdata[$r])) {
+                if ($i < C\count($dcdata[$r] as nonnull)) {
                     $data[$index] = $dcdata[$r] as nonnull[$i];
                     $index++;
                 }
@@ -497,7 +497,7 @@ class QRCode {
 
         for ($i = 0; $i < $maxEcCount; $i++) {
             for ($r = 0; $r < $rsBlockCount; $r++) {
-                if ($i < count($ecdata[$r])) {
+                if ($i < C\count($ecdata[$r] as nonnull)) {
                     $data[$index] = $ecdata[$r] as nonnull[$i];
                     $index++;
                 }
@@ -958,7 +958,7 @@ class QRUtil {
     }
 
     public static function isNumber(string $s): bool {
-        for ($i = 0; $i < strlen($s); $i++) {
+        for ($i = 0; $i < Str\length($s); $i++) {
             $c = ord($s[$i]);
             if (
                 !(
@@ -973,7 +973,7 @@ class QRUtil {
     }
 
     public static function isAlphaNum(string $s): bool {
-        for ($i = 0; $i < strlen($s); $i++) {
+        for ($i = 0; $i < Str\length($s); $i++) {
             $c = ord($s[$i]);
             if (
                 !(
@@ -998,7 +998,7 @@ class QRUtil {
 
         $i = 0;
 
-        while ($i + 1 < strlen($data)) {
+        while ($i + 1 < Str\length($data)) {
 
             $c = ((0xff & ord($data[$i])) << 8) | (0xff & ord($data[$i + 1]));
 
@@ -1012,7 +1012,7 @@ class QRUtil {
             $i += 2;
         }
 
-        if ($i < strlen($data)) {
+        if ($i < Str\length($data)) {
             return false;
         }
 
@@ -1335,7 +1335,7 @@ class QRRSBlock {
     ): varray<QRRSBlock> {
 
         $rsBlock = QRRSBlock::getRsBlockTable($typeNumber, $errorCorrectLevel);
-        $length = count($rsBlock) / 3;
+        $length = C\count($rsBlock) / 3;
 
         $list = [];
 
@@ -1393,18 +1393,18 @@ class QRNumber extends QRData {
 
         $i = 0;
 
-        while ($i + 2 < strlen($data)) {
+        while ($i + 2 < Str\length($data)) {
             $num = QRNumber::parseInt(Str\slice($data, $i, 3));
             $buffer->put($num, 10);
             $i += 3;
         }
 
-        if ($i < strlen($data)) {
+        if ($i < Str\length($data)) {
 
-            if (strlen($data) - $i == 1) {
+            if (Str\length($data) - $i == 1) {
                 $num = QRNumber::parseInt(Str\slice($data, $i, $i + 1));
                 $buffer->put($num, 4);
-            } else if (strlen($data) - $i == 2) {
+            } else if (Str\length($data) - $i == 2) {
                 $num = QRNumber::parseInt(Str\slice($data, $i, $i + 2));
                 $buffer->put($num, 7);
             }
@@ -1414,7 +1414,7 @@ class QRNumber extends QRData {
     public static function parseInt(string $s): int {
 
         $num = 0;
-        for ($i = 0; $i < strlen($s); $i++) {
+        for ($i = 0; $i < Str\length($s); $i++) {
             $num = $num * 10 + QRNumber::parseIntAt(ord($s[$i]));
         }
         return $num;
@@ -1446,7 +1446,7 @@ class QRKanji extends QRData {
 
         $i = 0;
 
-        while ($i + 1 < strlen($data)) {
+        while ($i + 1 < Str\length($data)) {
 
             $c = ((0xff & ord($data[$i])) << 8) | (0xff & ord($data[$i + 1]));
 
@@ -1465,13 +1465,13 @@ class QRKanji extends QRData {
             $i += 2;
         }
 
-        if ($i < strlen($data)) {
+        if ($i < Str\length($data)) {
             invariant_violation("illegal char at %d", $i + 1);
         }
     }
 
     public function getLength(): int {
-        return Math\int_div(strlen($this->getData()), 2);
+        return Math\int_div(Str\length($this->getData()), 2);
     }
 }
 
@@ -1490,7 +1490,7 @@ class QRAlphaNum extends QRData {
         $i = 0;
         $c = $this->getData();
 
-        while ($i + 1 < strlen($c)) {
+        while ($i + 1 < Str\length($c)) {
             $buffer->put(
                 QRAlphaNum::getCode(ord($c[$i])) * 45 +
                     QRAlphaNum::getCode(ord($c[$i + 1])),
@@ -1499,7 +1499,7 @@ class QRAlphaNum extends QRData {
             $i += 2;
         }
 
-        if ($i < strlen($c)) {
+        if ($i < Str\length($c)) {
             $buffer->put(QRAlphaNum::getCode(ord($c[$i])), 6);
         }
     }
@@ -1553,7 +1553,7 @@ class QR8BitByte extends QRData {
     public function write(QRBitBuffer $buffer): void {
 
         $data = $this->getData();
-        for ($i = 0; $i < strlen($data); $i++) {
+        for ($i = 0; $i < Str\length($data); $i++) {
             $buffer->put(ord($data[$i]), 8);
         }
     }
@@ -1587,7 +1587,7 @@ abstract class QRData {
      * @return int
      */
     public function getLength(): int {
-        return strlen($this->getData());
+        return Str\length($this->getData());
     }
 
     /**
@@ -1730,12 +1730,12 @@ class QRPolynomial {
 
         $offset = 0;
 
-        while ($offset < count($num) && $num[$offset] == 0) {
+        while ($offset < C\count($num) && $num[$offset] == 0) {
             $offset++;
         }
 
-        $this->num = QRMath::createNumArray(count($num) - $offset + $shift);
-        for ($i = 0; $i < count($num) - $offset; $i++) {
+        $this->num = QRMath::createNumArray(C\count($num) - $offset + $shift);
+        for ($i = 0; $i < C\count($num) - $offset; $i++) {
             $this->num[$i] = $num[$i + $offset] as int;
         }
     }
@@ -1745,7 +1745,7 @@ class QRPolynomial {
     }
 
     public function getLength(): int {
-        return count($this->num);
+        return C\count($this->num);
     }
 
     // PHP5
@@ -1894,7 +1894,7 @@ class QRBitBuffer {
     }
 
     public function get(int $index): bool {
-        $bufIndex = (int)floor($index / 8);
+        $bufIndex = (int)Math\floor($index / 8);
         return (($this->buffer[$bufIndex] >> (7 - $index % 8)) & 1) == 1;
     }
 
@@ -1907,8 +1907,8 @@ class QRBitBuffer {
 
     public function putBit(bool $bit): void {
 
-        $bufIndex = (int)floor($this->length / 8);
-        if (count($this->buffer) <= $bufIndex) {
+        $bufIndex = (int)Math\floor($this->length / 8);
+        if (C\count($this->buffer) <= $bufIndex) {
             $this->buffer[] = 0;
         }
 
