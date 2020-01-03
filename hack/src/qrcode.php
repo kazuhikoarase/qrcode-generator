@@ -20,6 +20,8 @@
 // QRCode
 //---------------------------------------------------------------
 
+namespace Kazuhikoarase\QrcodeGenerator;
+
 use namespace HH\Lib\{C, Math, Str, Vec};
 
 const int QR_PAD0 = 0xEC;
@@ -58,32 +60,29 @@ class QRCode {
         $this->errorCorrectLevel = $errorCorrectLevel;
     }
 
-    public function addData(string $data, int $mode = 0): void {
+    public function addData(string $data, ?Mode $mode = null): void {
 
-        if ($mode === 0) {
+        if ($mode is null) {
             $mode = QRUtil::getMode($data);
         }
 
         switch ($mode) {
 
-            case QR_MODE_NUMBER:
+            case Mode::NUMBER:
                 $this->addDataImpl(new QRNumber($data));
                 break;
 
-            case QR_MODE_ALPHA_NUM:
+            case Mode::ALPHA_NUM:
                 $this->addDataImpl(new QRAlphaNum($data));
                 break;
 
-            case QR_MODE_8BIT_BYTE:
+            case Mode::EIGHT_BIT_BYTE:
                 $this->addDataImpl(new QR8BitByte($data));
                 break;
 
-            case QR_MODE_KANJI:
+            case Mode::KANJI:
                 $this->addDataImpl(new QRKanji($data));
                 break;
-
-            default:
-                invariant_violation("mode:%d", $mode);
         }
     }
 
@@ -363,7 +362,7 @@ class QRCode {
         $buffer = new QRBitBuffer();
 
         foreach ($dataArray as $data) {
-            $buffer->put($data->getMode(), 4);
+            $buffer->put(mode_to_int($data->getMode()), 4);
             $buffer->put(
                 $data->getLength(),
                 $data->getLengthInBits($typeNumber),
@@ -529,13 +528,6 @@ class QRCode {
         bool $bgtrans = false,
     ): resource {
 
-        // size/margin EC
-        if (!is_numeric($size)) {
-            $size = 2;
-        }
-        if (!is_numeric($margin)) {
-            $margin = 2;
-        }
         if ($size < 1) {
             $size = 1;
         }
@@ -545,8 +537,8 @@ class QRCode {
 
         $image_size = $this->getModuleCount() * $size + $margin * 2;
 
-        $image = imagecreatetruecolor($image_size, $image_size)
-            |> reified_cast<resource>($$);
+        $image = \imagecreatetruecolor($image_size, $image_size)
+            |> _Private\reified_cast<resource>($$);
 
         // fg/bg EC
         if ($fg < 0 || $fg > 0xFFFFFF) {
@@ -561,23 +553,33 @@ class QRCode {
         $bgrgb = $this->hex2rgb($bg);
 
         // replace $black and $white with $fgc and $bgc
-        $fgc = imagecolorallocate($image, $fgrgb['r'], $fgrgb['g'], $fgrgb['b'])
-            |> reified_cast<int>($$);
-        $bgc = imagecolorallocate($image, $bgrgb['r'], $bgrgb['g'], $bgrgb['b'])
-            |> reified_cast<int>($$);
+        $fgc = \imagecolorallocate(
+            $image,
+            $fgrgb['r'],
+            $fgrgb['g'],
+            $fgrgb['b'],
+        )
+            |> _Private\reified_cast<int>($$);
+        $bgc = \imagecolorallocate(
+            $image,
+            $bgrgb['r'],
+            $bgrgb['g'],
+            $bgrgb['b'],
+        )
+            |> _Private\reified_cast<int>($$);
         if ($bgtrans) {
-            imagecolortransparent($image, $bgc);
+            \imagecolortransparent($image, $bgc);
         }
 
         // update $white to $bgc
-        imagefilledrectangle($image, 0, 0, $image_size, $image_size, $bgc);
+        \imagefilledrectangle($image, 0, 0, $image_size, $image_size, $bgc);
 
         for ($r = 0; $r < $this->getModuleCount(); $r++) {
             for ($c = 0; $c < $this->getModuleCount(); $c++) {
                 if ($this->isDark($r, $c)) {
 
                     // update $black to $fgc
-                    imagefilledrectangle(
+                    \imagefilledrectangle(
                         $image,
                         $margin + $c * $size,
                         $margin + $r * $size,
@@ -597,15 +599,15 @@ class QRCode {
         $style =
             "border-style:none;border-collapse:collapse;margin:0px;padding:0px;";
 
-        print_string("<table style='".$style."'>");
+        _Private\print_string("<table style='".$style."'>");
 
         for ($r = 0; $r < $this->getModuleCount(); $r++) {
 
-            print_string("<tr style='".$style."'>");
+            _Private\print_string("<tr style='".$style."'>");
 
             for ($c = 0; $c < $this->getModuleCount(); $c++) {
                 $color = $this->isDark($r, $c) ? "#000000" : "#ffffff";
-                print_string(
+                _Private\print_string(
                     "<td style='".
                     $style.
                     ";width:".
@@ -618,10 +620,10 @@ class QRCode {
                 );
             }
 
-            print_string("</tr>");
+            _Private\print_string("</tr>");
         }
 
-        print_string("</table>");
+        _Private\print_string("</table>");
     }
 }
 
@@ -757,7 +759,7 @@ class QRUtil {
 
     public static function getMaxLength(
         int $typeNumber,
-        int $mode,
+        Mode $mode,
         int $errorCorrectLevel,
     ): int {
 
@@ -783,20 +785,18 @@ class QRUtil {
         }
 
         switch ($mode) {
-            case QR_MODE_NUMBER:
+            case Mode::NUMBER:
                 $m = 0;
                 break;
-            case QR_MODE_ALPHA_NUM:
+            case Mode::ALPHA_NUM:
                 $m = 1;
                 break;
-            case QR_MODE_8BIT_BYTE:
+            case Mode::EIGHT_BIT_BYTE:
                 $m = 2;
                 break;
-            case QR_MODE_KANJI:
+            case Mode::KANJI:
                 $m = 3;
                 break;
-            default:
-                invariant_violation("m:%s", $mode);
         }
 
         return self::$QR_MAX_LENGTH[$t][$e][$m];
@@ -960,22 +960,22 @@ class QRUtil {
         return $lostPoint;
     }
 
-    public static function getMode(string $s): int {
+    public static function getMode(string $s): Mode {
         if (QRUtil::isAlphaNum($s)) {
             if (QRUtil::isNumber($s)) {
-                return QR_MODE_NUMBER;
+                return Mode::NUMBER;
             }
-            return QR_MODE_ALPHA_NUM;
+            return Mode::ALPHA_NUM;
         } else if (QRUtil::isKanji($s)) {
-            return QR_MODE_KANJI;
+            return Mode::KANJI;
         } else {
-            return QR_MODE_8BIT_BYTE;
+            return Mode::EIGHT_BIT_BYTE;
         }
     }
 
     public static function isNumber(string $s): bool {
         for ($i = 0; $i < Str\length($s); $i++) {
-            $c = ord($s[$i]);
+            $c = \ord($s[$i]);
             if (
                 !(
                     QRUtil::toCharCode('0') <= $c &&
@@ -990,7 +990,7 @@ class QRUtil {
 
     public static function isAlphaNum(string $s): bool {
         for ($i = 0; $i < Str\length($s); $i++) {
-            $c = ord($s[$i]);
+            $c = \ord($s[$i]);
             if (
                 !(
                     QRUtil::toCharCode('0') <= $c &&
@@ -1016,7 +1016,7 @@ class QRUtil {
 
         while ($i + 1 < Str\length($data)) {
 
-            $c = ((0xff & ord($data[$i])) << 8) | (0xff & ord($data[$i + 1]));
+            $c = ((0xff & \ord($data[$i])) << 8) | (0xff & \ord($data[$i + 1]));
 
             if (
                 !(0x8140 <= $c && $c <= 0x9FFC) &&
@@ -1036,7 +1036,7 @@ class QRUtil {
     }
 
     public static function toCharCode(string $s): int {
-        return ord($s[0]);
+        return \ord($s[0]);
     }
 
     public static function getBCHTypeInfo(int $data): int {
@@ -1400,7 +1400,7 @@ class QRRSBlock {
 class QRNumber extends QRData {
 
     public function __construct(string $data) {
-        parent::__construct(QR_MODE_NUMBER, $data);
+        parent::__construct(Mode::NUMBER, $data);
     }
 
     <<__Override>>
@@ -1432,7 +1432,7 @@ class QRNumber extends QRData {
 
         $num = 0;
         for ($i = 0; $i < Str\length($s); $i++) {
-            $num = $num * 10 + QRNumber::parseIntAt(ord($s[$i]));
+            $num = $num * 10 + QRNumber::parseIntAt(\ord($s[$i]));
         }
         return $num;
     }
@@ -1454,7 +1454,7 @@ class QRNumber extends QRData {
 class QRKanji extends QRData {
 
     public function __construct(string $data) {
-        parent::__construct(QR_MODE_KANJI, $data);
+        parent::__construct(Mode::KANJI, $data);
     }
 
     <<__Override>>
@@ -1466,7 +1466,7 @@ class QRKanji extends QRData {
 
         while ($i + 1 < Str\length($data)) {
 
-            $c = ((0xff & ord($data[$i])) << 8) | (0xff & ord($data[$i + 1]));
+            $c = ((0xff & \ord($data[$i])) << 8) | (0xff & \ord($data[$i + 1]));
 
             if (0x8140 <= $c && $c <= 0x9FFC) {
                 $c -= 0x8140;
@@ -1501,7 +1501,7 @@ class QRKanji extends QRData {
 class QRAlphaNum extends QRData {
 
     public function __construct(string $data) {
-        parent::__construct(QR_MODE_ALPHA_NUM, $data);
+        parent::__construct(Mode::ALPHA_NUM, $data);
     }
 
     <<__Override>>
@@ -1512,15 +1512,15 @@ class QRAlphaNum extends QRData {
 
         while ($i + 1 < Str\length($c)) {
             $buffer->put(
-                QRAlphaNum::getCode(ord($c[$i])) * 45 +
-                    QRAlphaNum::getCode(ord($c[$i + 1])),
+                QRAlphaNum::getCode(\ord($c[$i])) * 45 +
+                    QRAlphaNum::getCode(\ord($c[$i + 1])),
                 11,
             );
             $i += 2;
         }
 
         if ($i < Str\length($c)) {
-            $buffer->put(QRAlphaNum::getCode(ord($c[$i])), 6);
+            $buffer->put(QRAlphaNum::getCode(\ord($c[$i])), 6);
         }
     }
 
@@ -1567,7 +1567,7 @@ class QRAlphaNum extends QRData {
 class QR8BitByte extends QRData {
 
     public function __construct(string $data) {
-        parent::__construct(QR_MODE_8BIT_BYTE, $data);
+        parent::__construct(Mode::EIGHT_BIT_BYTE, $data);
     }
 
     <<__Override>>
@@ -1575,7 +1575,7 @@ class QR8BitByte extends QRData {
 
         $data = $this->getData();
         for ($i = 0; $i < Str\length($data); $i++) {
-            $buffer->put(ord($data[$i]), 8);
+            $buffer->put(\ord($data[$i]), 8);
         }
     }
 
@@ -1587,16 +1587,16 @@ class QR8BitByte extends QRData {
 
 abstract class QRData {
 
-    public int $mode;
+    public Mode $mode;
 
     public string $data;
 
-    public function __construct(int $mode, string $data) {
+    public function __construct(Mode $mode, string $data) {
         $this->mode = $mode;
         $this->data = $data;
     }
 
-    public function getMode(): int {
+    public function getMode(): Mode {
         return $this->mode;
     }
 
@@ -1617,16 +1617,14 @@ abstract class QRData {
             // 1 - 9
 
             switch ($this->mode) {
-                case QR_MODE_NUMBER:
+                case Mode::NUMBER:
                     return 10;
-                case QR_MODE_ALPHA_NUM:
+                case Mode::ALPHA_NUM:
                     return 9;
-                case QR_MODE_8BIT_BYTE:
+                case Mode::EIGHT_BIT_BYTE:
                     return 8;
-                case QR_MODE_KANJI:
+                case Mode::KANJI:
                     return 8;
-                default:
-                    invariant_violation("mode:%d", $this->mode);
             }
 
         } else if ($type < 27) {
@@ -1634,16 +1632,14 @@ abstract class QRData {
             // 10 - 26
 
             switch ($this->mode) {
-                case QR_MODE_NUMBER:
+                case Mode::NUMBER:
                     return 12;
-                case QR_MODE_ALPHA_NUM:
+                case Mode::ALPHA_NUM:
                     return 11;
-                case QR_MODE_8BIT_BYTE:
+                case Mode::EIGHT_BIT_BYTE:
                     return 16;
-                case QR_MODE_KANJI:
+                case Mode::KANJI:
                     return 10;
-                default:
-                    invariant_violation("mode:%d", $this->mode);
             }
 
         } else if ($type < 41) {
@@ -1651,16 +1647,14 @@ abstract class QRData {
             // 27 - 40
 
             switch ($this->mode) {
-                case QR_MODE_NUMBER:
+                case Mode::NUMBER:
                     return 14;
-                case QR_MODE_ALPHA_NUM:
+                case Mode::ALPHA_NUM:
                     return 13;
-                case QR_MODE_8BIT_BYTE:
+                case Mode::EIGHT_BIT_BYTE:
                     return 16;
-                case QR_MODE_KANJI:
+                case Mode::KANJI:
                     return 12;
-                default:
-                    invariant_violation("mode:%d", $this->mode);
             }
 
         } else {
@@ -1832,10 +1826,16 @@ class QRPolynomial {
 // Mode
 //---------------------------------------------------------------
 
-const int QR_MODE_NUMBER = 1 << 0;
-const int QR_MODE_ALPHA_NUM = 1 << 1;
-const int QR_MODE_8BIT_BYTE = 1 << 2;
-const int QR_MODE_KANJI = 1 << 3;
+enum Mode: int {
+    NUMBER = 1 << 0;
+    ALPHA_NUM = 1 << 1;
+    EIGHT_BIT_BYTE = 1 << 2;
+    KANJI = 1 << 3;
+}
+
+function mode_to_int(Mode $mode): int {
+    return $mode as int;
+}
 
 //---------------------------------------------------------------
 // MaskPattern
