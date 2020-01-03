@@ -6,6 +6,8 @@ require_once(__DIR__.'/../vendor/hh_autoload.php');
 function sample_html(): noreturn {
     //---------------------------------------------------------
 
+    print('<meta charset="UTF-8">');
+
     // QR in Japanese 1234:! Kanji
     print("<h4>日本語のQR 1234:! 漢字</h4>");
 
