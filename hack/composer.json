@@ -1,4 +1,9 @@
 {
+    "name": "kazuhikoarase/qrcode-generator",
+    "description": "A Hack port of the PHP 5 program Kazuhikoarase\\QrcodeGenerator",
+    "require": {
+        "hhvm": "^4.32"
+    },
     "require-dev": {
         "hhvm/hhvm-autoload": "^2.0",
         "hhvm/hsl": "^4.36",
