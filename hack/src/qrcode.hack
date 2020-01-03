@@ -1,7 +1,5 @@
-<?hh // strict
-
 //---------------------------------------------------------------
-// QRCode for PHP5
+// QRCode for HHVM 4
 //
 // Copyright (c) 2009 Kazuhiko Arase
 //
