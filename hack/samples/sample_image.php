@@ -1,15 +1,18 @@
-<?php
+<?hh // partial
 
 require_once("qrcode.php");
 
-$qr = QRCode::getMinimumQRCode("QRƒR[ƒh", QR_ERROR_CORRECT_LEVEL_L);
+<<__EntryPoint>>
+function sample_custom(): noreturn {
+  $qr = QRCode::getMinimumQRCode("QRï¿½Rï¿½[ï¿½h", QR_ERROR_CORRECT_LEVEL_L);
 
-// ƒCƒ[ƒWì¬(ˆø”:ƒTƒCƒY,ƒ}[ƒWƒ“)
-$im = $qr->createImage(2, 4);
+  // ï¿½Cï¿½ï¿½ï¿½[ï¿½Wï¿½ì¬(ï¿½ï¿½ï¿½ï¿½:ï¿½Tï¿½Cï¿½Y,ï¿½}ï¿½[ï¿½Wï¿½ï¿½)
+  $im = $qr->createImage(2, 4);
 
-header("Content-type: image/gif");
-imagegif($im);
+  header("Content-type: image/gif");
+  imagegif($im);
 
-imagedestroy($im);
+  imagedestroy($im);
 
-?>
+  exit(0);
+}
