@@ -775,7 +775,7 @@ class QRUtil {
             case ErrorCorrectionPercentage::SEVEN:
                 $e = 0;
                 break;
-            case ErrorCorrectionPercentage::FIRTEEN:
+            case ErrorCorrectionPercentage::FIFTEEN:
                 $e = 1;
                 break;
             case ErrorCorrectionPercentage::TWENTY_FIVE:
@@ -1380,7 +1380,7 @@ class QRRSBlock {
         switch ($errorCorrectLevel) {
             case ErrorCorrectionPercentage::SEVEN:
                 return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 0];
-            case ErrorCorrectionPercentage::FIRTEEN:
+            case ErrorCorrectionPercentage::FIFTEEN:
                 return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 1];
             case ErrorCorrectionPercentage::TWENTY_FIVE:
                 return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 2];
@@ -1860,7 +1860,7 @@ enum ErrorCorrectionPercentage: int {
     // 7%.
     SEVEN = 1;
     // 15%.
-    FIRTEEN = 0;
+    FIFTEEN = 0;
     // 25%.
     TWENTY_FIVE = 3;
     // 30%.
