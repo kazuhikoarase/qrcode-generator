@@ -20,7 +20,7 @@
 // QRCode
 //---------------------------------------------------------------
 
-use namespace HH\Lib\{C, Dict, Math, Vec};
+use namespace HH\Lib\{C, Dict, Math, Str, Vec};
 
 const int QR_PAD0 = 0xEC;
 const int QR_PAD1 = 0x11;
@@ -84,7 +84,7 @@ class QRCode {
                 break;
 
             default:
-                trigger_error("mode:$mode", E_USER_ERROR);
+                invariant_violation("mode:%d", $mode);
         }
     }
 
@@ -385,13 +385,10 @@ class QRCode {
         }
 
         if ($buffer->getLengthInBits() > $totalDataCount * 8) {
-            trigger_error(
-                "code length overflow. (".
-                $buffer->getLengthInBits().
-                ">".
-                $totalDataCount * 8 .
-                ")",
-                E_USER_ERROR,
+            invariant_violation(
+                "code length overflow. (%d>%d)",
+                $buffer->getLengthInBits(),
+                $totalDataCount * 8,
             );
         }
 
@@ -447,8 +444,8 @@ class QRCode {
             $dcCount = $rsBlocks[$r]->getDataCount();
             $ecCount = $rsBlocks[$r]->getTotalCount() - $dcCount;
 
-            $maxDcCount = max($maxDcCount, $dcCount);
-            $maxEcCount = max($maxEcCount, $ecCount);
+            $maxDcCount = Math\maxva($maxDcCount, $dcCount);
+            $maxEcCount = Math\maxva($maxEcCount, $ecCount);
 
             $dcdata[$r] = QRCode::createNullArray($dcCount);
             // The whole array is not safe, but the $r'th element is nonnull.
@@ -559,7 +556,8 @@ class QRCode {
 
         $image_size = $this->getModuleCount() * $size + $margin * 2;
 
-        $image = imagecreatetruecolor($image_size, $image_size);
+        $image = imagecreatetruecolor($image_size, $image_size)
+            |> reified_cast<resource>($$);
 
         // fg/bg EC
         if ($fg < 0 || $fg > 0xFFFFFF) $fg = 0x0;
@@ -570,18 +568,10 @@ class QRCode {
         $bgrgb = $this->hex2rgb($bg);
 
         // replace $black and $white with $fgc and $bgc
-        $fgc = imagecolorallocate(
-            $image,
-            $fgrgb['r'],
-            $fgrgb['g'],
-            $fgrgb['b'],
-        );
-        $bgc = imagecolorallocate(
-            $image,
-            $bgrgb['r'],
-            $bgrgb['g'],
-            $bgrgb['b'],
-        );
+        $fgc = imagecolorallocate($image, $fgrgb['r'], $fgrgb['g'], $fgrgb['b'])
+            |> reified_cast<int>($$);
+        $bgc = imagecolorallocate($image, $bgrgb['r'], $bgrgb['g'], $bgrgb['b'])
+            |> reified_cast<int>($$);
         if ($bgtrans) imagecolortransparent($image, $bgc);
 
         // update $white to $bgc
@@ -612,23 +602,23 @@ class QRCode {
         $style =
             "border-style:none;border-collapse:collapse;margin:0px;padding:0px;";
 
-        print("<table style='$style'>");
+        print_string("<table style='$style'>");
 
         for ($r = 0; $r < $this->getModuleCount(); $r++) {
 
-            print("<tr style='$style'>");
+            print_string("<tr style='$style'>");
 
             for ($c = 0; $c < $this->getModuleCount(); $c++) {
                 $color = $this->isDark($r, $c) ? "#000000" : "#ffffff";
-                print(
-                    "<td style='$style;width:$size;height:$size;background-color:$color'></td>"
+                print_string(
+                    "<td style='$style;width:$size;height:$size;background-color:$color'></td>",
                 );
             }
 
-            print("</tr>");
+            print_string("</tr>");
         }
 
-        print("</table>");
+        print_string("</table>");
     }
 }
 
@@ -776,7 +766,7 @@ class QRUtil {
                 $e = 3;
                 break;
             default:
-                trigger_error("e:$errorCorrectLevel", E_USER_ERROR);
+                invariant_violation("e:%d", $errorCorrectLevel);
         }
 
         switch ($mode) {
@@ -793,7 +783,7 @@ class QRUtil {
                 $m = 3;
                 break;
             default:
-                trigger_error("m:$mode", E_USER_ERROR);
+                invariant_violation("m:%s", $mode);
         }
 
         return self::$QR_MAX_LENGTH[$t][$e][$m];
@@ -947,7 +937,8 @@ class QRUtil {
             }
         }
 
-        $ratio = abs(100 * $darkCount / $moduleCount / $moduleCount - 50) / 5;
+        $ratio = Math\abs(100 * $darkCount / $moduleCount / $moduleCount - 50) /
+            5;
         $lostPoint += $ratio * 10;
 
         return $lostPoint;
@@ -993,7 +984,7 @@ class QRUtil {
                     QRUtil::toCharCode('A') <= $c &&
                     $c <= QRUtil::toCharCode('Z')
                 ) &&
-                strpos(" $%*+-./:", $s[$i]) === false
+                !Str\contains(" $%*+-./:", $s[$i])
             ) {
                 return false;
             }
@@ -1403,7 +1394,7 @@ class QRNumber extends QRData {
         $i = 0;
 
         while ($i + 2 < strlen($data)) {
-            $num = QRNumber::parseInt(substr($data, $i, 3));
+            $num = QRNumber::parseInt(Str\slice($data, $i, 3));
             $buffer->put($num, 10);
             $i += 3;
         }
@@ -1411,10 +1402,10 @@ class QRNumber extends QRData {
         if ($i < strlen($data)) {
 
             if (strlen($data) - $i == 1) {
-                $num = QRNumber::parseInt(substr($data, $i, $i + 1));
+                $num = QRNumber::parseInt(Str\slice($data, $i, $i + 1));
                 $buffer->put($num, 4);
             } else if (strlen($data) - $i == 2) {
-                $num = QRNumber::parseInt(substr($data, $i, $i + 2));
+                $num = QRNumber::parseInt(Str\slice($data, $i, $i + 2));
                 $buffer->put($num, 7);
             }
         }
@@ -1464,7 +1455,7 @@ class QRKanji extends QRData {
             } else if (0xE040 <= $c && $c <= 0xEBBF) {
                 $c -= 0xC140;
             } else {
-                trigger_error("illegal char at ".($i + 1)."/$c", E_USER_ERROR);
+                invariant_violation("illegal char at %d/%d", ($i + 1), $c);
             }
 
             $c = (($c >> 8) & 0xff) * 0xC0 + ($c & 0xff);
@@ -1475,7 +1466,7 @@ class QRKanji extends QRData {
         }
 
         if ($i < strlen($data)) {
-            trigger_error("illegal char at ".($i + 1), E_USER_ERROR);
+            invariant_violation("illegal char at %d", $i + 1);
         }
     }
 
@@ -1707,7 +1698,7 @@ class QRMath {
     public static function glog(int $n): int {
         self::init();
         if ($n < 1) {
-            trigger_error("log($n)", E_USER_ERROR);
+            invariant_violation("log(%d)", $n);
         }
 
         return self::$QR_MATH_LOG_TABLE[$n];
