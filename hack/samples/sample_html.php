@@ -20,7 +20,7 @@ function sample_html(): noreturn {
     // QR_ERROR_CORRECT_LEVEL_H : 30%
     $qr->setErrorCorrectLevel(QrcodeGenerator\ErrorCorrectionPercentage::SEVEN);
     $qr->setTypeNumber(4);
-    $qr->addData("日本語のQR 1234:!");
+    $qr->addData("日本語のQR 1234:! 漢字");
     $qr->make();
     $qr->printHTML();
 
