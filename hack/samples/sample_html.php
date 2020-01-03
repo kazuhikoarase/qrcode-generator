@@ -18,9 +18,9 @@ function sample_html(): noreturn {
     // QR_ERROR_CORRECT_LEVEL_M : 15%
     // QR_ERROR_CORRECT_LEVEL_Q : 25%
     // QR_ERROR_CORRECT_LEVEL_H : 30%
-    $qr->setErrorCorrectLevel(QrcodeGenerator\QR_ERROR_CORRECT_LEVEL_L);
+    $qr->setErrorCorrectLevel(QrcodeGenerator\ErrorCorrectionPercentage::SEVEN);
     $qr->setTypeNumber(4);
-    $qr->addData("日本語のQR 1234:!</h4>");
+    $qr->addData("日本語のQR 1234:!");
     $qr->make();
     $qr->printHTML();
 
@@ -31,7 +31,7 @@ function sample_html(): noreturn {
 
     $qr = QrcodeGenerator\QRCode::getMinimumQRCode(
         "QRクイック",
-        QrcodeGenerator\QR_ERROR_CORRECT_LEVEL_L,
+        QrcodeGenerator\ErrorCorrectionPercentage::SEVEN,
     );
     $qr->printHTML();
 

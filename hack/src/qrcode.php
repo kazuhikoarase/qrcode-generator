@@ -35,13 +35,13 @@ class QRCode {
 
     public int $moduleCount = 0;
 
-    public int $errorCorrectLevel;
+    public ErrorCorrectionPercentage $errorCorrectLevel;
 
     public vec<QRData> $qrDataList = vec[];
 
     public function __construct() {
         $this->typeNumber = 1;
-        $this->errorCorrectLevel = QR_ERROR_CORRECT_LEVEL_H;
+        $this->errorCorrectLevel = ErrorCorrectionPercentage::SEVEN;
     }
 
     public function getTypeNumber(): int {
@@ -52,11 +52,13 @@ class QRCode {
         $this->typeNumber = $typeNumber;
     }
 
-    public function getErrorCorrectLevel(): int {
+    public function getErrorCorrectLevel(): ErrorCorrectionPercentage {
         return $this->errorCorrectLevel;
     }
 
-    public function setErrorCorrectLevel(int $errorCorrectLevel): void {
+    public function setErrorCorrectLevel(
+        ErrorCorrectionPercentage $errorCorrectLevel,
+    ): void {
         $this->errorCorrectLevel = $errorCorrectLevel;
     }
 
@@ -130,12 +132,12 @@ class QRCode {
         $this->makeImpl(false, $this->getBestMaskPattern());
     }
 
-    public function getBestMaskPattern(): int {
+    public function getBestMaskPattern(): MaskPattern {
 
         $minLostPoint = 0;
-        $pattern = 0;
+        $pattern = MaskPattern::P000;
 
-        for ($i = 0; $i < 8; $i++) {
+        foreach (MaskPattern::getValues() as $i) {
 
             $this->makeImpl(true, $i);
 
@@ -150,7 +152,7 @@ class QRCode {
         return $pattern;
     }
 
-    public function makeImpl(bool $test, int $maskPattern): void {
+    public function makeImpl(bool $test, MaskPattern $maskPattern): void {
 
         $this->moduleCount = $this->typeNumber * 4 + 17;
 
@@ -185,7 +187,7 @@ class QRCode {
 
     public function mapData(
         KeyedContainer<int, int> $data,
-        int $maskPattern,
+        MaskPattern $maskPattern,
     ): void {
 
         $inc = -1;
@@ -322,9 +324,12 @@ class QRCode {
         }
     }
 
-    public function setupTypeInfo(bool $test, int $maskPattern): void {
-
-        $data = ($this->errorCorrectLevel << 3) | $maskPattern;
+    public function setupTypeInfo(bool $test, MaskPattern $maskPattern): void {
+        $maskPattern = mask_pattern_as_int($maskPattern);
+        $data = (
+            error_correction_percentage_as_int($this->errorCorrectLevel) << 3
+        ) |
+            $maskPattern;
         $bits = QRUtil::getBCHTypeInfo($data);
 
         for ($i = 0; $i < 15; $i++) {
@@ -353,7 +358,7 @@ class QRCode {
 
     public static function createData(
         int $typeNumber,
-        int $errorCorrectLevel,
+        ErrorCorrectionPercentage $errorCorrectLevel,
         Traversable<QRData> $dataArray,
     ): vec<int> {
 
@@ -490,7 +495,7 @@ class QRCode {
 
     public static function getMinimumQRCode(
         string $data,
-        int $errorCorrectLevel,
+        ErrorCorrectionPercentage $errorCorrectLevel,
     ): QRCode {
 
         $mode = QRUtil::getMode($data);
@@ -760,7 +765,7 @@ class QRUtil {
     public static function getMaxLength(
         int $typeNumber,
         Mode $mode,
-        int $errorCorrectLevel,
+        ErrorCorrectionPercentage $errorCorrectLevel,
     ): int {
 
         $t = $typeNumber - 1;
@@ -768,20 +773,18 @@ class QRUtil {
         $m = 0;
 
         switch ($errorCorrectLevel) {
-            case QR_ERROR_CORRECT_LEVEL_L:
+            case ErrorCorrectionPercentage::SEVEN:
                 $e = 0;
                 break;
-            case QR_ERROR_CORRECT_LEVEL_M:
+            case ErrorCorrectionPercentage::FIRTEEN:
                 $e = 1;
                 break;
-            case QR_ERROR_CORRECT_LEVEL_Q:
+            case ErrorCorrectionPercentage::TWENTY_FIVE:
                 $e = 2;
                 break;
-            case QR_ERROR_CORRECT_LEVEL_H:
+            case ErrorCorrectionPercentage::THIRTY:
                 $e = 3;
                 break;
-            default:
-                invariant_violation("e:%d", $errorCorrectLevel);
         }
 
         switch ($mode) {
@@ -815,29 +818,30 @@ class QRUtil {
         return $a;
     }
 
-    public static function getMask(int $maskPattern, int $i, int $j): bool {
+    public static function getMask(
+        MaskPattern $maskPattern,
+        int $i,
+        int $j,
+    ): bool {
 
         switch ($maskPattern) {
 
-            case QR_MASK_PATTERN000:
+            case MaskPattern::P000:
                 return ($i + $j) % 2 === 0;
-            case QR_MASK_PATTERN001:
+            case MaskPattern::P001:
                 return $i % 2 === 0;
-            case QR_MASK_PATTERN010:
+            case MaskPattern::P010:
                 return $j % 3 === 0;
-            case QR_MASK_PATTERN011:
+            case MaskPattern::P011:
                 return ($i + $j) % 3 === 0;
-            case QR_MASK_PATTERN100:
+            case MaskPattern::P100:
                 return (Math\int_div($i, 2) + Math\int_div($j, 3)) % 2 === 0;
-            case QR_MASK_PATTERN101:
+            case MaskPattern::P101:
                 return ($i * $j) % 2 + ($i * $j) % 3 === 0;
-            case QR_MASK_PATTERN110:
+            case MaskPattern::P110:
                 return (($i * $j) % 2 + ($i * $j) % 3) % 2 === 0;
-            case QR_MASK_PATTERN111:
+            case MaskPattern::P111:
                 return (($i * $j) % 3 + ($i + $j) % 2) % 2 === 0;
-
-            default:
-                invariant_violation("mask:%d", $maskPattern);
         }
     }
 
@@ -1347,7 +1351,7 @@ class QRRSBlock {
 
     public static function getRSBlocks(
         int $typeNumber,
-        int $errorCorrectLevel,
+        ErrorCorrectionPercentage $errorCorrectLevel,
     ): vec<QRRSBlock> {
 
         $rsBlock = QRRSBlock::getRsBlockTable($typeNumber, $errorCorrectLevel);
@@ -1371,24 +1375,18 @@ class QRRSBlock {
 
     public static function getRsBlockTable(
         int $typeNumber,
-        int $errorCorrectLevel,
+        ErrorCorrectionPercentage $errorCorrectLevel,
     ): vec<int> {
 
         switch ($errorCorrectLevel) {
-            case QR_ERROR_CORRECT_LEVEL_L:
+            case ErrorCorrectionPercentage::SEVEN:
                 return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 0];
-            case QR_ERROR_CORRECT_LEVEL_M:
+            case ErrorCorrectionPercentage::FIRTEEN:
                 return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 1];
-            case QR_ERROR_CORRECT_LEVEL_Q:
+            case ErrorCorrectionPercentage::TWENTY_FIVE:
                 return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 2];
-            case QR_ERROR_CORRECT_LEVEL_H:
+            case ErrorCorrectionPercentage::THIRTY:
                 return self::$QR_RS_BLOCK_TABLE[($typeNumber - 1) * 4 + 3];
-            default:
-                invariant_violation(
-                    "tn:%d/ecl:%d",
-                    $typeNumber,
-                    $errorCorrectLevel,
-                );
         }
     }
 }
@@ -1841,26 +1839,40 @@ function mode_to_int(Mode $mode): int {
 // MaskPattern
 //---------------------------------------------------------------
 
-const int QR_MASK_PATTERN000 = 0;
-const int QR_MASK_PATTERN001 = 1;
-const int QR_MASK_PATTERN010 = 2;
-const int QR_MASK_PATTERN011 = 3;
-const int QR_MASK_PATTERN100 = 4;
-const int QR_MASK_PATTERN101 = 5;
-const int QR_MASK_PATTERN110 = 6;
-const int QR_MASK_PATTERN111 = 7;
+enum MaskPattern: int {
+    P000 = 0;
+    P001 = 1;
+    P010 = 2;
+    P011 = 3;
+    P100 = 4;
+    P101 = 5;
+    P110 = 6;
+    P111 = 7;
+}
+
+function mask_pattern_as_int(MaskPattern $pattern): int {
+    return $pattern as int;
+}
 
 //---------------------------------------------------------------
 // ErrorCorrectLevel
 
-// 7%.
-const int QR_ERROR_CORRECT_LEVEL_L = 1;
-// 15%.
-const int QR_ERROR_CORRECT_LEVEL_M = 0;
-// 25%.
-const int QR_ERROR_CORRECT_LEVEL_Q = 3;
-// 30%.
-const int QR_ERROR_CORRECT_LEVEL_H = 2;
+enum ErrorCorrectionPercentage: int {
+    // 7%.
+    SEVEN = 1;
+    // 15%.
+    FIRTEEN = 0;
+    // 25%.
+    TWENTY_FIVE = 3;
+    // 30%.
+    THIRTY = 2;
+}
+
+function error_correction_percentage_as_int(
+    ErrorCorrectionPercentage $percentage,
+): int {
+    return $percentage as int;
+}
 
 
 //---------------------------------------------------------------

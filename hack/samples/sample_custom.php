@@ -8,7 +8,7 @@ require_once(__DIR__.'/../vendor/hh_autoload.php');
 function sample_custom(): noreturn {
     $qr = QrcodeGenerator\QRCode::getMinimumQRCode(
         "日本語のQR 1234:! 漢字",
-        QrcodeGenerator\QR_ERROR_CORRECT_LEVEL_L,
+        QrcodeGenerator\ErrorCorrectionPercentage::SEVEN,
     );
 
     header("Content-type: text/xml");
