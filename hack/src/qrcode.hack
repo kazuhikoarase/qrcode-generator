@@ -6,6 +6,8 @@
 //
 // URL: http://www.d-project.com/
 //
+// Github: https://github.com/kazuhikoarase/qrcode-generator/tree/master/hack
+//
 // Licensed under the MIT license:
 //   http://www.opensource.org/licenses/mit-license.php
 //
@@ -26,7 +28,7 @@ use namespace HH\Lib\{C, Math, Str, Vec};
 const int QR_PAD0 = 0xEC;
 const int QR_PAD1 = 0x11;
 
-class QRCode {
+final class QRCode {
 
     public int $typeNumber;
 
@@ -381,7 +383,7 @@ class QRCode {
 
         if ($buffer->getLengthInBits() > $totalDataCount * 8) {
             invariant_violation(
-                "code length overflow. (%d>%d)",
+                'code length overflow. (%d>%d)',
                 $buffer->getLengthInBits(),
                 $totalDataCount * 8,
             );
@@ -445,10 +447,7 @@ class QRCode {
             $offset += $dcCount;
 
             $rsPoly = QRUtil::getErrorCorrectPolynomial($ecCount);
-            $rawPoly = new QRPolynomial(
-                $dcdata[$r],
-                $rsPoly->getLength() - 1,
-            );
+            $rawPoly = new QRPolynomial($dcdata[$r], $rsPoly->getLength() - 1);
 
             $modPoly = $rawPoly->mod($rsPoly);
             $ecdata[$r] = Vec\fill($rsPoly->getLength() - 1, 0);
@@ -542,7 +541,7 @@ class QRCode {
         $image_size = $this->getModuleCount() * $size + $margin * 2;
 
         $image = \imagecreatetruecolor($image_size, $image_size)
-            |> _Private\reified_cast<resource>($$);
+            |> QRUtil::reifiedCast<resource>($$);
 
         // fg/bg EC
         if ($fg < 0 || $fg > 0xFFFFFF) {
@@ -563,14 +562,14 @@ class QRCode {
             $fgrgb['g'],
             $fgrgb['b'],
         )
-            |> _Private\reified_cast<int>($$);
+            |> QRUtil::reifiedCast<int>($$);
         $bgc = \imagecolorallocate(
             $image,
             $bgrgb['r'],
             $bgrgb['g'],
             $bgrgb['b'],
         )
-            |> _Private\reified_cast<int>($$);
+            |> QRUtil::reifiedCast<int>($$);
         if ($bgtrans) {
             \imagecolortransparent($image, $bgc);
         }
@@ -598,36 +597,36 @@ class QRCode {
         return $image;
     }
 
-    public function printHTML(string $size = "2px"): void {
+    public function printHTML(string $size = '2px'): void {
 
         $style =
-            "border-style:none;border-collapse:collapse;margin:0px;padding:0px;";
+            'border-style:none;border-collapse:collapse;margin:0px;padding:0px;';
 
-        _Private\print_string("<table style='".$style."'>");
+        QRUtil::printString("<table style='".$style."'>");
 
         for ($r = 0; $r < $this->getModuleCount(); $r++) {
 
-            _Private\print_string("<tr style='".$style."'>");
+            QRUtil::printString("<tr style='".$style."'>");
 
             for ($c = 0; $c < $this->getModuleCount(); $c++) {
-                $color = $this->isDark($r, $c) ? "#000000" : "#ffffff";
-                _Private\print_string(
+                $color = $this->isDark($r, $c) ? '#000000' : '#ffffff';
+                QRUtil::printString(
                     "<td style='".
                     $style.
-                    ";width:".
+                    ';width:'.
                     $size.
-                    ";height:".
+                    ';height:'.
                     $size.
-                    ";background-color:".
+                    ';background-color:'.
                     $color.
                     "'></td>",
                 );
             }
 
-            _Private\print_string("</tr>");
+            QRUtil::printString('</tr>');
         }
 
-        _Private\print_string("</table>");
+        QRUtil::printString('</table>');
     }
 }
 
@@ -649,7 +648,17 @@ const int QR_G18 = (1 << 12) |
 
 const int QR_G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
-class QRUtil {
+final abstract class QRUtil {
+
+    public static function reifiedCast<<<__Enforceable>> reify T>(
+        mixed $in,
+    ): T {
+        return $in as T;
+    }
+
+    public static function printString(string $string): void {
+        echo $string;
+    }
 
     static vec<vec<vec<int>>> $QR_MAX_LENGTH = vec[
         vec[
@@ -1081,7 +1090,7 @@ class QRUtil {
 // QRRSBlock
 //---------------------------------------------------------------
 
-class QRRSBlock {
+final class QRRSBlock {
 
     public int $totalCount;
     public int $dataCount;
@@ -1394,7 +1403,7 @@ class QRRSBlock {
 // QRNumber
 //---------------------------------------------------------------
 
-class QRNumber extends QRData {
+final class QRNumber extends QRData {
 
     public function __construct(string $data) {
         parent::__construct(Mode::NUMBER, $data);
@@ -1440,7 +1449,7 @@ class QRNumber extends QRData {
             return $c - QRUtil::toCharCode('0');
         }
 
-        invariant_violation("illegal char : %d", $c);
+        invariant_violation('illegal char : %d', $c);
     }
 }
 
@@ -1448,7 +1457,7 @@ class QRNumber extends QRData {
 // QRKanji
 //---------------------------------------------------------------
 
-class QRKanji extends QRData {
+final class QRKanji extends QRData {
 
     public function __construct(string $data) {
         parent::__construct(Mode::KANJI, $data);
@@ -1470,7 +1479,7 @@ class QRKanji extends QRData {
             } else if (0xE040 <= $c && $c <= 0xEBBF) {
                 $c -= 0xC140;
             } else {
-                invariant_violation("illegal char at %d/%d", ($i + 1), $c);
+                invariant_violation('illegal char at %d/%d', ($i + 1), $c);
             }
 
             $c = (($c >> 8) & 0xff) * 0xC0 + ($c & 0xff);
@@ -1481,7 +1490,7 @@ class QRKanji extends QRData {
         }
 
         if ($i < Str\length($data)) {
-            invariant_violation("illegal char at %d", $i + 1);
+            invariant_violation('illegal char at %d', $i + 1);
         }
     }
 
@@ -1495,7 +1504,7 @@ class QRKanji extends QRData {
 // QRAlphaNum
 //---------------------------------------------------------------
 
-class QRAlphaNum extends QRData {
+final class QRAlphaNum extends QRData {
 
     public function __construct(string $data) {
         parent::__construct(Mode::ALPHA_NUM, $data);
@@ -1550,7 +1559,7 @@ class QRAlphaNum extends QRData {
                 case QRUtil::toCharCode(':'):
                     return 44;
                 default:
-                    invariant_violation("illegal char : %s", $c);
+                    invariant_violation('illegal char : %s', $c);
             }
         }
 
@@ -1561,7 +1570,7 @@ class QRAlphaNum extends QRData {
 // QR8BitByte
 //---------------------------------------------------------------
 
-class QR8BitByte extends QRData {
+final class QR8BitByte extends QRData {
 
     public function __construct(string $data) {
         parent::__construct(Mode::EIGHT_BIT_BYTE, $data);
@@ -1655,7 +1664,7 @@ abstract class QRData {
             }
 
         } else {
-            invariant_violation("mode:%d", $this->mode);
+            invariant_violation('mode:%d', $this->mode);
         }
     }
 
@@ -1696,7 +1705,7 @@ class QRMath {
     public static function glog(int $n): int {
         self::init();
         if ($n < 1) {
-            invariant_violation("log(%d)", $n);
+            invariant_violation('log(%d)', $n);
         }
 
         return self::$QR_MATH_LOG_TABLE[$n];
@@ -1720,14 +1729,11 @@ class QRMath {
 // QRPolynomial
 //---------------------------------------------------------------
 
-class QRPolynomial {
+final class QRPolynomial {
 
     public vec<int> $num;
 
-    public function __construct(
-        KeyedContainer<int, int> $num,
-        int $shift = 0,
-    ) {
+    public function __construct(KeyedContainer<int, int> $num, int $shift = 0) {
 
         $offset = 0;
 
@@ -1756,11 +1762,11 @@ class QRPolynomial {
 
     public function toString(): string {
 
-        $buffer = "";
+        $buffer = '';
 
         for ($i = 0; $i < $this->getLength(); $i++) {
             if ($i > 0) {
-                $buffer .= ",";
+                $buffer .= ',';
             }
             $buffer .= $this->get($i);
         }
@@ -1770,11 +1776,11 @@ class QRPolynomial {
 
     public function toLogString(): string {
 
-        $buffer = "";
+        $buffer = '';
 
         for ($i = 0; $i < $this->getLength(); $i++) {
             if ($i > 0) {
-                $buffer .= ",";
+                $buffer .= ',';
             }
             $buffer .= QRMath::glog($this->get($i));
         }
@@ -1878,7 +1884,7 @@ function error_correction_percentage_as_int(
 // QRBitBuffer
 //---------------------------------------------------------------
 
-class QRBitBuffer {
+final class QRBitBuffer {
 
     public vec<int> $buffer;
     public int $length;
@@ -1897,7 +1903,7 @@ class QRBitBuffer {
     }
 
     public function __toString(): string {
-        $buffer = "";
+        $buffer = '';
         for ($i = 0; $i < $this->getLengthInBits(); $i++) {
             $buffer .= $this->get($i) ? '1' : '0';
         }
