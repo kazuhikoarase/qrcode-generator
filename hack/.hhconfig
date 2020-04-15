@@ -1,0 +1,3 @@
+ignored_paths = [ "vendor/.+/tests/.+", "vendor/.+/bin/.+"]
+hackfmt.line_width = 80
+hackfmt.indent_width = 4
