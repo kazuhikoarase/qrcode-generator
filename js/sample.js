@@ -52,7 +52,7 @@ var create_qrcode = function(text, typeNumber, cellsize, padding, errorCorrectio
   try {
     qrcode.stringToBytes = qrcode.stringToBytesFuncs[mb];
     
-    var qr = qrcode(typeNumber || 4, errorCorrectionLevel || 'M');
+    var qr = qrcode(typeNumber || 0, errorCorrectionLevel || 'M');
     qr.addData(text, mode);
     qr.make();
     qr.setColors(fg, bg);

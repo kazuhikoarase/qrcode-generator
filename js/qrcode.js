@@ -11,7 +11,7 @@
 //
 // The word 'QR Code' is registered trademark of
 // DENSO WAVE INCORPORATED
-//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//  https://www.qrcode.com/en/faq.html
 //
 //---------------------------------------------------------------------
 
