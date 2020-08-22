@@ -37,6 +37,8 @@ var qrcode = function() {
     var _moduleCount = 0;
     var _dataCache = null;
     var _dataList = [];
+    var _foreground = "black";
+    var _background = "white";
 
     var _this = {};
 
@@ -452,6 +454,17 @@ var qrcode = function() {
       makeImpl(false, getBestMaskPattern() );
     };
 
+    _this.setColors = function(foreground, background) {
+      _foreground = simplifyColor(foreground);
+      _background = simplifyColor(background);
+
+      function simplifyColor(c) {
+        if (c.match(/^#[0-9A-Fa-f]{6}$/) && c[1] === c[2] && c[3] === c[4] && c[5] === c[6])
+          c = "#" + c[1] + c[3] + c[5];
+        return c;
+      }
+    };
+
     _this.createTableTag = function(cellSize, margin) {
 
       cellSize = cellSize || 2;
@@ -459,34 +472,28 @@ var qrcode = function() {
 
       var qrHtml = '';
 
-      qrHtml += '<table style="';
-      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += '<table style="border: solid ' + margin + 'px ' + _background + ';';
       qrHtml += ' border-collapse: collapse;';
-      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += ' padding: 0px;';
       qrHtml += '">';
-      qrHtml += '<tbody>';
 
       for (var r = 0; r < _this.getModuleCount(); r += 1) {
 
         qrHtml += '<tr>';
 
         for (var c = 0; c < _this.getModuleCount(); c += 1) {
-          qrHtml += '<td style="';
-          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += '<td style="border: none;';
           qrHtml += ' border-collapse: collapse;';
           qrHtml += ' padding: 0px; margin: 0px;';
           qrHtml += ' width: ' + cellSize + 'px;';
           qrHtml += ' height: ' + cellSize + 'px;';
-          qrHtml += ' background-color: ';
-          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
-          qrHtml += ';';
+          qrHtml += ' background-color: ' + (_this.isDark(r, c) ? _foreground : _background) + ';';
           qrHtml += '"/>';
         }
 
         qrHtml += '</tr>';
       }
 
-      qrHtml += '</tbody>';
       qrHtml += '</table>';
 
       return qrHtml;
@@ -535,7 +542,7 @@ var qrcode = function() {
           escapeXml(title.text) + '</title>' : '';
       qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
           escapeXml(alt.text) + '</description>' : '';
-      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<rect width="' + size + '" height="' + size + '" fill="' + _background + '" cx="0" cy="0"/>';
       qrSvg += '<path d="';
 
       for (r = 0; r < _this.getModuleCount(); r += 1) {
@@ -548,7 +555,7 @@ var qrcode = function() {
         }
       }
 
-      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '" stroke="transparent" fill="' + _foreground + '"/>';
       qrSvg += '</svg>';
 
       return qrSvg;
@@ -563,7 +570,7 @@ var qrcode = function() {
       var min = margin;
       var max = size - margin;
 
-      return createDataURL(size, size, function(x, y) {
+      return createDataURL(size, size, _foreground, _background, function(x, y) {
         if (min <= x && x < max && min <= y && y < max) {
           var c = Math.floor( (x - min) / cellSize);
           var r = Math.floor( (y - min) / cellSize);
@@ -582,21 +589,11 @@ var qrcode = function() {
       var size = _this.getModuleCount() * cellSize + margin * 2;
 
       var img = '';
-      img += '<img';
-      img += '\u0020src="';
-      img += _this.createDataURL(cellSize, margin);
-      img += '"';
-      img += '\u0020width="';
-      img += size;
-      img += '"';
-      img += '\u0020height="';
-      img += size;
-      img += '"';
-      if (alt) {
-        img += '\u0020alt="';
-        img += escapeXml(alt);
-        img += '"';
-      }
+      img += '<img src="' + _this.createDataURL(cellSize, margin) + '"';
+      img += ' width="' + size + '"';
+      img += ' height="' + size + '"';
+      if (alt)
+        img += ' alt="' + escapeXml(alt) + '"';
       img += '/>';
 
       return img;
@@ -617,7 +614,7 @@ var qrcode = function() {
       return escaped;
     };
 
-    var _createHalfASCII = function(margin) {
+    var _createHalfASCII = function(margin, inverted) {
       var cellSize = 1;
       margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
 
@@ -631,14 +628,14 @@ var qrcode = function() {
         '██': '█',
         '█ ': '▀',
         ' █': '▄',
-        '  ': ' '
+        '  ': '\xa0'
       };
 
       var blocksLastLineNoMargin = {
         '██': '▀',
         '█ ': '▀',
-        ' █': ' ',
-        '  ': ' '
+        ' █': '\xa0',
+        '  ': '\xa0'
       };
 
       var ascii = '';
@@ -646,17 +643,17 @@ var qrcode = function() {
         r1 = Math.floor((y - min) / cellSize);
         r2 = Math.floor((y + 1 - min) / cellSize);
         for (x = 0; x < size; x += 1) {
-          p = '█';
+          p = inverted ? '█' : ' ';
 
           if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
-            p = ' ';
+            p = inverted ? ' ' : '█';
           }
 
           if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
-            p += ' ';
+            p += inverted ? ' ' : '█';
           }
           else {
-            p += '█';
+            p += inverted ? '█' : ' ';
           }
 
           // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
@@ -667,21 +664,21 @@ var qrcode = function() {
       }
 
       if (size % 2 && margin > 0) {
-        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join(inverted ? '▀' : '\xa0');
       }
 
       return ascii.substring(0, ascii.length-1);
     };
 
-    _this.createASCII = function(cellSize, margin) {
+    _this.createASCII = function(cellSize, margin, inverted) {
       cellSize = cellSize || 1;
 
       if (cellSize < 2) {
-        return _createHalfASCII(margin);
+        return _createHalfASCII(margin, inverted);
       }
 
       cellSize -= 1;
-      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin / (cellSize + 1)  * cellSize;
 
       var size = _this.getModuleCount() * cellSize + margin * 2;
       var min = margin;
@@ -689,8 +686,13 @@ var qrcode = function() {
 
       var y, x, r, p;
 
-      var white = Array(cellSize+1).join('██');
-      var black = Array(cellSize+1).join('  ');
+      var white = '\xa0\xa0';
+      var black = '██';
+      if (inverted) {
+        var b = black;
+        black = white;
+        white = b;
+      }
 
       var ascii = '';
       var line = '';
@@ -708,21 +710,24 @@ var qrcode = function() {
           line += p ? white : black;
         }
 
-        for (r = 0; r < cellSize; r += 1) {
-          ascii += line + '\n';
-        }
+        ascii += line + '\n';
       }
 
       return ascii.substring(0, ascii.length-1);
     };
 
-    _this.renderTo2dContext = function(context, cellSize) {
+    _this.renderTo2dContext = function(context, cellSize, margin) {
       cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
       var length = _this.getModuleCount();
+      if (margin > 0) {
+        context.fillStyle = _background;
+        context.fillRect(0, 0, length * cellSize + margin * 2, length * cellSize + margin * 2);
+      }
       for (var row = 0; row < length; row++) {
         for (var col = 0; col < length; col++) {
-          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
-          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+          context.fillStyle = _this.isDark(row, col) ? _foreground : _background;
+          context.fillRect(margin + col * cellSize, margin + row * cellSize, cellSize, cellSize);
         }
       }
     }
@@ -2009,7 +2014,7 @@ var qrcode = function() {
   // gifImage (B/W)
   //---------------------------------------------------------------------
 
-  var gifImage = function(width, height) {
+  var gifImage = function(width, height, foreground, background) {
 
     var _width = width;
     var _height = height;
@@ -2041,15 +2046,17 @@ var qrcode = function() {
       //---------------------------------
       // Global Color Map
 
-      // black
-      out.writeByte(0x00);
-      out.writeByte(0x00);
-      out.writeByte(0x00);
+      // foreground
+      var fg = parseColor(foreground, "#000");
+      out.writeByte(fg[0]);
+      out.writeByte(fg[1]);
+      out.writeByte(fg[2]);
 
-      // white
-      out.writeByte(0xff);
-      out.writeByte(0xff);
-      out.writeByte(0xff);
+      // background
+      var bg = parseColor(background, "#fff");
+      out.writeByte(bg[0]);
+      out.writeByte(bg[1]);
+      out.writeByte(bg[2]);
 
       //---------------------------------
       // Image Descriptor
@@ -2088,6 +2095,15 @@ var qrcode = function() {
       // GIF Terminator
       out.writeString(';');
     };
+
+    function parseColor(c, fallback) {
+      c = c.toLowerCase();
+      if (c.match(/^#[0-9a-f]{3}$/))
+        return [parseInt(c[1] + c[1], 16), parseInt(c[2] + c[2], 16), parseInt(c[3] + c[3], 16)];
+      if (c.match(/^#[0-9a-f]{6}$/))
+        return [parseInt(c[1] + c[2], 16), parseInt(c[3] + c[4], 16), parseInt(c[5] + c[6], 16)];
+      return parseColor(fallback);
+    }
 
     var bitOutputStream = function(out) {
 
@@ -2219,8 +2235,8 @@ var qrcode = function() {
     return _this;
   };
 
-  var createDataURL = function(width, height, getPixel) {
-    var gif = gifImage(width, height);
+  var createDataURL = function(width, height, foreground, background, getPixel) {
+    var gif = gifImage(width, height, foreground, background);
     for (var y = 0; y < height; y += 1) {
       for (var x = 0; x < width; x += 1) {
         gif.setPixel(x, y, getPixel(x, y) );

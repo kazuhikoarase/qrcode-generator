@@ -1,0 +1,49 @@
+html
+{
+	background: #f0f0f0;
+}
+body,
+input,
+select,
+button
+{
+	font: 16px sans-serif;
+	line-height: 133%;
+}
+h1
+{
+	text-align: center;
+}
+textarea
+{
+	width: 95%;
+	height: 100px;
+	resize: vertical;
+	font-size: 16px;
+}
+p
+{
+	margin: 1em auto;
+	text-align: center;
+}
+#qr
+{
+	margin: 3em auto;
+	text-align: center;
+}
+#qr > *
+{
+	outline: solid 1px #e0e0e0;
+}
+#qr pre
+{
+	display: inline-block;
+	background: white;
+	color: black;
+	font-size: 8px;
+	line-height: 100%;
+}
+#qr table
+{
+	margin: 0 auto;
+}
