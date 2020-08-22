@@ -58,13 +58,15 @@ var create_qrcode = function(text, typeNumber, cellsize, padding, errorCorrectio
     qr.setColors(fg, bg);
 
     var size = qr.getModuleCount() * cellsize + padding * 2;
-    document.getElementById("qr-info").innerHTML = "Image size: " + size + "x" + size + " px";
+    var info = document.getElementById("qr-info");
+    info.innerHTML = "Image size: " + size + "x" + size + " px";
 
     switch (format) {
       case "svg":
         downloadFileName = "qr.svg";
         downloadType = "image/svg";
         downloadData = qr.createSvgTag(cellsize, padding);
+        info.innerHTML +=  ", file size: " + downloadData.length;
         return downloadData;
       case "gif":
       case "png":
@@ -77,29 +79,36 @@ var create_qrcode = function(text, typeNumber, cellsize, padding, errorCorrectio
         downloadFileName = "qr." + format;
         downloadType = "";   // raw download data URL
         downloadData = canvas.toDataURL("image/" + format);
+        info.innerHTML +=  ", file size: " + (downloadData.replace(/^data:image\/[a-z]+;base64,/, "").length * 3 / 4);
         var warning = "";
-        if (format === "webp" && downloadData.match(/^data:image\/png/))
-          warning = "<br><br><strong>Attention:</strong> This browser cannot generate WEBP images and made a PNG instead.";
+        var m = downloadData.match(/^data:image\/([a-z0-9]+)/);
+        if (m && m[1] !== format)
+          warning = "<br><br><strong>Attention:</strong> This browser cannot generate " +
+            format.toUpperCase() + " images and made a " + m[1].toUpperCase() + " instead.";
         return '<img src="' + downloadData + '" width="' + canvas.width + '" height="' + canvas.height + '">' + warning;
       case "gif-direct":
         downloadFileName = "qr.gif";
         downloadType = "";   // raw download data URL
         downloadData = qr.createDataURL(cellsize, padding);
+        info.innerHTML +=  ", file size: " + (downloadData.replace(/^data:image\/[a-z]+;base64,/, "").length * 3 / 4);
         return qr.createImgTag(cellsize, padding);
       case "ascii":
         downloadFileName = "qr.txt";
         downloadType = "text/plain";
         downloadData = qr.createASCII(cellsize, padding);
+        info.innerHTML +=  ", file size: " + downloadData.length;
         return "<pre style='color: " + fg + "; background: " + bg + ";'>" + downloadData + "</pre>";
       case "ascii-inv":
         downloadFileName = "qr.txt";
         downloadType = "text/plain";
         downloadData = qr.createASCII(cellsize, padding, true);
+        info.innerHTML +=  ", file size: " + downloadData.length;
         return "<pre style='color: " + fg + "; background: " + bg + ";'>" + downloadData + "</pre>";
       case "table":
         downloadFileName = "qr.html";
         downloadType = "text/html";
         downloadData = qr.createTableTag(cellsize, padding);
+        info.innerHTML +=  ", file size: " + downloadData.length;
         return downloadData;
     }
   }

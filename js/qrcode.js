@@ -526,10 +526,7 @@ var qrcode = function() {
       title.id = (title.text) ? title.id || 'qrcode-title' : null;
 
       var size = _this.getModuleCount() * cellSize + margin * 2;
-      var c, mc, r, mr, qrSvg='', rect;
-
-      rect = 'l' + cellSize + ',0 0,' + cellSize +
-        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+      var c, c2, mc, r, mr, qrSvg='', rect;
 
       qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
       qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
@@ -545,12 +542,17 @@ var qrcode = function() {
       qrSvg += '<rect width="' + size + '" height="' + size + '" fill="' + _background + '" cx="0" cy="0"/>';
       qrSvg += '<path d="';
 
-      for (r = 0; r < _this.getModuleCount(); r += 1) {
+      for (r = 0; r < _this.getModuleCount(); r++) {
         mr = r * cellSize + margin;
-        for (c = 0; c < _this.getModuleCount(); c += 1) {
-          if (_this.isDark(r, c) ) {
+        for (c = 0; c < _this.getModuleCount(); c++) {
+          if (_this.isDark(r, c)) {
             mc = c*cellSize+margin;
+            for (c2 = c + 1; c2 < _this.getModuleCount() && _this.isDark(r, c2); c2++);
+            var cx = c2 - c;
+            rect = 'l' + (cellSize * cx) + ',0 0,' + cellSize +
+              ' -' + (cellSize * cx) + ',0 0,-' + cellSize + 'z ';
             qrSvg += 'M' + mc + ',' + mr + rect;
+            c = c2 - 1;
           }
         }
       }

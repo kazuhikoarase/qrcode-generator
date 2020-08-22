@@ -31,7 +31,7 @@ p
 	margin: 3em auto;
 	text-align: center;
 }
-#qr > *
+#qr > *:not(strong)
 {
 	outline: solid 1px #e0e0e0;
 }
