@@ -454,6 +454,10 @@ var qrcode = function() {
       makeImpl(false, getBestMaskPattern() );
     };
 
+    _this.getTypeNumber = function() {
+      return _typeNumber;
+    };
+
     _this.setColors = function(foreground, background) {
       _foreground = simplifyColor(foreground);
       _background = simplifyColor(background);

@@ -30,7 +30,8 @@ var body_loadHander = function() {
   update_qrcode();
 
   document.getElementById("download").addEventListener("click", function () {
-    download(downloadFileName, downloadType, downloadData);
+    if (downloadData)
+      download(downloadFileName, downloadType, downloadData);
   });
 };
 
@@ -49,24 +50,38 @@ var create_qrcode = function(text, typeNumber, cellsize, padding, errorCorrectio
       mode = "Byte";
   }
 
+  var info = document.getElementById("qr-info");
+  downloadData = undefined;
+
+  var showLength = function (len) {
+    if (len < 1024)
+      len += " B";
+    else if (len < 10240)
+      len = Math.round(len * 100 / 1024) / 100 + " KiB";
+    else
+      len = Math.round(len * 10 / 1024) / 10 + " KiB";
+    info.innerHTML +=  ", file size: <b>" + len + "</b>";
+  };
+
   try {
     qrcode.stringToBytes = qrcode.stringToBytesFuncs[mb];
-    
+
     var qr = qrcode(typeNumber || 0, errorCorrectionLevel || 'M');
     qr.addData(text, mode);
     qr.make();
     qr.setColors(fg, bg);
 
     var size = qr.getModuleCount() * cellsize + padding * 2;
-    var info = document.getElementById("qr-info");
-    info.innerHTML = "Image size: " + size + "x" + size + " px";
+    info.innerHTML = "Size type: <b>" + qr.getTypeNumber() + "</b>, " +
+      "code columns: <b>" + qr.getModuleCount() + "</b>, " +
+      "image size: <b>" + size + "x" + size + " px</b>";
 
     switch (format) {
       case "svg":
         downloadFileName = "qr.svg";
         downloadType = "image/svg";
         downloadData = qr.createSvgTag(cellsize, padding);
-        info.innerHTML +=  ", file size: " + downloadData.length;
+        showLength(downloadData.length);
         return downloadData;
       case "gif":
       case "png":
@@ -79,7 +94,7 @@ var create_qrcode = function(text, typeNumber, cellsize, padding, errorCorrectio
         downloadFileName = "qr." + format;
         downloadType = "";   // raw download data URL
         downloadData = canvas.toDataURL("image/" + format);
-        info.innerHTML +=  ", file size: " + (downloadData.replace(/^data:image\/[a-z]+;base64,/, "").length * 3 / 4);
+        showLength(downloadData.replace(/^data:image\/[a-z]+;base64,/, "").length * 3 / 4);
         var warning = "";
         var m = downloadData.match(/^data:image\/([a-z0-9]+)/);
         if (m && m[1] !== format)
@@ -90,30 +105,31 @@ var create_qrcode = function(text, typeNumber, cellsize, padding, errorCorrectio
         downloadFileName = "qr.gif";
         downloadType = "";   // raw download data URL
         downloadData = qr.createDataURL(cellsize, padding);
-        info.innerHTML +=  ", file size: " + (downloadData.replace(/^data:image\/[a-z]+;base64,/, "").length * 3 / 4);
+        showLength(downloadData.replace(/^data:image\/[a-z]+;base64,/, "").length * 3 / 4);
         return qr.createImgTag(cellsize, padding);
       case "ascii":
         downloadFileName = "qr.txt";
         downloadType = "text/plain";
         downloadData = qr.createASCII(cellsize, padding);
-        info.innerHTML +=  ", file size: " + downloadData.length;
+        showLength(downloadData.length);
         return "<pre style='color: " + fg + "; background: " + bg + ";'>" + downloadData + "</pre>";
       case "ascii-inv":
         downloadFileName = "qr.txt";
         downloadType = "text/plain";
         downloadData = qr.createASCII(cellsize, padding, true);
-        info.innerHTML +=  ", file size: " + downloadData.length;
+        showLength(downloadData.length);
         return "<pre style='color: " + fg + "; background: " + bg + ";'>" + downloadData + "</pre>";
       case "table":
         downloadFileName = "qr.html";
         downloadType = "text/html";
         downloadData = qr.createTableTag(cellsize, padding);
-        info.innerHTML +=  ", file size: " + downloadData.length;
+        showLength(downloadData.length);
         return downloadData;
     }
   }
   catch (error) {
-    return "Error: " + error;
+    info.innerHTML = "Error: " + error;
+    return "";
   }
 };
 
