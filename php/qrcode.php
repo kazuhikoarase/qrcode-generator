@@ -567,6 +567,48 @@ class QRCode {
 
         print("</svg>");
     }
+
+    public function printASCII($margin = 2)
+    {
+        for ($y = 0; $y < $this->getModuleCount()+2*$margin; $y++) {
+            for ($x = 0; $x < $this->getModuleCount()+2*$margin; $x++) {
+                $r = $y-$margin;
+                $c = $x-$margin;
+                $dark = false;
+                if($r>=0 && $r<$this->getModuleCount() && $c>=0 && $c<$this->getModuleCount()) {
+                    $dark = $this->isDark($r, $c);
+                } 
+                print($dark ? '  ' : '██');
+            }
+            print("\n");
+        }
+    }
+
+    public function printHalfASCII($margin = 2)
+    {
+        // dark: 0 = none, 1 = top, 2 = bottom, 3 = both
+        $blocks = ['█','▄','▀',' '];
+        for ($y = 0; $y < $this->getModuleCount()+2*$margin; $y+=2) {
+            for ($x = 0; $x < $this->getModuleCount()+2*$margin; $x++) {
+                $r1 = $y-$margin;
+                $r2 = $y+1-$margin;
+                $c = $x-$margin;
+                $dark = 0;
+                if($r1>=0 && $r1<$this->getModuleCount() && $c>=0 && $c<$this->getModuleCount()) {
+                    $dark |= $this->isDark($r1, $c)?1:0;
+                } 
+                if($r2>=0 && $r2<$this->getModuleCount() && $c>=0 && $c<$this->getModuleCount()) {
+                    $dark |= $this->isDark($r2, $c)?2:0;
+                }
+                if ($r2==$this->getModuleCount()+$margin) {
+                    $dark |= 2;
+                }
+                print($blocks[$dark]);
+            }
+            print("\n");
+        }
+    }
+
 }
 
 //---------------------------------------------------------------
