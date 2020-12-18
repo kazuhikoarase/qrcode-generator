@@ -492,21 +492,27 @@ var qrcode = function() {
       return qrHtml;
     };
 
-    _this.createSvgTag = function(cellSize, margin, alt, title) {
+    _this.createSvgTag = function(cellSize, margin, alt, title, fill, background) {
 
       var opts = {};
       if (typeof arguments[0] == 'object') {
         // Called by options.
         opts = arguments[0];
         // overwrite cellSize and margin.
-        cellSize = opts.cellSize;
+        cellSize = opts.cellSize || 2;
         margin = opts.margin;
         alt = opts.alt;
         title = opts.title;
+        background = opts.background;
+      } else {
+        // Copy for path opts
+        opts.cellSize = cellSize || 2;
+        opts.fill = fill
       }
 
-      cellSize = cellSize || 2;
       margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      background = (typeof background == 'undefined')? "#fff" : null;
 
       // Compose alt property surrogate
       alt = (typeof alt === 'string') ? {text: alt} : alt || {};
@@ -519,10 +525,7 @@ var qrcode = function() {
       title.id = (title.text) ? title.id || 'qrcode-title' : null;
 
       var size = _this.getModuleCount() * cellSize + margin * 2;
-      var c, mc, r, mr, qrSvg='', rect;
 
-      rect = 'l' + cellSize + ',0 0,' + cellSize +
-        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
 
       qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
       qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
@@ -535,23 +538,48 @@ var qrcode = function() {
           escapeXml(title.text) + '</title>' : '';
       qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
           escapeXml(alt.text) + '</description>' : '';
-      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
-      qrSvg += '<path d="';
+      qrSvg += (background)? '<rect width="100%" height="100%" fill="' + background + '" cx="0" cy="0"/>' : '';
+
+      qrSvg += _this.createSvgPath(opts)
+
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createSvgPath = function(cellSize, margin, alt, title, fill, background) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        cellSize = opts.cellSize;
+        fill = opts.fill;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      fill = fill || "#000";
+
+      var c, mc, r, mr;
+      var rect = 'l' + cellSize + ',0 0,' + cellSize + ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      var qrPath = '<path d="';
 
       for (r = 0; r < _this.getModuleCount(); r += 1) {
         mr = r * cellSize + margin;
         for (c = 0; c < _this.getModuleCount(); c += 1) {
           if (_this.isDark(r, c) ) {
             mc = c*cellSize+margin;
-            qrSvg += 'M' + mc + ',' + mr + rect;
+            qrPath += 'M' + mc + ',' + mr + rect;
           }
         }
       }
 
-      qrSvg += '" stroke="transparent" fill="black"/>';
-      qrSvg += '</svg>';
+      qrPath += '" stroke="transparent" fill="' + fill + '"/>';
 
-      return qrSvg;
+      return qrPath;
     };
 
     _this.createDataURL = function(cellSize, margin) {
@@ -716,12 +744,14 @@ var qrcode = function() {
       return ascii.substring(0, ascii.length-1);
     };
 
-    _this.renderTo2dContext = function(context, cellSize) {
+    _this.renderTo2dContext = function(context, cellSize, fill, background) {
       cellSize = cellSize || 2;
+      fill = fill | "#000"
+      background = background | "#fff"
       var length = _this.getModuleCount();
       for (var row = 0; row < length; row++) {
         for (var col = 0; col < length; col++) {
-          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillStyle = _this.isDark(row, col) ? fill : background;
           context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
         }
       }
