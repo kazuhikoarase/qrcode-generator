@@ -5,8 +5,7 @@
         "hhvm": "^4.32"
     },
     "require-dev": {
-        "hhvm/hhvm-autoload": "^2.0",
-        "hhvm/hsl": "^4.36",
+        "hhvm/hhvm-autoload": "^2.0|^3.0",
         "hhvm/hhast": "^4.41"
     }
 }
