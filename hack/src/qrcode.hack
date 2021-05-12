@@ -206,9 +206,8 @@ final class QRCode {
                         $dark = false;
 
                         if ($byteIndex < C\count($data)) {
-                            $dark = (
-                                (($data[$byteIndex] >> $bitIndex) & 1) === 1
-                            );
+                            $dark = (($data[$byteIndex] >> $bitIndex) & 1) ===
+                                1;
                         }
 
                         if (QRUtil::getMask($maskPattern, $row, $col - $c)) {
@@ -293,8 +292,8 @@ final class QRCode {
                 continue;
             }
 
-            $this->modules[$i][6] = ($i % 2 === 0);
-            $this->modules[6][$i] = ($i % 2 === 0);
+            $this->modules[$i][6] = $i % 2 === 0;
+            $this->modules[6][$i] = $i % 2 === 0;
         }
     }
 
@@ -303,7 +302,7 @@ final class QRCode {
         $bits = QRUtil::getBCHTypeNumber($this->typeNumber);
 
         for ($i = 0; $i < 18; $i++) {
-            $mod = (!$test && (($bits >> $i) & 1) === 1);
+            $mod = !$test && (($bits >> $i) & 1) === 1;
             $this->modules[(int)Math\floor($i / 3)][
                 $i % 3 + $this->moduleCount - 8 - 3
             ] = $mod;
@@ -323,7 +322,7 @@ final class QRCode {
         $bits = QRUtil::getBCHTypeInfo($data);
 
         for ($i = 0; $i < 15; $i++) {
-            $mod = (!$test && (($bits >> $i) & 1) === 1);
+            $mod = !$test && (($bits >> $i) & 1) === 1;
 
             if ($i < 6) {
                 $this->modules[$i][8] = $mod;
@@ -441,9 +440,7 @@ final class QRCode {
             $ecDataCount = C\count($ecdata[$r]);
             for ($i = 0; $i < $ecDataCount; $i++) {
                 $modIndex = $i + $modPoly->getLength() - C\count($ecdata[$r]);
-                $ecdata[$r][$i] = ($modIndex >= 0)
-                    ? $modPoly->get($modIndex)
-                    : 0;
+                $ecdata[$r][$i] = $modIndex >= 0 ? $modPoly->get($modIndex) : 0;
             }
         }
 
@@ -870,7 +867,7 @@ final abstract class QRUtil {
                 }
 
                 if ($sameCount > 5) {
-                    $lostPoint += (3 + $sameCount - 5);
+                    $lostPoint += 3 + $sameCount - 5;
                 }
             }
         }
@@ -1032,10 +1029,8 @@ final abstract class QRUtil {
     public static function getBCHTypeInfo(int $data): int {
         $d = $data << 10;
         while (QRUtil::getBCHDigit($d) - QRUtil::getBCHDigit(QR_G15) >= 0) {
-            $d ^= (
-                QR_G15 <<
-                (QRUtil::getBCHDigit($d) - QRUtil::getBCHDigit(QR_G15))
-            );
+            $d ^= QR_G15 <<
+                (QRUtil::getBCHDigit($d) - QRUtil::getBCHDigit(QR_G15));
         }
         return (($data << 10) | $d) ^ QR_G15_MASK;
     }
@@ -1043,10 +1038,8 @@ final abstract class QRUtil {
     public static function getBCHTypeNumber(int $data): int {
         $d = $data << 12;
         while (QRUtil::getBCHDigit($d) - QRUtil::getBCHDigit(QR_G18) >= 0) {
-            $d ^= (
-                QR_G18 <<
-                (QRUtil::getBCHDigit($d) - QRUtil::getBCHDigit(QR_G18))
-            );
+            $d ^= QR_G18 <<
+                (QRUtil::getBCHDigit($d) - QRUtil::getBCHDigit(QR_G18));
         }
         return ($data << 12) | $d;
     }
