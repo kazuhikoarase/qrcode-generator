@@ -2,10 +2,10 @@
 
 use namespace Kazuhikoarase\QrcodeGenerator;
 
-require_once(__DIR__.'/../vendor/hh_autoload.php');
-
 <<__EntryPoint>>
 function sample_html(): noreturn {
+    require_once __DIR__.'/../vendor/autoload.hack';
+    \Facebook\AutoloadMap\initialize();
     //---------------------------------------------------------
 
     print('<meta charset="UTF-8">');
