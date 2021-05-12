@@ -139,7 +139,6 @@ final class QRCode {
         $pattern = MaskPattern::P000;
 
         foreach (MaskPattern::getValues() as $i) {
-
             $this->makeImpl(true, $i);
 
             $lostPoint = QRUtil::getLostPoint($this);
@@ -197,17 +196,13 @@ final class QRCode {
         $byteIndex = 0;
 
         for ($col = $this->moduleCount - 1; $col > 0; $col -= 2) {
-
             if ($col === 6) {
                 $col--;
             }
 
             while (true) {
-
                 for ($c = 0; $c < 2; $c++) {
-
                     if ($this->modules[$row][$col - $c] === null) {
-
                         $dark = false;
 
                         if ($byteIndex < C\count($data)) {
@@ -246,9 +241,7 @@ final class QRCode {
         $pos = QRUtil::getPatternPosition($this->typeNumber);
 
         for ($i = 0; $i < C\count($pos); $i++) {
-
             for ($j = 0; $j < C\count($pos); $j++) {
-
                 $row = $pos[$i];
                 $col = $pos[$j];
 
@@ -257,7 +250,6 @@ final class QRCode {
                 }
 
                 for ($r = -2; $r <= 2; $r++) {
-
                     for ($c = -2; $c <= 2; $c++) {
                         $this->modules[$row + $r][$col + $c] = $r === -2 ||
                             $r === 2 ||
@@ -273,9 +265,7 @@ final class QRCode {
     public function setupPositionProbePattern(int $row, int $col): void {
 
         for ($r = -1; $r <= 7; $r++) {
-
             for ($c = -1; $c <= 7; $c++) {
-
                 if (
                     $row + $r <= -1 ||
                     $this->moduleCount <= $row + $r ||
@@ -297,7 +287,6 @@ final class QRCode {
     public function setupTimingPattern(): void {
 
         for ($i = 8; $i < $this->moduleCount - 8; $i++) {
-
             if (
                 $this->modules[$i][6] !== null || $this->modules[6][$i] !== null
             ) {
@@ -334,7 +323,6 @@ final class QRCode {
         $bits = QRUtil::getBCHTypeInfo($data);
 
         for ($i = 0; $i < 15; $i++) {
-
             $mod = (!$test && (($bits >> $i) & 1) === 1);
 
             if ($i < 6) {
@@ -401,7 +389,6 @@ final class QRCode {
 
         // padding
         while (true) {
-
             if ($buffer->getLengthInBits() >= $totalDataCount * 8) {
                 break;
             }
@@ -431,7 +418,6 @@ final class QRCode {
 
         $rsBlockCount = C\count($rsBlocks);
         for ($r = 0; $r < $rsBlockCount; $r++) {
-
             $dcCount = $rsBlocks[$r]->getDataCount();
             $ecCount = $rsBlocks[$r]->getTotalCount() - $dcCount;
 
@@ -580,7 +566,6 @@ final class QRCode {
         for ($r = 0; $r < $this->getModuleCount(); $r++) {
             for ($c = 0; $c < $this->getModuleCount(); $c++) {
                 if ($this->isDark($r, $c)) {
-
                     // update $black to $fgc
                     \imagefilledrectangle(
                         $image,
@@ -605,7 +590,6 @@ final class QRCode {
         QRUtil::printString("<table style='".$style."'>");
 
         for ($r = 0; $r < $this->getModuleCount(); $r++) {
-
             QRUtil::printString("<tr style='".$style."'>");
 
             for ($c = 0; $c < $this->getModuleCount(); $c++) {
@@ -859,24 +843,19 @@ final abstract class QRUtil {
 
         $lostPoint = 0;
 
-
         // LEVEL1
 
         for ($row = 0; $row < $moduleCount; $row++) {
-
             for ($col = 0; $col < $moduleCount; $col++) {
-
                 $sameCount = 0;
                 $dark = $qrCode->isDark($row, $col);
 
                 for ($r = -1; $r <= 1; $r++) {
-
                     if ($row + $r < 0 || $moduleCount <= $row + $r) {
                         continue;
                     }
 
                     for ($c = -1; $c <= 1; $c++) {
-
                         if (
                             ($col + $c < 0 || $moduleCount <= $col + $c) ||
                             ($r === 0 && $c === 0)
@@ -1027,7 +1006,6 @@ final abstract class QRUtil {
         $i = 0;
 
         while ($i + 1 < Str\length($data)) {
-
             $c = ((0xff & \ord($data[$i])) << 8) | (0xff & \ord($data[$i + 1]));
 
             if (
@@ -1368,7 +1346,6 @@ final class QRRSBlock {
         $list = vec[];
 
         for ($i = 0; $i < $length; $i++) {
-
             $count = $rsBlock[$i * 3 + 0];
             $totalCount = $rsBlock[$i * 3 + 1];
             $dataCount = $rsBlock[$i * 3 + 2];
@@ -1423,7 +1400,6 @@ final class QRNumber extends QRData {
         }
 
         if ($i < Str\length($data)) {
-
             if (Str\length($data) - $i === 1) {
                 $num = QRNumber::parseInt(Str\slice($data, $i, $i + 1));
                 $buffer->put($num, 4);
@@ -1471,7 +1447,6 @@ final class QRKanji extends QRData {
         $i = 0;
 
         while ($i + 1 < Str\length($data)) {
-
             $c = ((0xff & \ord($data[$i])) << 8) | (0xff & \ord($data[$i + 1]));
 
             if (0x8140 <= $c && $c <= 0x9FFC) {
@@ -1619,7 +1594,6 @@ abstract class QRData {
     public function getLengthInBits(int $type): int {
 
         if (1 <= $type && $type < 10) {
-
             // 1 - 9
 
             switch ($this->mode) {
@@ -1634,7 +1608,6 @@ abstract class QRData {
             }
 
         } else if ($type < 27) {
-
             // 10 - 26
 
             switch ($this->mode) {
@@ -1649,7 +1622,6 @@ abstract class QRData {
             }
 
         } else if ($type < 41) {
-
             // 27 - 40
 
             switch ($this->mode) {
@@ -1878,7 +1850,6 @@ function error_correction_percentage_as_int(
 ): int {
     return $percentage as int;
 }
-
 
 //---------------------------------------------------------------
 // QRBitBuffer
