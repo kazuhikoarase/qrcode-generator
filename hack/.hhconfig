@@ -1,3 +1,5 @@
 ignored_paths = [ "vendor/.+/tests/.+", "vendor/.+/bin/.+"]
 hackfmt.line_width = 80
 hackfmt.indent_width = 4
+allowed_decl_fixme_codes = 2053, 4047
+allowed_fixme_codes_strict = 2049, 2053, 4027, 4047, 4104, 4107, 4110, 4128, 4188, 4323
