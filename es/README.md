@@ -4,7 +4,7 @@ QR Code Generator ES Module
 ## Getting Started
 
 ```javascript
-import { QR } from "./QR.js";
+import { QR } from "https://taisukef.github.io/qrcode-generator/es/QR.js";
 
 const data = QR.encode("Hi!");
 console.log(data);
@@ -16,7 +16,7 @@ Create a QRCode array data
 
 | Param                | Type                | Description                                    |
 | ---------------------| ------------------- | ---------------------------------------------- |
-| data                 | <code>string</code> | Error correction level (0:L, 1:M, 2:Q, 3:H)    |
+| data                 | <code>string</code> | Data                                           |
 | errorCorrectionLevel | <code>number</code> | Error correction level (0:L, 1:M, 2:Q, 3:H)    |
 | typeNumber           | <code>number</code> | Type number (1 ~ 40), or 0 for auto detection. |
 

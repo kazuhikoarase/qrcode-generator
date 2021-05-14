@@ -1,5 +1,4 @@
-import { QR } from "./QR.js";
+import { QR } from "https://taisukef.github.io/qrcode-generator/es/QR.js";
 
-const src = "HI!";
-const qr = QR.encode(src, "L");
-console.log(qr);
+const data = QR.encode("Hi!");
+console.log(data);
