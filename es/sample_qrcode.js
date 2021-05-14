@@ -1,9 +1,9 @@
 import { qrcode } from "./qrcode.js";
 
 const typeNumber = 4; // 1 to 40 (MAX_TYPE_NUMBER)
-const errorCorrectionLevel = 'L'; // 'L','M','Q','H'
+const errorCorrectionLevel = "L"; // 'L','M','Q','H'
 const mode = "Byte"; // 'Numeric' 'Alphanumeric' 'Byte'(base64?) 'Kanji'
-const src = 'Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!';
+const src = "Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!Hi!";
 
 const qr = qrcode(typeNumber, errorCorrectionLevel);
 qr.addData(src, mode);
