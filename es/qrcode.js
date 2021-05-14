@@ -1,3 +1,4 @@
+// deno-fmt-ignore-file
 //---------------------------------------------------------------------
 //
 // QR Code Generator for JavaScript
