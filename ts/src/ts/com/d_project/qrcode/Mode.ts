@@ -1,11 +1,8 @@
-'use strict';
-namespace com.d_project.qrcode {
-
-  /**
+/**
    * Mode
    * @author Kazuhiko Arase
    */
-  export enum Mode {
+enum Mode {
 
     /**
      * number
@@ -26,5 +23,6 @@ namespace com.d_project.qrcode {
      * KANJI
      */
     MODE_KANJI = 1 << 3
-  }
 }
+
+export default Mode;
