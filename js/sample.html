@@ -1,90 +1,91 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <script type="text/javascript" src="qrcode.js"></script>
-    <!-- SJIS Support (optional) -->
-    <script type="text/javascript" src="qrcode_SJIS.js"></script>
-<!--
-    <script type="text/javascript" src="qrcode_SJIS.js"></script>
--->
-    <!-- Uncomment to encode string in qrcode as UTF8 (optional) -->
-<!--
-    <script type="text/javascript" src="qrcode_UTF8.js"></script>
--->
-    <script type="text/javascript" src="sample.js"></script>
-    <title>QR Code Generator for JavaScript</title>
-    <link rel="stylesheet" href="sample.css">
-  </head>
-  <body onload="body_loadHander()">
-    <h1>QR Code Generator for JavaScript</h1>
-    <form name="qrForm">
-      <p>
-        <textarea name="msg">Type your message here.</textarea><br>
-        <span id="length"></span>
-      </p>
-      <p>
-        Cell size:
-        <input name="cellsize" type="number" min="1" max="999" value="4" size="4">
-        &nbsp;
-        Padding:
-        <input name="padding" type="number" min="0" max="9" value="1" size="3">
-        &nbsp;
-        Error correction level:
-        <select name="e">
-          <option value="L" selected>Low (7%)</option>
-          <option value="M">Medium (15%)</option>
-          <option value="Q">Quartile (25%)</option>
-          <option value="H">High (30%)</option>
-        </select>
-      </p>
-      <p>
-        Image type:
-        <select name="format">
-          <option value="svg" selected>SVG</option>
-          <option value="png">PNG</option>
-          <option value="webp">WEBP</option>
-          <option value="jpeg">JPEG</option>
-          <option value="gif">GIF</option>
-          <option value="gif-direct">GIF (w/o canvas)</option>
-          <option value="ascii">ASCII</option>
-          <option value="ascii-inv">ASCII inverted</option>
-          <option value="table">Table</option>
-        </select>
-        &nbsp;
-        Foreground:
-        <input name="foreground" type="color" value="#000000">
-        &nbsp;
-        Background:
-        <input name="background" type="color" value="#ffffff">
-      </p>
-      <p>
-        Content mode:
-        <select name="m">
-          <option value="" selected>Auto</option>
-          <option value="Numeric">Numeric</option>
-          <option value="Alphanumeric">Alphanumeric</option>
-          <option value="Byte">Byte</option>
-          <option value="Kanji">Kanji</option>
-        </select>
-        &nbsp;
-        Multibyte text:
-        <select name="mb">
-          <option value="default">None</option>
-          <option value="SJIS">SJIS</option>
-          <option value="UTF-8" selected>UTF-8</option>
-        </select>
-        &nbsp;
-        Size type:
-        <select name="t"></select>
-      </p>
-      <div id="qr"></div>
-      <p>
-        <span id="qr-info"></span>
-      </p>
-      <p>
-        <button type="button" id="download">Download</button>
-      </p>
-    </form>
-  </body>
+<head>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="qrcode.js"></script>
+	<!-- SJIS Support (optional) -->
+	<script type="text/javascript" src="qrcode_SJIS.js"></script>
+	<!--
+	<script type="text/javascript" src="qrcode_SJIS.js"></script>
+	-->
+	<!-- Uncomment to encode string in qrcode as UTF8 (optional) -->
+	<!--
+	<script type="text/javascript" src="qrcode_UTF8.js"></script>
+	-->
+	<script type="text/javascript" src="sample.js"></script>
+	<title>QR Code Generator for JavaScript</title>
+	<link rel="stylesheet" href="sample.css">
+</head>
+<body onload="body_loadHander()">
+	<h1>QR Code Generator for JavaScript</h1>
+
+	<form name="qrForm">
+	<p>
+		<textarea name="msg">Type your message here.</textarea><br>
+		<span id="length"></span>
+	</p>
+	<p>
+		Cell size:
+		<input name="cellsize" type="number" min="1" max="999" value="4" size="4">
+		&nbsp;
+		Padding:
+		<input name="padding" type="number" min="0" max="9" value="1" size="3">
+		&nbsp;
+		Error correction level:
+		<select name="e">
+			<option value="L" selected>Low (7%)</option>
+			<option value="M">Medium (15%)</option>
+			<option value="Q">Quartile (25%)</option>
+			<option value="H">High (30%)</option>
+		</select>
+	</p>
+	<p>
+		Image type:
+		<select name="format">
+			<option value="svg" selected>SVG</option>
+			<option value="png">PNG</option>
+			<option value="webp">WEBP</option>
+			<option value="jpeg">JPEG</option>
+			<option value="gif">GIF</option>
+			<option value="gif-direct">GIF (w/o canvas)</option>
+			<option value="ascii">ASCII</option>
+			<option value="ascii-inv">ASCII inverted</option>
+			<option value="table">Table</option>
+		</select>
+		&nbsp;
+		Foreground:
+		<input name="foreground" type="color" value="#000000">
+		&nbsp;
+		Background:
+		<input name="background" type="color" value="#ffffff">
+	</p>
+	<p>
+		Content mode:
+		<select name="m">
+			<option value="" selected>Auto</option>
+			<option value="Numeric">Numeric</option>
+			<option value="Alphanumeric">Alphanumeric</option>
+			<option value="Byte">Byte</option>
+			<option value="Kanji">Kanji</option>
+		</select>
+		&nbsp;
+		Multibyte text:
+		<select name="mb">
+			<option value="default">None</option>
+			<option value="SJIS">SJIS</option>
+			<option value="UTF-8" selected>UTF-8</option>
+		</select>
+		&nbsp;
+		Size type:
+		<select name="t"></select>
+	</p>
+	<div id="qr"></div>
+	<p>
+		<span id="qr-info"></span>
+	</p>
+	<p>
+		<button type="button" id="download">Download</button>
+	</p>
+	</form>
+</body>
 </html>
