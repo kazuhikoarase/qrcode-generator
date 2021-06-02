@@ -534,7 +534,7 @@ var qrcode = function() {
 
       qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
       qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
-      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '"';
       qrSvg += ' preserveAspectRatio="xMinYMin meet"';
       qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
           escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
@@ -546,22 +546,23 @@ var qrcode = function() {
       qrSvg += '<rect width="' + size + '" height="' + size + '" fill="' + _background + '" cx="0" cy="0"/>';
       qrSvg += '<path d="';
 
+      var d = '';
       for (r = 0; r < _this.getModuleCount(); r++) {
         mr = r * cellSize + margin;
         for (c = 0; c < _this.getModuleCount(); c++) {
           if (_this.isDark(r, c)) {
-            mc = c*cellSize+margin;
+            mc = c * cellSize + margin;
             for (c2 = c + 1; c2 < _this.getModuleCount() && _this.isDark(r, c2); c2++);
             var cx = c2 - c;
-            rect = 'l' + (cellSize * cx) + ',0 0,' + cellSize +
-              ' -' + (cellSize * cx) + ',0 0,-' + cellSize + 'z ';
-            qrSvg += 'M' + mc + ',' + mr + rect;
+            rect = 'h' + (cellSize * cx) + 'v' + cellSize +
+              'h-' + (cellSize * cx) + 'v-' + cellSize + 'z ';
+            d += 'M' + mc + ',' + mr + rect;
             c = c2 - 1;
           }
         }
       }
 
-      qrSvg += '" stroke="transparent" fill="' + _foreground + '"/>';
+      qrSvg += d.trim() + '" stroke="transparent" fill="' + _foreground + '"/>';
       qrSvg += '</svg>';
 
       return qrSvg;
