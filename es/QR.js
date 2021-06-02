@@ -1,20 +1,16 @@
-import { qrcode } from "./qrcode.js";
+import { qrcode, qrDetectMode } from "./qrcode.js";
 
 const MAX_TYPE_NUMBER = 40;
 
-/*
-const typeNumber = 4; // 1 to 40 (MAX_TYPE_NUMBER)
-const errorCorrectionLevel = 'L'; // 'L','M','Q','H'
-const mode = "Byte"; // 'Numeric' 'Alphanumeric' 'Byte'(base64?) 'Kanji'
-*/
-
-// 0: L, 1: M, 2: Q, 3: H
-const encode = (data, errorCorrectionLevel, typeNumber) => {
+// errCorrectionLevel 0: L, 1: M, 2: Q, 3: H
+// typeNumber 1 to 40
+// const mode = "Byte"; // 'Numeric' 'Alphanumeric' 'Byte'(base64?) 'Kanji'
+const encode = (data, errorCorrectionLevel, typeNumber, mode) => {
   if (typeof errorCorrectionLevel == "number") {
     errorCorrectionLevel = "LMQH".charAt(errorCorrectionLevel);
   }
   errorCorrectionLevel = errorCorrectionLevel || "L";
-  const mode = "Byte"; // todo auto detect!
+  mode = mode || qrDetectMode(data);
   const getQR = () => {
     if (!typeNumber) {
       for (let i = 1; i <= MAX_TYPE_NUMBER; i++) {
@@ -24,9 +20,10 @@ const encode = (data, errorCorrectionLevel, typeNumber) => {
           qr.make();
           return qr;
         } catch (e) {
-          console.log(e);
+          //console.log(e);
         }
       }
+      throw Error("ovelflow");
     } else {
       const qr = qrcode(typeNumber, errorCorrectionLevel);
       qr.addData(data, mode);
