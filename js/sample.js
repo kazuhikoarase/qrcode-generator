@@ -1,21 +1,8 @@
 var downloadFileName, downloadType, downloadData;
 
 var body_loadHander = function () {
-	var crtOpt = function (value, label) {
-		let opt = document.createElement('option');
-		opt.appendChild(document.createTextNode(label));
-		opt.value = value;
-		return opt;
-	};
-
-	let t = document.forms['qrForm'].elements['t'];
-	t.appendChild(crtOpt('' + 0, 'Auto'));
-	for (let i = 1; i <= 40; i += 1) {
-		t.appendChild(crtOpt('' + i, '' + i));
-	}
-	t.value = '0';
-
 	let form = document.forms['qrForm'];
+	form.elements['trim'].addEventListener("click", update_qrcode);
 	form.elements['msg'].addEventListener("input", update_qrcode);
 	form.elements['t'].addEventListener("change", update_qrcode);
 	form.elements['cellsize'].addEventListener("input", update_qrcode);
@@ -26,6 +13,7 @@ var body_loadHander = function () {
 	form.elements['format'].addEventListener("change", update_qrcode);
 	form.elements['foreground'].addEventListener("change", update_qrcode);
 	form.elements['background'].addEventListener("change", update_qrcode);
+	form.elements['mask'].addEventListener("change", update_qrcode);
 	update_qrcode();
 
 	document.getElementById("download").addEventListener("click", function () {
@@ -38,7 +26,7 @@ var draw_qrcode = function (text, typeNumber, errorCorrectionLevel) {
 	document.write(create_qrcode(text, typeNumber, errorCorrectionLevel));
 };
 
-var create_qrcode = function (text, typeNumber, cellsize, padding, errorCorrectionLevel, mode, mb, format, fg, bg) {
+var create_qrcode = function (text, typeNumber, cellsize, padding, errorCorrectionLevel, mode, mb, format, fg, bg, mask) {
 	if (!mode) {
 		if (text.match(/^[0-9]+$/))
 			mode = "Numeric";
@@ -65,14 +53,35 @@ var create_qrcode = function (text, typeNumber, cellsize, padding, errorCorrecti
 		qrcode.stringToBytes = qrcode.stringToBytesFuncs[mb];
 
 		let qr = qrcode(typeNumber || 0, errorCorrectionLevel || 'M');
+		if (mask > 0)
+			qr.setMaskPattern(mask - 1);
 		qr.addData(text, mode);
 		qr.make();
 		qr.setColors(fg, bg);
 
+		let maskPattern = qr.getMaskPattern();
+		let bestMaskPattern = qr.getBestMaskPattern();
+		let scores = qr.getMaskPatternPenaltyScores();
+		let minScore = Math.min.apply(null, scores);
+		let maskField = document.forms['qrForm'].elements['mask'];
+		for (let i = 0; i <= 8; i++) {
+			if (i === 0) {
+				maskField.children[i].textContent = "Best (" + (bestMaskPattern + 1) + ")";
+			}
+			else if (scores[i - 1] === minScore) {
+				maskField.children[i].textContent = i + " (best)";
+			}
+			else {
+				let worse = scores[i - 1] / minScore - 1;
+				maskField.children[i].textContent = i + " (" + (Math.round(worse * 1000) / 10) + "% worse)";
+			}
+		}
+
 		let size = qr.getModuleCount() * cellsize + padding * 2;
 		info.innerHTML = "Size type: <b>" + qr.getTypeNumber() + "</b>, " +
 			"code columns: <b>" + qr.getModuleCount() + "</b>, " +
-			"image size: <b>" + size + "x" + size + " px</b>";
+			"filled blocks: <b>" + qr.getDarkCount() + "</b> (" + Math.round(qr.getDarkCount() / (qr.getModuleCount() * qr.getModuleCount()) * 100) + "%)<br>" +
+			"Image size: <b>" + size + "x" + size + " px</b>";
 
 		switch (format) {
 			case "svg":
@@ -126,6 +135,7 @@ var create_qrcode = function (text, typeNumber, cellsize, padding, errorCorrecti
 		}
 	}
 	catch (error) {
+		console.error(error);
 		info.innerHTML = "Error: " + error;
 		return "";
 	}
@@ -133,7 +143,10 @@ var create_qrcode = function (text, typeNumber, cellsize, padding, errorCorrecti
 
 var update_qrcode = function () {
 	let form = document.forms['qrForm'];
-	let text = form.elements['msg'].value.replace(/^[\s\u3000]+|[\s\u3000]+$/g, '');
+	let trim = form.elements['trim'].checked;
+	let text = form.elements['msg'].value;
+	if (trim)
+		text = text.replace(/^[\s\u3000]+|[\s\u3000]+$/g, '');   // U+3000 Ideographic Space
 	let t = form.elements['t'].value;
 	let cellsize = +form.elements['cellsize'].value;
 	let padding = +form.elements['padding'].value * cellsize;
@@ -143,8 +156,9 @@ var update_qrcode = function () {
 	let format = form.elements['format'].value;
 	let fg = form.elements['foreground'].value;
 	let bg = form.elements['background'].value;
+	let mask = form.elements['mask'].value;
 	document.getElementById("length").innerHTML = "(" + text.length + " characters)";
-	document.getElementById('qr').innerHTML = create_qrcode(text, t, cellsize, padding, e, m, mb, format, fg, bg);
+	document.getElementById('qr').innerHTML = create_qrcode(text, t, cellsize, padding, e, m, mb, format, fg, bg, mask);
 };
 
 // Source: https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server

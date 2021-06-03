@@ -3,6 +3,7 @@
 // QR Code Generator for JavaScript
 //
 // Copyright (c) 2009 Kazuhiko Arase
+// Improved 2020-2021 by Yves Goergen, ygoe.de
 //
 // URL: http://www.d-project.com/
 //
@@ -38,6 +39,10 @@ var qrcode = function () {
 		let _dataList = [];
 		let _foreground = "black";
 		let _background = "white";
+		let _maskPatternOverride = null;
+		let _maskPattern;
+		let _bestMaskPattern;
+		let _maskPatternPenaltyScores = [];
 		let _this = {};
 
 		var makeImpl = function (test, maskPattern) {
@@ -90,19 +95,21 @@ var qrcode = function () {
 		};
 
 		var getBestMaskPattern = function () {
-			let minLostPoint = 0;
-			let pattern = 0;
+			let minPenaltyScore = 0;
+			let bestPattern = 0;
+			_maskPatternPenaltyScores = [];
 
 			for (let i = 0; i < 8; i++) {
 				makeImpl(true, i);
 
-				let lostPoint = QRUtil.getLostPoint(_this);
-				if (i === 0 || minLostPoint > lostPoint) {
-					minLostPoint = lostPoint;
-					pattern = i;
+				let penaltyScore = QRUtil.getPenaltyScore(_this);
+				_maskPatternPenaltyScores.push(penaltyScore);
+				if (i === 0 || penaltyScore < minPenaltyScore) {
+					minPenaltyScore = penaltyScore;
+					bestPattern = i;
 				}
 			}
-			return pattern;
+			return bestPattern;
 		};
 
 		var setupTimingPattern = function () {
@@ -276,7 +283,6 @@ var qrcode = function () {
 
 			let data = new Array(totalCodeCount);
 			let index = 0;
-
 			for (let i = 0; i < maxDcCount; i++) {
 				for (let r = 0; r < rsBlocks.length; r++) {
 					if (i < dcdata[r].length) {
@@ -346,7 +352,6 @@ var qrcode = function () {
 			mode = mode || 'Byte';
 
 			let newData = null;
-
 			switch (mode) {
 				case 'Numeric':
 					newData = qrNumber(data);
@@ -379,6 +384,17 @@ var qrcode = function () {
 			return _moduleCount;
 		};
 
+		_this.getDarkCount = function () {
+			let count = 0;
+			for (let row = 0; row < _moduleCount; row++) {
+				for (let col = 0; col < _moduleCount; col++) {
+					if (_modules[row][col])
+						count++;
+				}
+			}
+			return count;
+		};
+
 		_this.make = function () {
 			if (_typeNumber < 1) {
 				let typeNumber = 1;
@@ -407,11 +423,31 @@ var qrcode = function () {
 				_typeNumber = typeNumber;
 			}
 
-			makeImpl(false, getBestMaskPattern());
+			_maskPattern = getBestMaskPattern();
+			_bestMaskPattern = _maskPattern;
+			if (_maskPatternOverride !== null)
+				_maskPattern = _maskPatternOverride;
+			makeImpl(false, _maskPattern);
 		};
 
 		_this.getTypeNumber = function () {
 			return _typeNumber;
+		};
+
+		_this.getMaskPattern = function () {
+			return _maskPattern;
+		};
+
+		_this.getBestMaskPattern = function () {
+			return _bestMaskPattern;
+		};
+
+		_this.getMaskPatternPenaltyScores = function () {
+			return _maskPatternPenaltyScores;
+		};
+
+		_this.setMaskPattern = function (maskPattern) {
+			_maskPatternOverride = maskPattern;
 		};
 
 		_this.setColors = function (foreground, background) {
@@ -426,7 +462,6 @@ var qrcode = function () {
 		};
 
 		_this.createTableTag = function (cellSize, margin) {
-
 			cellSize = cellSize || 2;
 			margin = (typeof margin === 'undefined') ? cellSize * 4 : margin;
 
@@ -479,8 +514,7 @@ var qrcode = function () {
 			title.id = (title.text) ? title.id || 'qrcode-title' : null;
 
 			let size = _this.getModuleCount() * cellSize + margin * 2;
-			let c, c2, mc, r, mr, qrSvg = '', rect;
-
+			let qrSvg = '';
 			qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
 			qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
 			qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '"';
@@ -493,25 +527,141 @@ var qrcode = function () {
 			qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
 				escapeXml(alt.text) + '</description>' : '';
 			qrSvg += '<rect width="' + size + '" height="' + size + '" fill="' + _background + '" cx="0" cy="0"/>';
-			qrSvg += '<path d="';
 
-			let d = '';
-			for (r = 0; r < _this.getModuleCount(); r++) {
-				mr = r * cellSize + margin;
-				for (c = 0; c < _this.getModuleCount(); c++) {
-					if (_this.isDark(r, c)) {
-						mc = c * cellSize + margin;
-						for (c2 = c + 1; c2 < _this.getModuleCount() && _this.isDark(r, c2); c2++);
-						let cx = c2 - c;
-						rect = 'h' + (cellSize * cx) + 'v' + cellSize +
-							'h-' + (cellSize * cx) + 'v-' + cellSize + 'z ';
-						d += 'M' + mc + ',' + mr + rect;
-						c = c2 - 1;
+			const moduleCount = _this.getModuleCount();
+			const pointEquals = function (a, b) {
+				return a[0] === b[0] && a[1] === b[1];
+			};
+
+			// Mark all four edges of each square in clockwise drawing direction
+			const edges = [];
+			for (let row = 0; row < moduleCount; row++) {
+				for (let col = 0; col < moduleCount; col++) {
+					if (_this.isDark(row, col)) {
+						const x0 = col * cellSize + margin;
+						const y0 = row * cellSize + margin;
+						const x1 = (col + 1) * cellSize + margin;
+						const y1 = (row + 1) * cellSize + margin;
+						edges.push([[x0, y0], [x1, y0]]);   // top edge (to right)
+						edges.push([[x1, y0], [x1, y1]]);   // right edge (down)
+						edges.push([[x1, y1], [x0, y1]]);   // bottom edge (to left)
+						edges.push([[x0, y1], [x0, y0]]);   // left edge (up)
 					}
 				}
 			}
 
-			qrSvg += d.trim() + '" stroke="transparent" fill="' + _foreground + '"/>';
+			// Edges that exist in both directions cancel each other (connecting the rectangles)
+			for (let i = edges.length - 1; i >= 0; i--) {
+				for (let j = i - 1; j >= 0; j--) {
+					if (pointEquals(edges[i][0], edges[j][1]) &&
+						pointEquals(edges[i][1], edges[j][0])) {
+						// First remove index i, it's greater than j
+						edges.splice(i, 1);
+						edges.splice(j, 1);
+						i--;
+						break;
+					}
+				}
+			}
+
+			let polygons = [];
+			while (edges.length > 0) {
+				// Pick a random edge and follow its connected edges to form a path (remove used edges)
+				// If there are multiple connected edges, pick the first
+				// Stop when the starting point of this path is reached
+				let polygon = [];
+				polygons.push(polygon);
+				let edge = edges.splice(0, 1)[0];
+				polygon.push(edge[0]);
+				polygon.push(edge[1]);
+				do {
+					let foundEdge = false;
+					for (let i = 0; i < edges.length; i++) {
+						if (pointEquals(edges[i][0], edge[1])) {
+							// Found an edge that starts at the last edge's end
+							foundEdge = true;
+							edge = edges.splice(i, 1)[0];
+							let p1 = polygon[polygon.length - 2];   // polygon's second-last point
+							let p2 = polygon[polygon.length - 1];   // polygon's current end
+							let p3 = edge[1];   // new point
+							// Extend polygon end if it's continuing in the same direction
+							if (p1[0] === p2[0] &&   // polygon ends vertical
+								p2[0] === p3[0]) {   // new point is vertical, too
+								polygon[polygon.length - 1][1] = p3[1];
+							}
+							else if (p1[1] === p2[1] &&   // polygon ends horizontal
+								p2[1] === p3[1]) {   // new point is horizontal, too
+								polygon[polygon.length - 1][0] = p3[0];
+							}
+							else {
+								polygon.push(p3);   // new direction
+							}
+							break;
+						}
+					}
+					if (!foundEdge)
+						throw new Error("no next edge found at", edge[1]);
+				}
+				while (!pointEquals(polygon[polygon.length - 1], polygon[0]));
+				
+				// Move polygon's start and end point into a corner
+				if (polygon[0][0] === polygon[1][0] &&
+					polygon[polygon.length - 2][0] === polygon[polygon.length - 1][0]) {
+					// start/end is along a vertical line
+					polygon.length--;
+					polygon[0][1] = polygon[polygon.length - 1][1];
+				}
+				else if (polygon[0][1] === polygon[1][1] &&
+					polygon[polygon.length - 2][1] === polygon[polygon.length - 1][1]) {
+					// start/end is along a horizontal line
+					polygon.length--;
+					polygon[0][0] = polygon[polygon.length - 1][0];
+				}
+			}
+			// Repeat until there are no more unused edges
+
+			// If two paths touch in at least one point, pick such a point and include one path in the other's sequence of points
+			for (let i = 0; i < polygons.length; i++) {
+				const polygon = polygons[i];
+				for (let j = 0; j < polygon.length; j++) {
+					const point = polygon[j];
+					for (let k = i + 1; k < polygons.length; k++) {
+						const polygon2 = polygons[k];
+						for (let l = 0; l < polygon2.length - 1; l++) {   // exclude end point (same as start)
+							const point2 = polygon2[l];
+							if (pointEquals(point, point2)) {
+								// Embed polygon2 into polygon
+								if (l > 0) {
+									// Touching point is not other polygon's start/end
+									polygon.splice.apply(polygon, [j + 1, 0].concat(
+										polygon2.slice(1, l + 1)));
+								}
+								polygon.splice.apply(polygon, [j + 1, 0].concat(
+									polygon2.slice(l + 1)));
+								polygons.splice(k, 1);
+								k--;
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			// Generate SVG path data
+			let d = "";
+			for (let i = 0; i < polygons.length; i++) {
+				const polygon = polygons[i];
+				d += "M" + polygon[0][0] + "," + polygon[0][1];
+				for (let j = 1; j < polygon.length; j++) {
+					if (polygon[j][0] === polygon[j - 1][0])
+						d += "v" + (polygon[j][1] - polygon[j - 1][1]);
+					else
+						d += "h" + (polygon[j][0] - polygon[j - 1][0]);
+				}
+				d += "z";
+			}
+
+			qrSvg += '<path d="' + d + '" stroke="none" fill="' + _foreground + '"/>';
 			qrSvg += '</svg>';
 
 			return qrSvg;
@@ -955,9 +1105,9 @@ var qrcode = function () {
 			}
 		};
 
-		_this.getLostPoint = function (qrcode) {
+		_this.getPenaltyScore = function (qrcode) {
 			let moduleCount = qrcode.getModuleCount();
-			let lostPoint = 0;
+			let penaltyScore = 0;
 
 			// LEVEL1
 
@@ -982,7 +1132,7 @@ var qrcode = function () {
 					}
 
 					if (sameCount > 5) {
-						lostPoint += (3 + sameCount - 5);
+						penaltyScore += (3 + sameCount - 5);
 					}
 				}
 			};
@@ -997,7 +1147,7 @@ var qrcode = function () {
 					if (qrcode.isDark(row, col + 1)) count++;
 					if (qrcode.isDark(row + 1, col + 1)) count++;
 					if (count === 0 || count === 4) {
-						lostPoint += 3;
+						penaltyScore += 3;
 					}
 				}
 			}
@@ -1013,7 +1163,7 @@ var qrcode = function () {
 						qrcode.isDark(row, col + 4) &&
 						!qrcode.isDark(row, col + 5) &&
 						qrcode.isDark(row, col + 6)) {
-						lostPoint += 40;
+						penaltyScore += 40;
 					}
 				}
 			}
@@ -1027,7 +1177,7 @@ var qrcode = function () {
 						qrcode.isDark(row + 4, col) &&
 						!qrcode.isDark(row + 5, col) &&
 						qrcode.isDark(row + 6, col)) {
-						lostPoint += 40;
+						penaltyScore += 40;
 					}
 				}
 			}
@@ -1045,8 +1195,8 @@ var qrcode = function () {
 			}
 
 			let ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
-			lostPoint += ratio * 10;
-			return lostPoint;
+			penaltyScore += ratio * 10;
+			return penaltyScore;
 		};
 
 		return _this;
