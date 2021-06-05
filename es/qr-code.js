@@ -41,7 +41,7 @@ class QRCode extends HTMLElement {
     this.appendChild(canvas);
 
     const draw = () => {
-      const url = document.location;
+      const url = document.location.toString();
       const imgdata = encodeImageData(url);
       canvas.width = canvas.height = imgdata.width;
       g.putImageData(imgdata, 0, 0);
