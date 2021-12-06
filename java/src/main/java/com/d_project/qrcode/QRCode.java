@@ -577,4 +577,12 @@ public void addData(String data) {
 
     return image;
   }
+
+  private static String _8BitByteEncoding = QRUtil.getJISEncoding();
+  public static void set8BitByteEncoding(final String _8BitByteEncoding) {
+    QRCode._8BitByteEncoding = _8BitByteEncoding;
+  }
+  public static String get8BitByteEncoding() {
+    return _8BitByteEncoding;
+  }
 }

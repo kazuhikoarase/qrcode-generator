@@ -16,7 +16,7 @@ class QR8BitByte extends QRData {
 
     try {
 
-      byte[] data = getData().getBytes(QRUtil.getJISEncoding() );
+      byte[] data = getData().getBytes(QRCode.get8BitByteEncoding() );
 
       for (int i = 0; i < data.length; i++) {
         buffer.put(data[i], 8);
@@ -29,7 +29,7 @@ class QR8BitByte extends QRData {
 
   public int getLength() {
     try {
-      return getData().getBytes(QRUtil.getJISEncoding() ).length;
+      return getData().getBytes(QRCode.get8BitByteEncoding() ).length;
     } catch(UnsupportedEncodingException e) {
       throw new RuntimeException(e.getMessage() );
     }
