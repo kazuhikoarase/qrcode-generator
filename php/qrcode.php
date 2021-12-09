@@ -551,7 +551,7 @@ class QRCode {
 
         print("</table>");
     }
-    
+
     public function printSVG($size = 2)
     {
         $width = $this->getModuleCount() * $size;
@@ -561,7 +561,7 @@ class QRCode {
         for ($r = 0; $r < $this->getModuleCount(); $r++) {
             for ($c = 0; $c < $this->getModuleCount(); $c++) {
                 $color = $this->isDark($r, $c) ? "#000000" : "#ffffff";
-                print('<rect x="' . ($c * $size) . '" y="' . ($r * $size) . '" width="' . $size . '" height="' . $size . '" fill="' . $color . '"/>');
+                print('<rect x="' . ($c * $size) . '" y="' . ($r * $size) . '" width="' . $size . '" height="' . $size . '" fill="' . $color . '"stroke="'.$color.'" stroke-width="0.5"/>');
             }
         }
 
