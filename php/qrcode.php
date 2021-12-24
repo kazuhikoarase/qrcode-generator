@@ -554,6 +554,7 @@ class QRCode {
 
     public function printSVG($size = 2)
     {
+        $size = (int) $size;
         $width = $this->getModuleCount() * $size;
         $height = $width;
         print('<svg width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' ' . $height . '" xmlns="http://www.w3.org/2000/svg">');
