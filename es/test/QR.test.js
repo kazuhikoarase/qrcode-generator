@@ -57,3 +57,9 @@ Deno.test("encode Byte", () => {
   t.assertEquals(qrDetectMode(s), "Byte");
   t.assertEquals(data.length, 25);
 });
+Deno.test("encode bin", () => {
+  const bin = new Uint8Array(1, 2, 3);
+  const data = QR.encode(bin);
+  t.assertEquals(qrDetectMode(bin), "Byte");
+  t.assertEquals(data.length, 21);
+});
