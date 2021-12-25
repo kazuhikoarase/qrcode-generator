@@ -1,6 +1,6 @@
 import { QR } from "./QR.js";
 
-const encodeImageData = (code, r = 3) => {
+export const encodeImageData = (code, r = 3) => {
   const data = QR.encode(code);
   const iw = data.length;
   const w = 4;
@@ -32,24 +32,27 @@ const encodeImageData = (code, r = 3) => {
   return imgdata;
 };
 
-
 class QRCode extends HTMLElement {
-  constructor () {
+  constructor(value) {
     super();
-    const canvas = document.createElement("canvas");
-    const g = canvas.getContext("2d");
-    this.appendChild(canvas);
+    this.canvas = document.createElement("canvas");
+    this.g = this.canvas.getContext("2d");
+    this.appendChild(this.canvas);
 
-    const draw = () => {
-      const url = document.location.toString();
-      const imgdata = encodeImageData(url);
-      canvas.width = canvas.height = imgdata.width;
-      g.putImageData(imgdata, 0, 0);
-    };
-    draw();
-
-    window.addEventListener("hashchange", () => draw(), false);
+    if (value) {
+      this.value = value;
+    } else {
+      this.value = document.location.toString();
+      window.addEventListener("hashchange", () => this.value = document.location.toString(), false);
+    }
+  }
+  set value(value) {
+    const imgdata = encodeImageData(value);
+    this.canvas.width = this.canvas.height = imgdata.width;
+    this.g.putImageData(imgdata, 0, 0);
   }
 }
 
 customElements.define('qr-code', QRCode);
+
+export { QRCode };
