@@ -64,24 +64,27 @@ class QRCode {
         }
 
         switch($mode) {
-
-        case QR_MODE_NUMBER :
-            $this->addDataImpl(new QRNumber($data) );
+          case QR_MODE_NUMBER:
+            $d = new QRNumber($data);
+            $this->addDataImpl($d);
             break;
 
-        case QR_MODE_ALPHA_NUM :
-            $this->addDataImpl(new QRAlphaNum($data) );
+          case QR_MODE_ALPHA_NUM:
+            $d = new QRAlphaNum($data);
+            $this->addDataImpl($d);
             break;
 
-        case QR_MODE_8BIT_BYTE :
-            $this->addDataImpl(new QR8BitByte($data) );
+          case QR_MODE_8BIT_BYTE:
+            $d = new QR8BitByte($data);
+            $this->addDataImpl($d);
             break;
 
-        case QR_MODE_KANJI :
-            $this->addDataImpl(new QRKanji($data) );
+          case QR_MODE_KANJI:
+            $d = new QRKanji($data);
+            $this->addDataImpl($d);
             break;
 
-        default :
+          default:
             trigger_error("mode:$mode", E_USER_ERROR);
         }
     }
