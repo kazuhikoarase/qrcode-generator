@@ -2,11 +2,18 @@
 
 ## Getting Started
 
-```javascript
+```js
 import { QR } from "https://taisukef.github.io/qrcode-generator/es/QR.js";
 
 const data = QR.encode("Hi!");
 console.log(data);
+```
+
+for browsers
+```js
+import { QRCode } from "https://taisukef.github.io/qrcode-generator/es/qr-code.js";
+
+document.body.appendChild(new QRCode("abc"));
 ```
 
 ## API Documentation
@@ -15,11 +22,11 @@ console.log(data);
 
 Create a QRCode array data
 
-| Param                | Type                             | Description                                    |
-| -------------------- | -------------------------------- | ---------------------------------------------- |
-| data                 | <code>string | Uint8Array</code> | Data                                           |
-| errorCorrectionLevel | <code>number</code>              | Error correction level (0:L, 1:M, 2:Q, 3:H)    |
-| typeNumber           | <code>number</code>              | Type number (1 ~ 40), or 0 for auto detection. |
+| Param                | Type                              | Description                                    |
+| -------------------- | --------------------------------- | ---------------------------------------------- |
+| data                 | <code>string or Uint8Array</code> | Data                                           |
+| errorCorrectionLevel | <code>number</code>               | Error correction level (0:L, 1:M, 2:Q, 3:H)    |
+| typeNumber           | <code>number</code>               | Type number (1 ~ 40), or 0 for auto detection. |
 
 --
 
