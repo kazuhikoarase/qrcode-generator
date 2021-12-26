@@ -3,14 +3,10 @@ import { QRMode } from "./QRMode.js";
 const stringToBytes = (s) => {
   const bytes = [];
   if (typeof s == "string") {
-    for (let i = 0; i < s.length; i += 1) {
-      const c = s.charCodeAt(i);
-      bytes.push(c & 0xff);
-    }
-  } else {
-    for (let i = 0; i < s.length; i++) {
-      bytes.push(s[i]);
-    }
+    s = new TextEncoder().encode(s);
+  }
+  for (let i = 0; i < s.length; i++) {
+    bytes.push(s[i]);
   }
   return bytes;
 };
