@@ -35,6 +35,7 @@ export const encodeImageData = (code, r = 3) => {
 class QRCode extends HTMLElement {
   constructor(value) {
     super();
+    value = this.getAttribute("value") || value;
     this.canvas = document.createElement("canvas");
     this.g = this.canvas.getContext("2d");
     this.appendChild(this.canvas);
