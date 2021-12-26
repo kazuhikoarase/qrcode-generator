@@ -15,11 +15,11 @@ console.log(data);
 
 Create a QRCode array data
 
-| Param                | Type                | Description                                    |
-| -------------------- | ------------------- | ---------------------------------------------- |
-| data                 | <code>string</code> | Data                                           |
-| errorCorrectionLevel | <code>number</code> | Error correction level (0:L, 1:M, 2:Q, 3:H)    |
-| typeNumber           | <code>number</code> | Type number (1 ~ 40), or 0 for auto detection. |
+| Param                | Type                             | Description                                    |
+| -------------------- | -------------------------------- | ---------------------------------------------- |
+| data                 | <code>string | Uint8Array</code> | Data                                           |
+| errorCorrectionLevel | <code>number</code>              | Error correction level (0:L, 1:M, 2:Q, 3:H)    |
+| typeNumber           | <code>number</code>              | Type number (1 ~ 40), or 0 for auto detection. |
 
 --
 
