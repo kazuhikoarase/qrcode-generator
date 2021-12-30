@@ -23,7 +23,7 @@ const encode = (data, errorCorrectionLevel, typeNumber, mode) => {
           //console.log(e);
         }
       }
-      throw Error("ovelflow");
+      throw Error("overflow");
     } else {
       const qr = qrcode(typeNumber, errorCorrectionLevel);
       qr.addData(data, mode);
