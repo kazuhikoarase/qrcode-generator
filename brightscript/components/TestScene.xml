@@ -2,6 +2,5 @@
 <component name="TestScene" extends="Scene">
 	<script type="text/brightscript" uri="TestScene.brs" />
 	<children>
-		<QRCode />
 	</children>
 </component>

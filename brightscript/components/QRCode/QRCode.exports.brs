@@ -169,11 +169,11 @@ function QRMaskFunctions() as object
 		return (i + j) MOD 2 = 0
 	end function
 	
-	result.PATTERN001 = function (i, j) as boolean
+	result.PATTERN001 = function (i, _j) as boolean
 		return i MOD 2 = 0
 	end function
 	
-	result.PATTERN010 = function (i, j) as boolean
+	result.PATTERN010 = function (_i, j) as boolean
 		return j MOD 3 = 0
 	end function
 	
@@ -306,7 +306,7 @@ function QRUtil() as object
 		maskId = patterns[maskPattern]
 		if maskId = invalid or masks[maskId] = invalid
 			print "Invalid maskPattern", maskPattern
-			return function(i, j) as boolean
+			return function(_i, _j) as boolean
 				print "Invalid maskPattern used"
 				return false
 			end function
@@ -323,22 +323,22 @@ function QRUtil() as object
 		return a
 	end function
 
-	util.getLengthInBits = function (mode as integer, type as integer) as integer
+	util.getLengthInBits = function (mode as integer, typeNumber as integer) as integer
 		modes = QRModes()
 
-		if 1 <= type and type < 10
+		if 1 <= typeNumber and typeNumber < 10
 			' 1 - 9
 			if mode = modes.MODE_NUMERIC then return 10
 			if mode = modes.MODE_ALPHANUMERIC then return 9
 			if mode = modes.MODE_BYTE then return 8
 			if mode = modes.MODE_KANJI then return 8
-		else if type < 27
+		else if typeNumber < 27
 			' 10 - 26
 			if mode = modes.MODE_NUMERIC then return 12
 			if mode = modes.MODE_ALPHANUMERIC then return 11
 			if mode = modes.MODE_BYTE then return 16
 			if mode = modes.MODE_KANJI then return 10
-		else if type < 41
+		else if typeNumber < 41
 			' 27 - 40
 			if mode = modes.MODE_NUMERIC then return 14
 			if mode = modes.MODE_ALPHANUMERIC then return 13
@@ -346,7 +346,7 @@ function QRUtil() as object
 			if mode = modes.MODE_KANJI then return 12
 		end if
 
-		print "Invalid mode and/or type", mode, type
+		print "Invalid mode and/or type", mode, typeNumber
 		return 0
 	end function
 
@@ -388,15 +388,15 @@ function QRBitBuffer() as object
 end function
 
 function QRCode(typeNumber = 0 as integer, errorCorrectionLevel = "Q" as string) as object
-	qrcode = createObject("roSGNode", "QRCode")
-	qrcode.setFields({
+	qr = createObject("roSGNode", "QRCode")
+	qr.setFields({
 		typeNumber: typeNumber
 		errorCorrectionLevel: errorCorrectionLevel
 	})
 	return {
-		qrcode: qrcode
+		qrcode: qr
 		addData: function(data as string, typeName = "BYTE" as string) as boolean
-			return m.qrcode.callFunc("addData", data, type)
+			return m.qrcode.callFunc("addData", data, typeName)
 		end function
 		make: sub()
 			m.qrcode.callFunc("make")

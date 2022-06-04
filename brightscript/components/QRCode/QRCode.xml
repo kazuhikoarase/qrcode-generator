@@ -15,7 +15,7 @@
 		<function name="isDark" /><!-- row integer, col integer -->
 
 		<!-- Public -->
-		<function name="addData" /><!-- params: data string, typeName (NUMERIC, ALPHANUMERIC, BYTE or JANJI) string -->
+		<function name="addData" /><!-- params: data string, typeName (NUMERIC, ALPHANUMERIC, BYTE or KANJI) string -->
 		<function name="make" />
 
 		<!-- Private, exported for testing -->

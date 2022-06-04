@@ -3,18 +3,29 @@ namespace tests
 	@suite("QRCodeTests")
 	class QRCodeTests extends Rooibos.BaseTestSuite
 
-		protected override function setup()
-			m.qrcode = CreateQRCode()
-		end function
-
 		'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		@describe("QRCode")
 		'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 		@it("is an QRCode instance")
 		function _()
-			m.assertNotInvalid(m.qrcode)
-			m.assertEqual(m.qrcode.isSubtype("QRCode"), true)
+			qrcode = createObject("roSGNode", "QRCode")
+
+			m.assertNotInvalid(qrcode)
+			m.assertEqual(qrcode.isSubtype("QRCode"), true)
+		end function
+
+		@it("creates correct QRCode data")
+		function _()
+			qrcode = createObject("roSGNode", "QRCodeTest")
+
+			m.assertEqual(qrcode.moduleCount, 29)
+
+			printer = createObject("roSGNode", "QRPrinter")
+
+			m.assertEqual(printer.callFunc("toString", qrcode, 1, 2), qrcode.correctHalfWidth)
+			m.assertEqual(printer.callFunc("toString", qrcode, 1, 0), qrcode.correctHalfWidthWithoutBorder)
+			m.assertEqual(printer.callFunc("toString", qrcode, 2, 2), qrcode.correctFullWidth)
 		end function
 	end class
 

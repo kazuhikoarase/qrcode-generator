@@ -3,7 +3,7 @@
 	<script type="text/brightscript" uri="QRPrinter.brs" />
 
 	<interface>
-		<function name="toString" /><!-- QRCode, margin integer -->
-		<function name="toLog" /><!-- QRCode, margin integer -->
+		<function name="toString" /><!-- QRCode, cellSize=1 integer, margin=1 integer -->
+		<function name="toLog" /><!-- QRCode, cellSize=1 integer, margin=1 integer -->
 	</interface>
 </component>

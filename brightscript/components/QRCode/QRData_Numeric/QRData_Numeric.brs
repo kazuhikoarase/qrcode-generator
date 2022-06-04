@@ -55,4 +55,5 @@ function strToNum(text as string) as integer
 		end if
 		num = num * 10 + digit
 	end for
+	return num
 end function

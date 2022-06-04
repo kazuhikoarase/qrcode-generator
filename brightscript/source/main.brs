@@ -1,5 +1,5 @@
 ' Use RunUserInterface instead of Main, so we can run tests with Roca
-sub RunUserInterface(argsAA as Object)
+sub RunUserInterface(_argsAA as Object)
 	'Indicate this is a Roku SceneGraph application'
 	screen = CreateObject("roSGScreen")
 	m.port = CreateObject("roMessagePort")

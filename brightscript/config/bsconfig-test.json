@@ -12,6 +12,7 @@
 		"rooibos-roku"
 	],
 	"rooibos": {
-		"testsFilePattern": "**/tests/**/*.spec.bs"
+		"testsFilePattern": "**/tests/**/*.spec.bs",
+		"sendHomeOnFinish": true
 	}
 }

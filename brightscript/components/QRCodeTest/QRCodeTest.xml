@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+	This is just for testing!
+	Since we try to test both with `brs` (on pc) and Rooibos (on Roku),
+	we want to have exact same test data for both.
+	It's less error-prone to keep it in a single place.
+-->
+<component name="QRCodeTest" extends="QRCode">
+	<script type="text/brightscript" uri="QRCodeTest.brs" />
+
+	<interface>
+		<!-- Read-only! -->
+		<field id="sourceText" type="string" />
+		<field id="correctHalfWidth" type="string" />
+		<field id="correctHalfWidthWithoutBorder" type="string" />
+		<field id="correctFullWidth" type="string" />
+	</interface>
+</component>
