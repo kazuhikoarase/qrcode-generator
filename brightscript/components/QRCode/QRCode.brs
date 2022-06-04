@@ -384,6 +384,107 @@ function addData(data as string, typeName = "BYTE" as string) as boolean
 	return true
 end function
 
+function getLostPoint() as float
+	moduleCount = m.moduleCount
+	modules = m.modules
+	lostPoint = 0
+
+	' LEVEL1
+
+	for row = 0 to moduleCount - 1 step 1
+		for col = 0 to moduleCount - 1 step 1
+			sameCount = 0
+			dark = modules[row][col]
+
+			for r = -1 to 1 step 1
+				rowR = row + r
+
+				if rowR >= 0 and moduleCount > rowR
+
+					for c = -1 to 1 step 1
+						colC = col + c
+
+						if colC >= 0 and moduleCount > colC and (r <> 0 or c <> 0)
+							if dark = modules[rowR][colC]
+								sameCount += 1
+							end if
+
+							if sameCount > 5
+								lostPoint += (3 + sameCount - 5)
+							end if
+						end if
+					end for
+
+				end if
+			end for
+		end for
+	end for
+
+	' LEVEL2
+
+	for row = 0 to moduleCount - 2 step 1
+		for col = 0 to moduleCount - 2 step 1
+			count = 0
+			if modules[row][col] then count += 1
+			if modules[row + 1][col] then count += 1
+			if modules[row][col + 1] then count += 1
+			if modules[row + 1][col + 1] then count += 1
+			if count = 0 or count = 4
+				lostPoint += 3
+	  		end if
+		end for
+	end for
+
+	' LEVEL3
+
+	for row = 0 to moduleCount - 1 step 1
+		for col = 0 to moduleCount - 7 step 1
+			lost =              modules[row][col]
+			lost = lost and not modules[row][col + 1]
+			lost = lost and     modules[row][col + 2]
+			lost = lost and     modules[row][col + 3]
+			lost = lost and     modules[row][col + 4]
+			lost = lost and not modules[row][col + 5]
+			lost = lost and     modules[row][col + 6]
+			if lost
+				lostPoint += 40
+	  		end if
+		end for
+	end for
+
+	for col = 0 to moduleCount - 1 step 1
+		for row = 0 to moduleCount - 7 step 1
+			lost =              modules[row][col]
+			lost = lost and not modules[row + 1][col]
+			lost = lost and     modules[row + 2][col]
+			lost = lost and     modules[row + 3][col]
+			lost = lost and     modules[row + 4][col]
+			lost = lost and not modules[row + 5][col]
+			lost = lost and     modules[row + 6][col]
+			if lost
+				lostPoint += 40
+	  		end if
+		end for
+	end for
+
+	' LEVEL4
+
+	darkCount = 0
+
+	for col = 0 to moduleCount - 1 step 1
+		for row = 0 to moduleCount - 1 step 1
+			if modules[row][col]
+				darkCount += 1
+			end if
+		end for
+	end for
+
+	ratio = abs((100 * darkCount) / moduleCount / (moduleCount - 50)) / 5
+	lostPoint += ratio * 10
+
+	return lostPoint
+end function
+
 function getBestMaskPattern() as integer
 	minLostPoint = 0
 	bestPattern = 0
@@ -392,7 +493,7 @@ function getBestMaskPattern() as integer
 
 	for pattern = 0 to patterns.count() - 1 step 1
 		initData(true, pattern)
-		lostPoint = QRUtil().getLostPoint(m.top)
+		lostPoint = getLostPoint()
 		if pattern = 0 or minLostPoint > lostPoint
 			minLostPoint = lostPoint
 			bestPattern = pattern
