@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="QRCode" extends="Node">
+	<script type="text/brightscript" uri="QRCode.brs" />
+	<script type="text/brightscript" uri="QRCode.exports.brs" />
+
+	<interface>
+		<field id="typeNumber" type="integer" value="0" /><!-- number 1 to 40, 0 for auto-detection -->
+		<field id="errorCorrectionLevel" type="string" value="Q" /><!-- Can be one of: 'L','M','Q','H' -->
+
+		<!-- Read-only! -->
+		<field id="modules" type="array" />
+		<field id="moduleCount" type="integer" value="0" />
+		<field id="state" type="string" value="init" /><!-- can be one of: 'init', 'loading', 'ready' -->
+
+		<function name="isDark" /><!-- row integer, col integer -->
+
+		<!-- Public -->
+		<function name="addData" /><!-- params: data string, typeName (NUMERIC, ALPHANUMERIC, BYTE or JANJI) string -->
+		<function name="make" />
+
+		<!-- Private, exported for testing -->
+		<function name="qrmath_glog" />
+		<function name="qrmath_gexp" />
+	</interface>
+</component>

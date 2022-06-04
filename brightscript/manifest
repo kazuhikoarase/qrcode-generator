@@ -1,0 +1,13 @@
+#
+#  Copyright (c) 2022 Marcin Konicki (https://ahwayakchih.neoni.net)
+#  Copyright (c) 2009 Kazuhiko Arase (https://github.com/kazuhikoarase/qrcode-generator)
+#
+
+##   Channel Details
+title=QRCode Generator
+major_version=1
+minor_version=0
+build_version=0
+
+## Can channel work without network access?
+network_not_required=1

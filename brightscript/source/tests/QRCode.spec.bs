@@ -1,0 +1,21 @@
+namespace tests
+
+	@suite("QRCodeTests")
+	class QRCodeTests extends Rooibos.BaseTestSuite
+
+		protected override function setup()
+			m.qrcode = CreateQRCode()
+		end function
+
+		'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		@describe("QRCode")
+		'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+		@it("is an QRCode instance")
+		function _()
+			m.assertNotInvalid(m.qrcode)
+			m.assertEqual(m.qrcode.isSubtype("QRCode"), true)
+		end function
+	end class
+
+end namespace

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="TestScene" extends="Scene">
+	<script type="text/brightscript" uri="TestScene.brs" />
+	<children>
+		<QRCode />
+	</children>
+</component>

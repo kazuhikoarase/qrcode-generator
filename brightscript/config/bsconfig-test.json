@@ -1,0 +1,17 @@
+{
+	"deploy": true,
+	"files": [
+		"source/**/*.*",
+		"components/**/*.*",
+		"images/**/*.*",
+		"fonts/**/*.*",
+		"manifest"
+	],
+	"plugins": [
+		"@rokucommunity/bslint",
+		"rooibos-roku"
+	],
+	"rooibos": {
+		"testsFilePattern": "**/tests/**/*.spec.bs"
+	}
+}

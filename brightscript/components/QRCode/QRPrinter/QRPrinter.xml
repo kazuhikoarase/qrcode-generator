@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="QRPrinter" extends="Node">
+	<script type="text/brightscript" uri="QRPrinter.brs" />
+
+	<interface>
+		<function name="toString" /><!-- QRCode, margin integer -->
+		<function name="toLog" /><!-- QRCode, margin integer -->
+	</interface>
+</component>
