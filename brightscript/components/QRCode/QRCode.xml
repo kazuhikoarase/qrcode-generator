@@ -10,7 +10,7 @@
 		<!-- Read-only! -->
 		<field id="modules" type="array" />
 		<field id="moduleCount" type="integer" value="0" />
-		<field id="state" type="string" value="init" /><!-- can be one of: 'init', 'loading', 'ready' -->
+		<field id="status" type="string" value="init" /><!-- can be one of: 'init', 'loading', 'ready' -->
 
 		<function name="isDark" /><!-- row integer, col integer -->
 

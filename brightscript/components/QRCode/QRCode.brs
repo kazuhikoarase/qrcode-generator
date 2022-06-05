@@ -527,6 +527,7 @@ sub setBestTypeNumber()
 end sub
 
 sub make()
+	m.top.status = "loading"
 	m.typeNumber = m.top.typeNumber
 	m.errorCorrectionLevel = m.top.errorCorrectionLevel
 
@@ -535,6 +536,7 @@ sub make()
 	end if
 
 	initData(false, getBestMaskPattern())
+	m.top.status = "ready"
 end sub
 
 function isDark(row as integer, col as integer) as boolean
