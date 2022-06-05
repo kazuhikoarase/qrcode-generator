@@ -9,5 +9,8 @@ major_version=1
 minor_version=0
 build_version=0
 
+## Write all code for fhd, let Roku scale it down
+ui_resolutions=fhd
+
 ## Can channel work without network access?
 network_not_required=1
