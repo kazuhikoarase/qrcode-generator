@@ -1,6 +1,6 @@
 sub init()
 	m.top.observeFieldScoped("qrcode", "onQRCodeChanged", ["width", "height", "padding"])
-	m.top.observeFieldScoped("text", "onTextChanged", ["width", "height", "padding"])
+	m.top.observeFieldScoped("text", "onTextChanged")
 end sub
 
 sub onQRCodeChanged(msg as object)
@@ -16,8 +16,6 @@ sub onQRCodeChanged(msg as object)
 end sub
 
 sub onTextChanged(msg as object)
-	params = msg.getInfo()
-
 	qrcode = createObject("roSGNode", "QRCode")	
 	qrcode.callFunc("addData", msg.getData())
 	qrcode.callFunc("make")
@@ -95,9 +93,12 @@ function toPNG(qrcode as object, params as object) as string
 			byte = byte << 1
 			bits += 1
 			if bits >= 8
-				bits = 0
 				ba[byteIndex] = byte
-				byteIndex++
+				byteIndex += 1
+				' bslint gets confused by these two
+				' bs:disable-next-line
+				bits = 0
+				' bs:disable-next-line
 				byte = 0
 			end if
 
