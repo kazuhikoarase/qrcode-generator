@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="QRPoster" extends="Poster">
+	<script type="text/brightscript" uri="QRPoster.brs" />
+
+	<interface>
+		<!-- Set to number of pixels to leave on the sides -->
+		<field id="padding" type="integer" value="0" />
+
+		<!--
+			Usage:
+
+			1. Set `width` and `height` to desired values.
+			2. Set `padding` if you want to leave a "frame" around QRCode image.
+			   QRPoster will keep size as specified through `width` and `height`.
+			3. Set one of:
+			3.a. `qrcode` to pre-made QRCode object,
+			3.b. `text` to a value that you want QRPoster to generate QRCode for.
+
+			Setting `text` will also set `qrcode` to a new QRCode object.
+		-->
+
+		<!-- Set to QRCode object to to show new image -->
+		<field id="qrcode" type="node" />
+
+		<!-- Set to a new value to replace `qrcode` and show new image -->
+		<field id="text" type="string" value="" />
+	</interface>
+</component>
