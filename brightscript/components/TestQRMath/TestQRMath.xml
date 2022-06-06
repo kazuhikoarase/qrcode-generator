@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+	This is just for testing stuff that's private for QRCode!
+-->
+<component name="TestQRMath">
+	<script type="text/brightscript" uri="TestQRMath.brs" />
+	<script type="text/brightscript" uri="pkg:/components/QRCode/QRCode.exports.brs" />
+
+	<interface>
+		<!-- Private, exported for testing -->
+		<function name="glog" />
+		<function name="gexp" />
+	</interface>
+</component>

@@ -78,15 +78,3 @@ sub init()
 	addData(m.top.sourceText)
 	make()
 end sub
-
-' -------- exports: QRMath ---------------------------------------------------
-
-' @private
-function qrmath_glog(n as integer) as dynamic
-	return QRMath().glog(n)
-end function
-
-' @private
-function qrmath_gexp(n as integer) as integer
-	return QRMath().gexp(n)
-end function
