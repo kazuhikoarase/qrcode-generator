@@ -1,6 +1,11 @@
 #
-#  Copyright (c) 2022 Marcin Konicki (https://ahwayakchih.neoni.net)
-#  Copyright (c) 2009 Kazuhiko Arase (https://github.com/kazuhikoarase/qrcode-generator)
+# Copyright (c) 2022 Marcin Konicki (https://ahwayakchih.neoni.net)
+# Copyright (c) 2009 Kazuhiko Arase (https://github.com/kazuhikoarase/qrcode-generator)
+#
+# Port of qrcode-generator project (JS implementation) to BrightScript.
+#
+# The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED
+# http://www.denso-wave.com/qrcode/faqpatent-e.html
 #
 
 ## Channel Details
