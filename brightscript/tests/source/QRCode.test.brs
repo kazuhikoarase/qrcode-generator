@@ -1,7 +1,7 @@
 function main(args as Object) as Object
 	return roca(args).describe("QRCode", sub()
 		m.it("should generate correct UTF8 text data", sub()
-			qrcode = createObject("roSGNode", "QRCodeTest")
+			qrcode = createObject("roSGNode", "TestQRCode")
 
 			m.assert.equal(qrcode.moduleCount, 29, "module count is invalid")
 

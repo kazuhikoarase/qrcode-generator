@@ -4,17 +4,17 @@ sub init()
 	timer = CreateObject("roTimespan")
 	timer.mark()
 
-	m.QRCode = createObject("roSGNode", "QRCodeTest")
+	m.QRCode = createObject("roSGNode", "TestQRCode")
 
 	print "Creating QRCode took:", timer.TotalMilliseconds().ToStr();"ms"
 
 	timer.mark()
 
-	m.QRPosterTest = m.top.findNode("QRPosterTest")
-	m.QRPosterTest.qrcode = m.QRCode
+	m.QRPoster = m.top.findNode("TestQRPoster")
+	m.QRPoster.qrcode = m.QRCode
 
 	print "Creating PNG took:", timer.TotalMilliseconds().ToStr();"ms"
-	print "QRCode image created as:", m.QRPosterTest.uri
+	print "QRCode image created as:", m.QRPoster.uri
 
 	timer.mark()
 

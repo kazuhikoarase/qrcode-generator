@@ -547,15 +547,3 @@ function isDark(row as integer, col as integer) as boolean
 
 	return m.modules[row][col] = true
 end function
-
-' -------- exports: QRMath ---------------------------------------------------
-
-' @private
-function qrmath_glog(n as integer) as dynamic
-	return QRMath().glog(n)
-end function
-
-' @private
-function qrmath_gexp(n as integer) as integer
-	return QRMath().gexp(n)
-end function

@@ -1,7 +1,7 @@
 namespace tests
 
-	@suite("QRCodeTests")
-	class QRCodeTests extends Rooibos.BaseTestSuite
+	@suite("TestQRCodes")
+	class TestQRCodes extends Rooibos.BaseTestSuite
 
 		'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		@describe("QRCode")
@@ -17,7 +17,7 @@ namespace tests
 
 		@it("creates correct QRCode data")
 		function _()
-			qrcode = createObject("roSGNode", "QRCodeTest")
+			qrcode = createObject("roSGNode", "TestQRCode")
 
 			m.assertEqual(qrcode.moduleCount, 29)
 

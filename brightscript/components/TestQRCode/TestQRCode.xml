@@ -5,8 +5,8 @@
 	we want to have exact same test data for both.
 	It's less error-prone to keep it in a single place.
 -->
-<component name="QRCodeTest" extends="QRCode">
-	<script type="text/brightscript" uri="QRCodeTest.brs" />
+<component name="TestQRCode" extends="QRCode">
+	<script type="text/brightscript" uri="TestQRCode.brs" />
 
 	<interface>
 		<!-- Read-only! -->
@@ -14,5 +14,9 @@
 		<field id="correctHalfWidth" type="string" />
 		<field id="correctHalfWidthWithoutBorder" type="string" />
 		<field id="correctFullWidth" type="string" />
+
+		<!-- Private, exported for testing -->
+		<function name="qrmath_glog" />
+		<function name="qrmath_gexp" />
 	</interface>
 </component>

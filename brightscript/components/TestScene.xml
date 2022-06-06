@@ -2,7 +2,7 @@
 <component name="TestScene" extends="Scene">
 	<script type="text/brightscript" uri="TestScene.brs" />
 	<children>
-		<QRPoster id="QRPosterTest"
+		<QRPoster id="TestQRPoster"
 			width="700"
 			height="700"
 			padding="20"

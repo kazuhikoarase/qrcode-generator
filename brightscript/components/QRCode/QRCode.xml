@@ -17,9 +17,5 @@
 		<!-- Public -->
 		<function name="addData" /><!-- params: data string, typeName (NUMERIC, ALPHANUMERIC, BYTE or KANJI) string -->
 		<function name="make" />
-
-		<!-- Private, exported for testing -->
-		<function name="qrmath_glog" />
-		<function name="qrmath_gexp" />
 	</interface>
 </component>
