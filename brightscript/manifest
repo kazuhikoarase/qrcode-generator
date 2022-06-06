@@ -3,7 +3,7 @@
 #  Copyright (c) 2009 Kazuhiko Arase (https://github.com/kazuhikoarase/qrcode-generator)
 #
 
-##   Channel Details
+## Channel Details
 title=QRCode Generator
 major_version=1
 minor_version=0
@@ -14,3 +14,13 @@ ui_resolutions=fhd
 
 ## Can channel work without network access?
 network_not_required=1
+
+## Enable optimizations of newer versions
+rsg_version=1.2
+
+## Make it a downloadable component library?
+# This disables launching the channel with test scene
+#sg_component_libs_provided=QRCode
+
+# This hides channel from default menu
+#hidden=1
