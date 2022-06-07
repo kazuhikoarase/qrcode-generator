@@ -2,7 +2,7 @@
 <!--
 	This is just for testing stuff that's private for QRCode!
 -->
-<component name="TestQRMath">
+<component name="TestQRMath" extends="Node">
 	<script type="text/brightscript" uri="TestQRMath.brs" />
 	<script type="text/brightscript" uri="pkg:/components/QRCode/QRCode.exports.brs" />
 
