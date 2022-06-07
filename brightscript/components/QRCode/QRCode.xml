@@ -8,14 +8,13 @@
 		<field id="errorCorrectionLevel" type="string" value="Q" /><!-- Can be one of: 'L','M','Q','H' -->
 
 		<!-- Read-only! -->
-		<field id="modules" type="array" />
-		<field id="moduleCount" type="integer" value="0" />
+		<field id="modules" type="array" /><!-- after call to `make`, this will hold Array of Arrays of booleans -->
+		<field id="moduleCount" type="integer" value="0" /><!-- number of modules on each side, e.g., 11 means 11x11 -->
 		<field id="status" type="string" value="init" /><!-- can be one of: 'init', 'loading', 'ready' -->
-
-		<function name="isDark" /><!-- row integer, col integer -->
 
 		<!-- Public -->
 		<function name="addData" /><!-- params: data string, typeName (NUMERIC, ALPHANUMERIC, BYTE or KANJI) string -->
-		<function name="make" />
+		<function name="make" /><!-- call AFTER all data is added, to generate modules -->
+		<function name="isDark" /><!-- row integer, col integer, returns boolean -->
 	</interface>
 </component>

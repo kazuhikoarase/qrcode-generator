@@ -254,6 +254,7 @@ sub init()
 	]
 end sub
 
+' @private
 function getRsBlockTable(typeNumber as integer, errorCorrectionLevel as string) as object
 	offset = m.ERROR_CORRECTION_LEVEL_OFFSETS[errorCorrectionLevel]
 	if offset = invalid

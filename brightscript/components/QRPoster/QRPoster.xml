@@ -3,9 +3,6 @@
 	<script type="text/brightscript" uri="QRPoster.brs" />
 
 	<interface>
-		<!-- Set to number of pixels to leave on the sides -->
-		<field id="padding" type="integer" value="0" />
-
 		<!--
 			Usage:
 
@@ -19,10 +16,13 @@
 			Setting `text` will also set `qrcode` to a new QRCode object.
 		-->
 
-		<!-- Set to QRCode object to to show new image -->
+		<!-- Set to minimum number of pixels to be left on the sides -->
+		<field id="padding" type="integer" value="0" />
+
+		<!-- Set QRCode object to show as a new image -->
 		<field id="qrcode" type="node" />
 
-		<!-- Set to a new value to replace `qrcode` and show new image -->
+		<!-- Set to a new value to replace `qrcode` and show a new image -->
 		<field id="text" type="string" value="" />
 	</interface>
 </component>

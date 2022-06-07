@@ -3,6 +3,7 @@ sub init()
 	m.top.observeFieldScoped("text", "onTextChanged")
 end sub
 
+' @private
 sub onQRCodeChanged(msg as object)
 	qrcode = msg.getData()
 
@@ -15,6 +16,7 @@ sub onQRCodeChanged(msg as object)
 	end if
 end sub
 
+' @private
 sub onTextChanged(msg as object)
 	qrcode = createObject("roSGNode", "QRCode")	
 	qrcode.callFunc("addData", msg.getData())

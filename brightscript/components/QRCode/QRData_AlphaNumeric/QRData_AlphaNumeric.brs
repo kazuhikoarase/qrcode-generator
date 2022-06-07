@@ -50,12 +50,14 @@ sub init()
 	}
 end sub
 
+' @public
 ' @param textual representation of value
 sub setData(data as string)
 	m.data = data
 	m.top.length = data.len()
 end sub
 
+' @public
 ' @param buffer QRBitBuffer
 sub writeToBuffer(buffer as object)
 	i = 0

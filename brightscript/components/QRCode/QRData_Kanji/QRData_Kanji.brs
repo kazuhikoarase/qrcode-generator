@@ -4,12 +4,14 @@ sub init()
 	initUnicodeMap()
 end sub
 
+' @public
 ' @param textual representation of value
 sub setData(data as string)
 	m.bytes = stringToBytes(data)
 	m.top.length = m.bytes.count() \ 2
 end sub
 
+' @public
 ' @param buffer QRBitBuffer
 sub writeToBuffer(buffer as object)
 	i = 0

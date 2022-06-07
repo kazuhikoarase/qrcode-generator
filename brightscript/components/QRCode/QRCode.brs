@@ -12,13 +12,13 @@ sub init()
 	m.errorCorrectionLevel = m.top.errorCorrectionLevel
 end sub
 
-' -------- exports: QRCode ---------------------------------------------------
-
+' @private
 sub initModuleCount(typeNumber as integer)
 	m.moduleCount = typeNumber * 4 + 17
 	m.top.moduleCount = m.moduleCount
 end sub
 
+' @private
 sub initData(isTest as boolean, maskPattern)
 	initModuleCount(m.typeNumber)
 	initModules(m.moduleCount)
@@ -41,6 +41,7 @@ sub initData(isTest as boolean, maskPattern)
 	m.top.modules = m.modules
 end sub
 
+' @private
 sub initModules(moduleCount as integer)
 	m.modules = createObject("roArray", moduleCount, false)
 	for rowIndex = 0 to moduleCount - 1 step 1
@@ -52,6 +53,7 @@ sub initModules(moduleCount as integer)
 	end for
 end sub
 
+' @private
 sub setupPositionProbePattern(startRow as integer, startCol as integer)
 	moduleCount = m.moduleCount
 	modules = m.modules
@@ -77,6 +79,7 @@ sub setupPositionProbePattern(startRow as integer, startCol as integer)
 	end for
 end sub
 
+' @private
 sub setupPositionAdjustPattern()
 	positions = QRUtil().getPatternPosition(m.typeNumber)
 	modules = m.modules
@@ -100,6 +103,7 @@ sub setupPositionAdjustPattern()
 	end for
 end sub
 
+' @private
 sub setupTimingPattern()
 	moduleCount = m.moduleCount
 	modules = m.modules
@@ -119,6 +123,7 @@ sub setupTimingPattern()
 	end for
 end sub
 
+' @private
 sub setupTypeInfo(isTest as boolean, maskPattern)
 	moduleCount = m.moduleCount
 	modules = m.modules
@@ -158,6 +163,7 @@ sub setupTypeInfo(isTest as boolean, maskPattern)
 	columns[8] = (isTest = false)
 end sub
 
+' @private
 sub setupTypeNumber(isTest as boolean)
 	bits = QRUtil().getBCHTypeNumber(m.typeNumber)
 	moduleCount = m.moduleCount
@@ -176,6 +182,7 @@ sub setupTypeNumber(isTest as boolean)
 	end for
 end sub
 
+' @private
 function createBytes(bitBuffer as object, rsBlocks as object) as object
 	offset = 0
 
@@ -251,6 +258,7 @@ function createBytes(bitBuffer as object, rsBlocks as object) as object
 	return result
 end function
 
+' @private
 function createBitBufferFromDataNodes(typeNumber as integer, dataNodes as object) as object
 	bitBuffer = QRBitBuffer()
 
@@ -264,6 +272,7 @@ function createBitBufferFromDataNodes(typeNumber as integer, dataNodes as object
 	return bitBuffer
 end function
 
+' @private
 function createData(typeNumber as integer, errorCorrectionLevel as string, dataNodes as object) as object
 	rsBlocks = QRRSBlock().getRSBlocks(typeNumber, errorCorrectionLevel)
 	if rsBlocks = invalid
@@ -311,6 +320,7 @@ function createData(typeNumber as integer, errorCorrectionLevel as string, dataN
 	return createBytes(bitBuffer, rsBlocks)
 end function
 
+' @private
 sub mapData(dataBytes as object, maskPattern)
 	moduleCount = m.moduleCount
 	modules = m.modules
@@ -360,6 +370,7 @@ sub mapData(dataBytes as object, maskPattern)
 	end for
 end sub
 
+' @public
 function addData(data as string, typeName = "BYTE" as string) as boolean
 	if typeName = invalid or typeName = ""
 		typeName = "BYTE"
@@ -384,6 +395,7 @@ function addData(data as string, typeName = "BYTE" as string) as boolean
 	return true
 end function
 
+' @private
 function getLostPoint() as float
 	moduleCount = m.moduleCount
 	modules = m.modules
@@ -485,6 +497,7 @@ function getLostPoint() as float
 	return lostPoint
 end function
 
+' @private
 function getBestMaskPattern() as integer
 	minLostPoint = 0
 	bestPattern = 0
@@ -503,6 +516,7 @@ function getBestMaskPattern() as integer
 	return bestPattern
 end function
 
+' @private
 sub setBestTypeNumber()
 	for typeNumber = 1 to 40 step 1
 		rsBlocks = QRRSBlock().getRSBlocks(typeNumber, m.errorCorrectionLevel)
@@ -526,6 +540,7 @@ sub setBestTypeNumber()
 	end if
 end sub
 
+' @public
 sub make()
 	m.top.status = "loading"
 	m.typeNumber = m.top.typeNumber
@@ -539,6 +554,7 @@ sub make()
 	m.top.status = "ready"
 end sub
 
+' @public
 function isDark(row as integer, col as integer) as boolean
 	if row < 0 or m.moduleCount <= row or col < 0 or m.moduleCount <= col
 		print "ERROR: invalid coords passed to isDark", row, col

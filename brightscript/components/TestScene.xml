@@ -2,6 +2,7 @@
 <component name="TestScene" extends="Scene">
 	<script type="text/brightscript" uri="TestScene.brs" />
 	<children>
+		<!-- This is example use of QRPoster: show QRCode centered on screen -->
 		<QRPoster id="TestQRPoster"
 			width="700"
 			height="700"

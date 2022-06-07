@@ -17,14 +17,15 @@ build_version=0
 ## Write all code for fhd, let Roku scale it down
 ui_resolutions=fhd
 
-## Can channel work without network access?
+## Lib does not need network access, nor does our test scene example
 network_not_required=1
 
 ## Enable optimizations of newer versions
 rsg_version=1.2
 
-## Make it a downloadable component library?
-# This disables launching the channel with test scene
+## TODO: Make it a downloadable component library?
+# This disables launching the channel with test scene,
+# so uncomment it only when packaging as a lib.
 #sg_component_libs_provided=QRCode
 
 # This hides channel from default menu

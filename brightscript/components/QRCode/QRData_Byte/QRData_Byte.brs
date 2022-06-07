@@ -2,12 +2,14 @@ sub init()
 	m.top.mode = m.top.MODE_BYTE
 end sub
 
+' @public
 ' @param textual representation of value
 sub setData(data as string)
 	m.bytes = stringToBytes(data)
 	m.top.length = m.bytes.count()
 end sub
 
+' @public
 ' @param buffer QRBitBuffer
 sub writeToBuffer(buffer as object)
 	for each byte in m.bytes
