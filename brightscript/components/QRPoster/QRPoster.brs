@@ -1,5 +1,5 @@
 sub init()
-	m.top.observeFieldScoped("qrcode", "onQRCodeChanged", ["width", "height", "padding"])
+	m.top.observeFieldScoped("qrcode", "onQRCodeChanged", ["width", "height", "loadWidth", "loadHeight", "loadPadding"])
 	m.top.observeFieldScoped("text", "onTextChanged")
 end sub
 
@@ -27,22 +27,22 @@ end sub
 
 ' @private
 function toPNG(qrcode as object, params as object) as string
-	if params = invalid or params.width = invalid or params.height = invalid
+	if params = invalid or params.loadWidth = invalid or params.loadHeight = invalid
 		m.top.loadStatus = "failed"
 		return ""
 	end if
 
-	padding = params.padding
+	padding = params.loadPadding
 	if padding = invalid
 		padding = 0
 	end if
 
 	' Calculate sizes and coords
 	moduleCount = qrcode.moduleCount
-	maxSize = fix(params.width - padding - padding)
+	maxSize = fix(params.loadWidth - padding - padding)
 
-	if params.width > params.height
-		maxSize = fix(params.height - padding - padding)
+	if params.loadWidth > params.loadHeight
+		maxSize = fix(params.loadHeight - padding - padding)
 	end if
 
 	if maxSize < moduleCount
@@ -53,8 +53,8 @@ function toPNG(qrcode as object, params as object) as string
 	cellSize = maxSize \ moduleCount
 	size = cellSize * moduleCount
 	center = size \ 2
-	left = (fix(params.width - padding - padding) \ 2) - center + padding
-	top = (fix(params.height - padding - padding) \ 2) - center + padding
+	left = (fix(params.loadWidth - padding - padding) \ 2) - center + padding
+	top = (fix(params.loadHeight - padding - padding) \ 2) - center + padding
 
 	' Prepare colors
 	white = &Hffffffff
@@ -69,7 +69,12 @@ function toPNG(qrcode as object, params as object) as string
 		params.name = "QRCode"
 	end if
 
-	bitmap = createObject("roBitmap", params)
+	bitmap = createObject("roBitmap", {
+		name: params.name
+		width: params.loadWidth
+		height: params.loadHeight
+		AlphaEnable: params.AlphaEnable
+	})
 	bitmap.clear(white)
 
 	' Gather bytes to use for unique file name
@@ -119,10 +124,19 @@ function toPNG(qrcode as object, params as object) as string
 	fileName = "tmp:/" + digest.process(ba) + ".png"
 
 	' Save bitmap to file
-	pngData = bitmap.getPNG(0, 0, params.width, params.height)
+	pngData = bitmap.getPNG(0, 0, params.loadWidth, params.loadHeight)
 	pngData.writeFile(fileName)
 
 	m.top.uri = fileName
+
+	' Update width and height if they were not set
+	if params.width = 0
+		m.top.width = params.loadWidth
+	end if
+
+	if params.height = 0
+		m.top.height = params.loadHeight
+	end if
 
 	return fileName
 end function

@@ -4,9 +4,9 @@
 	<children>
 		<!-- This is example use of QRPoster: show QRCode centered on screen -->
 		<QRPoster id="TestQRPoster"
-			width="700"
-			height="700"
-			padding="20"
+			loadWidth="700"
+			loadHeight="700"
+			loadPadding="20"
 			translation="[620, 190]" />
 	</children>
 </component>
