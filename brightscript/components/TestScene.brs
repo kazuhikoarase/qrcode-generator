@@ -19,7 +19,8 @@ sub init()
 	timer.mark()
 
 	m.QRPrinter = createObject("roSGNode", "QRPrinter")
-	m.QRPrinter.callFunc("toLog", m.QRCode)
+	m.QRPrinter.qrcode = m.QRCode
+	print m.QRPrinter.qrstring
 
 	print "Printing to console took:", timer.TotalMilliseconds().ToStr();"ms"
 end sub

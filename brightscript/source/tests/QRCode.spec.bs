@@ -23,9 +23,9 @@ namespace tests
 
 			printer = createObject("roSGNode", "QRPrinter")
 
-			m.assertEqual(printer.callFunc("toString", qrcode, 1, 2), qrcode.correctHalfWidth)
-			m.assertEqual(printer.callFunc("toString", qrcode, 1, 0), qrcode.correctHalfWidthWithoutBorder)
-			m.assertEqual(printer.callFunc("toString", qrcode, 2, 2), qrcode.correctFullWidth)
+			m.assertEqual(printer.callFunc("toASCII", qrcode, 1, 2), qrcode.correctHalfWidth)
+			m.assertEqual(printer.callFunc("toASCII", qrcode, 1, 0), qrcode.correctHalfWidthWithoutBorder)
+			m.assertEqual(printer.callFunc("toASCII", qrcode, 2, 2), qrcode.correctFullWidth)
 		end function
 	end class
 

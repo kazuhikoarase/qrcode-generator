@@ -1,32 +1,49 @@
-' @public
-function toString(qrcode as object, cellSize = 1 as integer, margin = 1 as integer) as string
-	return toASCII(qrcode, cellSize, margin)
-end function
-
-' @public
-sub toLog(qrcode as object, cellSize = 1 as integer, margin = 1 as integer)
-	print toString(qrcode, cellSize, margin)
+sub init()
+	m.top.observeFieldScoped("qrcode", "onQRCodeChanged")
+	m.top.observeFieldScoped("text", "onTextChanged")
 end sub
 
 ' @private
-function toASCII(qrcode as object, cellSize as integer, margin as integer) as string
+sub onQRCodeChanged(msg as object)
+	qrcode = msg.getData()
+
+	if qrcode <> invalid
+		if qrcode.status = "ready"
+			m.top.qrstring = toASCII(qrcode, m.top.cellSize, m.top.padding)
+		end if
+	else
+		m.top.qrstring = ""
+	end if
+end sub
+
+' @private
+sub onTextChanged(msg as object)
+	qrcode = createObject("roSGNode", "QRCode")	
+	qrcode.callFunc("addData", msg.getData())
+	qrcode.callFunc("make")
+
+	m.top.qrcode = qrcode
+end sub
+
+' @public
+function toASCII(qrcode as object, cellSize = 1 as integer, padding = 1 as integer) as string
 	if cellSize < 1
 		cellSize = 1
 	end if
 
 	if cellSize < 2
-		return toHalfASCII(qrcode, margin)
+		return toHalfASCII(qrcode, padding)
 	end if
 
 	cellSize -= 1
 
-	if margin < 0
-		margin = cellSize * 2
+	if padding < 0
+		padding = cellSize * 2
 	end if
 
-	size = (qrcode.moduleCount * cellSize) + (margin * 2)
-	min = margin
-	max = size - margin
+	size = (qrcode.moduleCount * cellSize) + (padding * 2)
+	min = padding
+	max = size - padding
 
 	white = String(cellSize, "██")
 	black = String(cellSize, "  ")
@@ -62,16 +79,16 @@ function toASCII(qrcode as object, cellSize as integer, margin as integer) as st
 end function
 
 ' @private
-function toHalfASCII(qrcode as object, margin as integer) as string
+function toHalfASCII(qrcode as object, padding = 1 as integer) as string
 	cellSize = 1
 
-	if margin < 0
-		margin = 2
+	if padding < 0
+		padding = 2
 	end if
 
-	size = (qrcode.moduleCount * cellSize) + (margin * 2)
-	min = margin
-	max = size - margin
+	size = (qrcode.moduleCount * cellSize) + (padding * 2)
+	min = padding
+	max = size - padding
 
 	blocks = {
 		"██": "█"
@@ -80,7 +97,7 @@ function toHalfASCII(qrcode as object, margin as integer) as string
 		"  ": " "
 	}
 
-	blocksLastLineNoMargin = {
+	blocksLastLineNoPadding = {
 		"██": "▀"
 		"█ ": "▀"
 		" █": " "
@@ -110,8 +127,8 @@ function toHalfASCII(qrcode as object, margin as integer) as string
 			end if
 
 			' Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
-			if margin < 1 and y + 1 >= max
-				ascii += blocksLastLineNoMargin[p]
+			if padding < 1 and y + 1 >= max
+				ascii += blocksLastLineNoPadding[p]
 			else
 				ascii += blocks[p]
 			end if
@@ -120,7 +137,7 @@ function toHalfASCII(qrcode as object, margin as integer) as string
 		ascii += NL
 	end for
 
-	if size mod 2 <> 0 and margin > 0
+	if size mod 2 <> 0 and padding > 0
 		return ascii.left(ascii.len() - size - 1) + String(size, "▀")
 	end if
 
