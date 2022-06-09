@@ -1,11 +1,11 @@
 ' BrightScript does not provide bitwise `not`, so we need own implementation
-' "namespaced" to avoid conflicts
+' "namespaced" to avoid potential conflicts
 function qrNOT(a as integer) as integer
 	return &HFFFFFFFF - a
 end function
 
 ' BrightScript does not provide bitwise `xor`, so we need own implementation
-' "namespaced" to avoid conflicts
+' "namespaced" to avoid potential conflicts
 function qrXOR(a as integer, b as integer) as integer
 	return (qrNOT(a and b) and (a or b))
 end function
