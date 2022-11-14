@@ -32,6 +32,7 @@ var create_qrcode = function(text, typeNumber,
   qr.make();
 
 //  return qr.createTableTag();
+//  return qr.createTableTagMin();
 //  return qr.createSvgTag();
   return qr.createImgTag();
 };

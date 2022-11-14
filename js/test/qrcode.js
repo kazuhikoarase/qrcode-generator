@@ -115,4 +115,44 @@ describe('QRCode', function(){
 		assert.strictEqual(qr.createASCII(1, 0), correctTextData2, 'ASCII QRCode of size 1 without margin is incorrect');
 		assert.strictEqual(qr.createASCII(2), correctTextData3, 'ASCII QRCode of size 2 is incorrect');
 	});
+
+  
+	it('should generate correct min HTML <table> data', function(){
+		var sourceText = 'http://www.example.com/ążśźęćńół';
+		var correctTableTagMinData = [
+			'7159: <style> table#qrTbl {border: 0px none; border-collapse: collapse; padding: 0px; background-color: #000000;} table#qrTbl {table-layout: fixed; margin: 8px;} table#qrTbl td {padding: 0px; width:2px; height:2px;}[w] {background-color: #ffffff !important;}</style>',
+			'<table id="qrTbl"><tbody>',
+			'<tr><td/><td/><td/><td/><td/><td/><td/><td w/>',
+			'...',
+			'<td w/><td w/><td w/><td/><td/><td/></tr></tbody></table>'].join('\n');
+
+		var qr = qrcode(-1, 'M');
+		qr.addData(unescape(encodeURI(sourceText)));
+		qr.make();
+		var tableTagMin=qr.createTableTagMin();
+		var out = tableTagMin.length + ': ' + tableTagMin.substring(0,333) + '\n...\n' + tableTagMin.substring(7102);
+    
+		assert.strictEqual(out, correctTableTagMinData, 'TableTag QRCode is incorrect');
+	});
+  
+
+  
+	it('should generate correct HTML <table> data', function(){
+		var sourceText = 'http://www.example.com/ążśźęćńół';
+		var correctTableTagData = [
+			'173580: <table style=" border-width: 0px; border-style: none; border-collapse: collapse; padding: 0px; margin: 8px;"><tbody><tr><td style=" border-width: 0px; border-style: none; border-collapse: collapse; padding: 0px; margin: 0px; width: 2px; height: 2px; background-color: #000000;"/><td style=" border-width: 0px; border-style: none; border-collapse: collapse; padding: 0px; margin: 0px; width: 2px; height: 2px; background-color: #000000;"/><td style=" border-width: 0px; border-style: none; border-collapse:',
+			'...',
+			'<td style=" border-width: 0px; border-style: none; border-collapse: collapse; padding: 0px; margin: 0px; width: 2px; height: 2px; background-color: #ffffff;"/><td style=" border-width: 0px; border-style: none; border-collapse: collapse; padding: 0px; margin: 0px; width: 2px; height: 2px; background-color: #000000;"/><td style=" border-width: 0px; border-style: none; border-collapse: collapse; padding: 0px; margin: 0px; width: 2px; height: 2px; background-color: #000000;"/><td style=" border-width: 0px; border-style: none; border-collapse: collapse; padding: 0px; margin: 0px; width: 2px; height: 2px; background-color: #000000;"/></tr></tbody></table>'].join('\n');
+
+		var qr = qrcode(-1, 'M');
+		qr.addData(unescape(encodeURI(sourceText)));
+		qr.make();
+		var tableTag=qr.createTableTag();
+		var out2 = tableTag.length + ': ' + tableTag.substring(0,505) + '\n...\n' + tableTag.substring(172923);
+    
+		assert.strictEqual(out2, correctTableTagData, 'TableTag QRCode is incorrect');
+	});
+  
+
+
 });
