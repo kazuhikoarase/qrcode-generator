@@ -1,12 +1,11 @@
 import { QR } from "./QR.js";
 
-export const encodeImageData = (code, r = 3) => {
+export const encodeImageData = (code, r = 3, margin = 4) => {
   const data = QR.encode(code);
   const iw = data.length;
-  const w = 4;
   //const cw = Math.min(document.body.clientWidth, 600);
   //const r = 3; // Math.floor(cw / (iw + w * 2)) || 1;
-  const qw = (iw + w * 2) * r;
+  const qw = (iw + margin * 2) * r;
   
   const idata = new Uint8ClampedArray(qw * qw * 4);
   for (let i = 0; i < idata.length / 4; i++) {
@@ -19,8 +18,8 @@ export const encodeImageData = (code, r = 3) => {
     for (let j = 0; j < iw; j++) {
       const c = data[i][j] ? 0 : 255;
       for (let k = 0; k < r * r; k++) {
-        const x = (i + w) * r + Math.floor(k / r);
-        const y = (j + w) * r + (k % r);
+        const x = (i + margin) * r + Math.floor(k / r);
+        const y = (j + margin) * r + (k % r);
         idata[(x + y * qw) * 4] = c;
         idata[(x + y * qw) * 4 + 1] = c;
         idata[(x + y * qw) * 4 + 2] = c;
@@ -33,10 +32,13 @@ export const encodeImageData = (code, r = 3) => {
 };
 
 class QRCode extends HTMLElement {
-  constructor(value) {
+  constructor(value, pixelsize, margin) {
     super();
     value = this.getAttribute("value") || value;
+    this.pixelsize = pixelsize;
+    this.margin = margin;
     this.canvas = document.createElement("canvas");
+    this.canvas.style.imageRendering = "pixelated";
     this.g = this.canvas.getContext("2d");
     this.appendChild(this.canvas);
 
@@ -48,7 +50,7 @@ class QRCode extends HTMLElement {
     }
   }
   set value(value) {
-    const imgdata = encodeImageData(value);
+    const imgdata = encodeImageData(value, this.pixelsize, this.margin);
     this.canvas.width = this.canvas.height = imgdata.width;
     this.g.putImageData(imgdata, 0, 0);
   }
