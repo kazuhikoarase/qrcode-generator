@@ -119,13 +119,13 @@ var create_qrcode = function (text, typeNumber, cellsize, padding, errorCorrecti
 				downloadType = "text/plain";
 				downloadData = qr.createASCII(cellsize, padding);
 				showLength(downloadData.length);
-				return "<pre style='color: " + fg + "; background: " + bg + ";'>" + downloadData + "</pre>";
+				return "<pre style='color: " + fg + "; background: " + bg + "; font-family: monospace;'>" + downloadData + "</pre>";
 			case "ascii-inv":
 				downloadFileName = "qr.txt";
 				downloadType = "text/plain";
 				downloadData = qr.createASCII(cellsize, padding, true);
 				showLength(downloadData.length);
-				return "<pre style='color: " + fg + "; background: " + bg + ";'>" + downloadData + "</pre>";
+				return "<pre style='color: " + fg + "; background: " + bg + "; font-family: monospace;'>" + downloadData + "</pre>";
 			case "table":
 				downloadFileName = "qr.html";
 				downloadType = "text/html";
