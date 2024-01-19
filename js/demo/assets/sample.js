@@ -34,11 +34,9 @@ var create_qrcode = function(text, typeNumber,
   qr.addData(text, mode);
   qr.make();
 
-  console.log(qr.createASCII() );
-
 //  return qr.createTableTag();
-  return qr.createSvgTag();
-//  return qr.createImgTag();
+//  return qr.createSvgTag();
+  return qr.createImgTag();
 };
 
 var update_qrcode = function() {
