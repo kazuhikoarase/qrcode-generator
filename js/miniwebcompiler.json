@@ -1,0 +1,8 @@
+{
+  "projectName": "qrcode-generator",
+  "files": [
+    {
+      "name": "qrcode.js"
+    }
+  ]
+}
