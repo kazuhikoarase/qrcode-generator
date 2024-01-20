@@ -1,0 +1,8 @@
+<body>
+<script type="module">
+import { QRCode } from "./qr-code.js";
+
+const bin = new Uint8Array([1, 2, 3]);
+document.body.appendChild(new QRCode(bin));
+
+</script>

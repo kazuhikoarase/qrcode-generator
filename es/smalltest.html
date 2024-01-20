@@ -1,0 +1,10 @@
+<body>
+<script type="module">
+import { QRCode } from "./qr-code.js";
+
+const data = "https://fukuno.jig.jp/";
+document.body.appendChild(new QRCode(data));
+document.body.appendChild(new QRCode(data, 2));
+document.body.appendChild(new QRCode(data, 1));
+
+</script>
