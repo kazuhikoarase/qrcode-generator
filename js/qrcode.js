@@ -492,6 +492,42 @@ var qrcode = function() {
       return qrHtml;
     };
 
+  
+    _this.createTableTagMin = function(cellSize, margin) {
+      //AK 2022-11-14: Minimize html table cell to '<td/>' and '<td w/>' - almost 159/6=26.5 times smaller HTML.
+      //Auto-conversion in innerHTML=  :...<td></td> <td w=""></td>...
+      //  could be reverted with: .replace(/<td(( w)="")?><\/td>/g,'<td$2/>')
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<style>'+
+        ' table#qrTbl {border: 0px none; border-collapse: collapse; padding: 0px; background-color: #000000;}'+
+        ' table#qrTbl {table-layout: fixed; margin: ' + margin + 'px;}'+
+        ' table#qrTbl td {padding: 0px; width:' + cellSize + 'px;'+' height:' + cellSize + 'px;}'+
+        '[w] {background-color: #ffffff !important;}'+
+        '</style>\n'+
+        '<table id="qrTbl"><tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '\n<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += _this.isDark(r, c)? '<td/>' : '<td w/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody></table>';
+    
+      return qrHtml;
+    };
+
+
     _this.createSvgTag = function(cellSize, margin, alt, title) {
 
       var opts = {};
