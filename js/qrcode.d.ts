@@ -28,7 +28,7 @@ type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H';
 type Mode = 'Numeric' | 'Alphanumeric' | 'Byte' /* Default */ | 'Kanji';
 
 interface QRCodeFactory {
-  (typeNumber: TypeNumber, errorCorrectionLevel: ErrorCorrectionLevel) : QRCode;
+  default(typeNumber: TypeNumber, errorCorrectionLevel: ErrorCorrectionLevel) : QRCode;
   stringToBytes(s: string) : number[];
   stringToBytesFuncs : { [encoding : string] : (s: string) => number[] };
   createStringToBytes(unicodeData: string, numChars: number) :
