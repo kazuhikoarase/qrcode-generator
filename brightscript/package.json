@@ -1,0 +1,22 @@
+{
+  "name": "test-brightscript-qrcode-generator",
+  "version": "1.0.0",
+  "description": "Test BrightScript port of QRCode Generator",
+  "scripts": {
+    "test": "roca"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kazuhikoarase/qrcode-generator/brightscript"
+  },
+  "keywords": [
+    "roku",
+    "brightscript",
+    "qrcode"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@hulu/roca": "^0.25.0",
+    "brs": "^0.43.0"
+  }
+}

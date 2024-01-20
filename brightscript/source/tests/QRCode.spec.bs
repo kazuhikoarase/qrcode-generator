@@ -1,0 +1,32 @@
+namespace tests
+
+	@suite("TestQRCodes")
+	class TestQRCodes extends Rooibos.BaseTestSuite
+
+		'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		@describe("QRCode")
+		'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+		@it("is an QRCode instance")
+		function _()
+			qrcode = createObject("roSGNode", "QRCode")
+
+			m.assertNotInvalid(qrcode)
+			m.assertEqual(qrcode.isSubtype("QRCode"), true)
+		end function
+
+		@it("creates correct QRCode data")
+		function _()
+			qrcode = createObject("roSGNode", "TestQRCode")
+
+			m.assertEqual(qrcode.moduleCount, 29)
+
+			printer = createObject("roSGNode", "QRPrinter")
+
+			m.assertEqual(printer.callFunc("toASCII", qrcode, 1, 2), qrcode.correctHalfWidth)
+			m.assertEqual(printer.callFunc("toASCII", qrcode, 1, 0), qrcode.correctHalfWidthWithoutBorder)
+			m.assertEqual(printer.callFunc("toASCII", qrcode, 2, 2), qrcode.correctFullWidth)
+		end function
+	end class
+
+end namespace
