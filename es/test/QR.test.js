@@ -76,3 +76,27 @@ Deno.test("multi chunks", () => {
   const data2 = QR.encode(["ABC100029130904930913094", bin], null, null, ["Alphanumeric", "Byte"]);
   t.assertEquals(data2.length, 25);
 });
+Deno.test("encode Numeric by Uint8Array", () => {
+  const s = new TextEncoder().encode("12345678901234567890123456789012345678901");
+  const data = QR.encode(s);
+  t.assertEquals(qrDetectMode(s), "Numeric");
+  t.assertEquals(data.length, 21);
+});
+Deno.test("encode Alphanumeric by Uint8Array", () => {
+  const s = new TextEncoder().encode("HIHIHIHIHIHIHIHIHIHIHIHIH");
+  const data = QR.encode(s);
+  t.assertEquals(qrDetectMode(s), "Alphanumeric");
+  t.assertEquals(data.length, 21);
+});
+Deno.test("encode Byte by Uint8Array", () => {
+  const s = new TextEncoder().encode("hIHIHIHIHIHIHIHIHIHIHIHIH");
+  const data = QR.encode(s);
+  t.assertEquals(qrDetectMode(s), "Byte");
+  t.assertEquals(data.length, 25);
+});
+Deno.test("encode Byte by Uint8Array", () => {
+  const s = new Uint8Array([1, 2, 3]);
+  const data = QR.encode(s);
+  t.assertEquals(qrDetectMode(s), "Byte");
+  t.assertEquals(data.length, 21);
+});

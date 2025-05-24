@@ -16,7 +16,7 @@
 //
 //---------------------------------------------------------------------
 
-import { qrNumber, qrAlphaNum, qrKanji, qr8BitByte, qrDetectMode } from "./qrcodec.js";
+import { qrNumber, qrAlphaNum, qrKanji, qr8BitByte, qrDetectMode, bin2str } from "./qrcodec.js";
 import { QRMode } from "./QRMode.js";
 
 var qrcode = function() {
@@ -388,6 +388,7 @@ var qrcode = function() {
     };
 
     _this.addData = function(data, mode) {
+      data = bin2str(data);
 
       mode = mode || 'Byte';
 
@@ -1644,4 +1645,3 @@ var qrcode = function() {
 }();
 
 export { qrcode, qrDetectMode };
-

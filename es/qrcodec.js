@@ -1,5 +1,16 @@
 import { QRMode } from "./QRMode.js";
 
+export const bin2str = (data) => {
+  if (data instanceof Uint8Array) {
+    const s = [];
+    for (let i = 0; i < data.length; i++) {
+      s[i] = String.fromCharCode(data[i]);
+    }
+    data = s.join("");
+  }
+  return data;
+};
+
 const stringToBytes = (s) => {
   const bytes = [];
   if (typeof s == "string") {
@@ -238,6 +249,7 @@ const qrCheck = (func, s) => {
 };
 
 const qrDetectMode = (s) => {
+  s = bin2str(s);
   if (qrCheck(qrNumber, s)) {
     return "Numeric";
   }
