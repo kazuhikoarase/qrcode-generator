@@ -5,12 +5,10 @@
     <script type="module">
 
 import { runTests } from '@web/test-runner-mocha';
-import { expect } from '@open-wc/testing';
-
-import { overview } from './qrcode.js';
+import { overview as test } from './qrcode-test-impl.js';
 
 runTests(async () => {
-  overview(qrcode);
+  test(qrcode);
 });
 
     </script>

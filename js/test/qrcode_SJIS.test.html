@@ -7,35 +7,10 @@
     <script type="module">
 
 import { runTests } from '@web/test-runner-mocha';
-import { expect } from '@open-wc/testing';
-import { capture } from './capture.js';
+import { sjis as test } from './qrcode-test-impl.js';
 
 runTests(async () => {
-  describe('QRCode', function(){
-    it('correct qr', function(){
-
-      let s = '';
-      s += 'data:image/gif;base64,R0lGODdhUgBSAIAAAAAAAP///ywAAAAAUgBSAAAC/4yPqcvtD6OctN';
-      s += 'qLs968+w+G4kiW5mkC6sqyhsq4ATyvUIvbU56/QKyjyRw8HIUG9CGKv4Ow6XsSoRHkQuosLptWmV';
-      s += 'XxfTy9XJ2ytuVtz0b0rkyOUrHyNhsepN7w2Hb47ldWJ/g2CJiXVBN4SFfFRyh3BvbY9yjpaOgWqZ';
-      s += 'kw1nKX+dcgyqjXiahoSsq5N5UJVBm2ujrJVAnqdptrS3vKi6sbTNlzEpc61YtSSzh0ZTbSbJe1Cc';
-      s += 's8N3z0LH2IbL2W2rzH9L3MPYpK7Tg+7RxrmgZ5/NbF+57lXt0oEV3fbb6sL4MsbfHWXQplL1s5dv';
-      s += 'TUsIMX0JU8Y6Ui7uIXTgyeTf/0Bln01PDZvmvwcE3yiO2eSEwPJ8b75tDhK5a6UEpr9OuUwl2X6p';
-      s += 'HklJNchY5AUWUsqfLoBaIh/7W7tm0DGVFKORZUlXDexqf+eLY8qO7TuaYXsy6SNzIqUqvpAFpL1j';
-      s += 'Km2GpOIb5kiXLmQk/57o40Cc5b0rloC2OoGRiwwcJVwwZ1efZkYl9Z3S6eKpaqJco72zK2B9KoaL';
-      s += 'g9V/JLJJet4UKBB8r0apOwhtCuiSnuB20rsJVrJ4OdrdtrY4wELdw0HXzvML5DCWdkTrdsINJLr+';
-      s += 'Jzppz6TrLQdXJe3W3xb5UV31bW+Hi86tTgWaPGWvr1wN6tzoHFqeVrUeqhzdFl9tsaMY1JdpYx7F';
-      s += 'kmIG/2TcYdaClJppdGCCGlWV7YDbZdZlhddldI2nkX2WDH3QeVgn8taGBy3i0EnEQpeiYUfdXlVF';
-      s += 'tX16mFni0kziKaVQMqA2SQQg5JZJFGHolkkkouySSSBQAAOw==';
-
-      const qr = qrcode(4, 'L');
-      qr.addData('あいう', 'Kanji');
-      qr.addData('abcあいう', 'Byte');
-      qr.make();
-      //capture('s', qr.createDataURL() );
-      expect(qr.createDataURL() ).to.equal(s);
-    });
-  });
+  test(qrcode);
 });
 
     </script>
