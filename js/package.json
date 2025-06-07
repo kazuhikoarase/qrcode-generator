@@ -22,9 +22,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "wtr test/*.test.html --node-resolve --coverage"
   },
   "devDependencies": {
-    "mocha": "^5.2.0"
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.20.2"
   }
 }

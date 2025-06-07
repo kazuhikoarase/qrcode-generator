@@ -1,13 +1,14 @@
-var assert = require('assert');
-var qrcode = require('../qrcode.js');
+import { expect } from "@open-wc/testing";
+
+export const overview = function(qrcode) {
 
 describe('QRCode', function(){
 	it('should exist', function(){
-		assert.ok(qrcode);
+		expect(!!qrcode).to.be.true;
 	});
 
 	it('should be a callable function', function(){
-		assert.ok(qrcode instanceof Function);
+		expect(qrcode instanceof Function).to.be.true;
 	});
 
 	it('should generate correct GIF image tag', function(){
@@ -18,7 +19,7 @@ describe('QRCode', function(){
 		qr.addData(unescape(encodeURI(sourceText)));
 		qr.make();
 
-		assert.strictEqual(qr.createImgTag(), correctImgTag);
+		expect(qr.createImgTag() ).to.equal(correctImgTag);
 	});
 
 	it('should generate correct GIF image data', function(){
@@ -29,9 +30,9 @@ describe('QRCode', function(){
 		qr.addData(unescape(encodeURI(sourceText)));
 		qr.make();
 
-		var data = Buffer.from(qr.createDataURL().replace('data:image/gif;base64,', ''), 'base64');
+		var data = qr.createDataURL().replace('data:image/gif;base64,', '');
 
-		assert.strictEqual(data.toString('base64'), correctImgData);
+		expect(btoa(atob(data) ) ).to.equal(correctImgData);
 	});
 
 	it('should generate correct UTF8 text data', function(){
@@ -111,8 +112,10 @@ describe('QRCode', function(){
 		qr.addData(unescape(encodeURI(sourceText)));
 		qr.make();
 
-		assert.strictEqual(qr.createASCII(), correctTextData1, 'ASCII QRCode of size 1 is incorrect');
-		assert.strictEqual(qr.createASCII(1, 0), correctTextData2, 'ASCII QRCode of size 1 without margin is incorrect');
-		assert.strictEqual(qr.createASCII(2), correctTextData3, 'ASCII QRCode of size 2 is incorrect');
+		expect(qr.createASCII() ).to.equal(correctTextData1, 'ASCII QRCode of size 1 is incorrect');
+		expect(qr.createASCII(1, 0) ).to.equal(correctTextData2, 'ASCII QRCode of size 1 without margin is incorrect');
+		expect(qr.createASCII(2) ).to.equal(correctTextData3, 'ASCII QRCode of size 2 is incorrect');
 	});
 });
+
+};

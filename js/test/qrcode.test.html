@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="../qrcode.js"></script>
+    <script type="module">
+
+import { runTests } from '@web/test-runner-mocha';
+import { expect } from '@open-wc/testing';
+
+import { overview } from './qrcode.js';
+
+runTests(async () => {
+  overview(qrcode);
+});
+
+    </script>
+  </head>
+</html>
