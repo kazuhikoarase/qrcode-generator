@@ -294,10 +294,10 @@ export const misc = function(qrcode) {
 
     it('- (for coverage)', function(){
       const qr = qrcode(3, 'H');
-      qr.addData('A\u0020$%*+-./:Z', 'Alphanumeric')
-      qr.addData('1234', 'Numeric')
-      qr.addData('12345', 'Numeric')
-      qr.addData('123456', 'Numeric')
+      qr.addData('A\u0020$%*+-./:Z', 'Alphanumeric');
+      qr.addData('1234', 'Numeric');
+      qr.addData('12345', 'Numeric');
+      qr.addData('123456', 'Numeric');
       qr.make();
       expect(!!qr.createDataURL() ).to.be.true;
     });
