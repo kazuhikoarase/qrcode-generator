@@ -1,5 +1,27 @@
 import { expect } from "@open-wc/testing";
-import { capture } from './capture.js';
+
+
+const limit = 76;
+
+const debug = false;
+
+export const capture = function(name, s) {
+  let code = '';
+  const println = function(s) { code += s + '\n'; };
+  let line = s;
+  println('let ' + name + ' = \'\';');
+  while (line.length > limit) {
+    println(name + ' += \'' + line.substring(0, limit) + '\';');
+    line = line.substring(limit);
+  }
+  if (line.length > 0) {
+    println(name + ' += \'' + line + '\';');
+  }
+  if (debug) {
+    console.log(code);
+  }
+  return s;
+};
 
 export const overview = function(qrcode) {
 
@@ -143,8 +165,7 @@ export const sjis = function(qrcode) {
       qr.addData('あいう', 'Kanji');
       qr.addData('abcあいう', 'Byte');
       qr.make();
-      //capture('s', qr.createDataURL() );
-      expect(qr.createDataURL() ).to.equal(s);
+      expect(capture('s', qr.createDataURL() ) ).to.equal(s);
     });
   });
 };
@@ -180,8 +201,57 @@ export const utf8 = function(qrcode) {
       const qr = qrcode(8, 'L');
       qr.addData('abcあいう👏', 'Byte');
       qr.make();
-      //capture('s', qr.createDataURL() );
-      expect(qr.createDataURL() ).to.equal(s);
+      expect(capture('s', qr.createDataURL() ) ).to.equal(s);
+    });
+  });
+};
+
+export const misc = function(qrcode) {
+  describe('QRCode', function(){
+    it('mixed qr', function(){
+
+      let s = '';
+      s += 'data:image/gif;base64,R0lGODdhWgBaAIAAAAAAAP///ywAAAAAWgBaAAAC/4yPqcvtD6OctN';
+      s += 'qLs968+w+G4kiW5ommHcC2rmu8QDwvLC3TjszXUp8LBG+2Wk/XAL4oRAYx6GwhYUmjr8i8Kp7LKh';
+      s += 'enTXyrWfCYe5Z6reBptxlBq9P0MIIqd+PtZOHbOmbW5Xb3J4j0AziniOh3dBDouHjoVyYZGVW3M1';
+      s += 'l5yTYhh1mkuUbo2QgBt/UpSGXaqoYqxhe12ahUeAuU25eolGYK3Cn8GxtX/EmcvByMbAIXiQvJqn';
+      s += 'LMC707LSvieorlKao3OMyThd19Xd65CpsOBaqoqr0+206/OkT7EMoXTp6/CeCFYm3AGYuWbU9BCw';
+      s += 'QlwcKm65FChxXk7ZHIqNQ/Z//39oW5qC6PRn7S5KWKd/AKulmkMqk0lsheRH0TVxY6p8+STYoiXY';
+      s += 'oraHJgRnzLggLNONEXNWk+NwZkNk/pzHdEf45cmvPbyXQ31b3iyYlhVl1TxyEUabSPwJoh+6Hkxw';
+      s += '4eJbRvqbn7szJtXErNahncNg2hJb7kAJO0yxIrB4EPX5YFiVPvsaQGIdIraXacTsfeeo4q6jWqUL';
+      s += 'Kdh34WR7VjzL/1KDb1TBS2NdZ3n1p1Kfsk3aBs0/bmjAHkwsS3TzsVrQGj1OO4F0lWStk288/CM3';
+      s += 'hm+zhl2eFih2O/nO1rvufUw7dW/g2jRZgeG8ZF/77tevKoP9r3C7/83tmp1+Pbb/uUfx90415hgc';
+      s += 'kHnGrWpcSUgY15l2ByKDXjGyePELbYhAbudJRM3pjzUoMcggVhQ/S5VhmDNFmoImYk5MVihaIIww';
+      s += '17v0knoD/NXahgV8X5uKFm7f3CC46mAVnHiRXKclZoNCI3mlr3gcfjk4Bt9htkYZ2HDGP8GcJafn';
+      s += 'd1qWN6YPoVn5dMQrWamq2leSaUVno0l30iYpUakmNxGV2KlkXGnp7dSamMjKDhJKEtJE5X1UaILm';
+      s += 'giaEZyN4+A0CUk6VWUfnVlNZ5+Cmqooo5KaqmmnopqqqquGkIBADs=';
+
+      const qr = qrcode(5, 'L');
+      qr.addData('012345', 'Numeric');
+      qr.addData('ABC123', 'Alphanumeric');
+      qr.addData('漢字', 'Kanji');
+      qr.addData('abcあいう', 'Byte');
+      qr.make();
+      expect(capture('s', qr.createDataURL() ) ).to.equal(s);
+    });
+
+    it('mixed qr', function(){
+
+      let s = '';
+      s += '<img src="data:image/gif;base64,R0lGODdhQQBBAIAAAAAAAP///ywAAAAAQQBBAAAC/4yP';
+      s += 'qcvtD6KctLYqD9428B9dmwZyRmkyqYdiZ/iQgNyx83vHNq7zeJ3x6YLBIcwGPBZjROVIqFgVpbDp';
+      s += 'c6e6Wl2+bTIX1Tq5WC9FRjuihdSbebJGqtnjL538Dufe27s9sXSXBtdVdwaFiKXY5neoGBfHN5Yo';
+      s += 'sjf3SJnldlkJmRjo0AQGMQl4Cdop11K6aLi6+don+BNL+xrJGkvYYzTK+wucGjxM7FlcWTIIKttq';
+      s += 'ObqqfJo7/dwS7cuczYnwt6ArjKpqfL2iNy6eqZqsuVZzjes8KGyr1629a87t+D7bHI65zp+0D/X2';
+      s += 'qXOUxxRBhe4O7kqob2HEhvbEPBwIrCIehJkYf2n8wuzcMVIbsXXEVIyRwnwoiamMyFLUN1vd5CHS';
+      s += 'JemiSZ0Ma9HkuDNkS3Yre4A89I+lyILOOiQtCtMoUKeu7t2LuS0nvKtQw2ltFO8Tq64WbTpctm0r';
+      s += 'ULMBlwrkSe8nvnRgra6Ny+vrW7u+SPLbS+2pUr91r7gVDI+cwaFuowImcxhn05PGKEo2W3lgIMmT';
+      s += 'dw5GNzI0sQIAOw==" width="65" height="65" alt="a&lt;&gt;&quot;&amp;\'\\z"/>';
+
+      const qr = qrcode(1, 'L');
+      qr.addData('abc');
+      qr.make();
+      expect(capture('s', qr.createImgTag(3, 1, 'a<>"&\'\\z') ) ).to.equal(s);
     });
   });
 };

@@ -8,9 +8,11 @@
 
 import { runTests } from '@web/test-runner-mocha';
 import { sjis as test } from './qrcode-test-impl.js';
+import { misc } from './qrcode-test-impl.js';
 
 runTests(async () => {
   test(qrcode);
+  misc(qrcode);
 });
 
     </script>
