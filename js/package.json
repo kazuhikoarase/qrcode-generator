@@ -1,6 +1,6 @@
 {
   "name": "qrcode-generator",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "description": "QR Code Generator implementation in JavaScript.",
   "author": "Kazuhiko Arase",
   "main": "qrcode.js",
@@ -22,7 +22,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "wtr test/*.test.html --node-resolve --coverage"
+    "test": "wtr"
   },
   "devDependencies": {
     "@open-wc/testing": "^4.0.0",

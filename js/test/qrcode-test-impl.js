@@ -2,8 +2,7 @@ import { expect } from "@open-wc/testing";
 
 
 const limit = 80;
-
-const debug = true;
+const debug = false;
 
 export const capture = function(varName, s) {
   let code = '';
