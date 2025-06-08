@@ -253,5 +253,54 @@ export const misc = function(qrcode) {
       qr.make();
       expect(capture('s', qr.createImgTag(3, 1, 'a<>"&\'\\z') ) ).to.equal(s);
     });
+
+    it('table tag (for coverage)', function(){
+      const qr = qrcode(1, 'L');
+      qr.addData('{TABLE}');
+      qr.make();
+      expect(!!qr.createTableTag() ).to.be.true;
+    });
+
+    it('svg tag (for coverage)', function(){
+      const qr = qrcode(1, 'Q');
+      qr.addData('{SVG}');
+      qr.make();
+      expect(!!qr.createSvgTag() ).to.be.true;
+    });
+
+    it('svg tag by object (for coverage)', function(){
+      const qr = qrcode(1, 'H');
+      qr.addData('{SVG}');
+      qr.make();
+      expect(!!qr.createSvgTag({}) ).to.be.true;
+    });
+
+    it('svg tag by object (for coverage)', function(){
+
+      let count = 0;
+      const context = {
+        fillStyle : '',
+        fillRect : function() {
+          count += 1;
+        },
+      };
+
+      const qr = qrcode(1, 'H');
+      qr.addData('{2d}');
+      qr.make();
+      qr.renderTo2dContext(context);
+      expect(count).to.equal(21 * 21);
+    });
+
+    it('- (for coverage)', function(){
+      const qr = qrcode(3, 'H');
+      qr.addData('A\u0020$%*+-./:Z', 'Alphanumeric')
+      qr.addData('1234', 'Numeric')
+      qr.addData('12345', 'Numeric')
+      qr.addData('123456', 'Numeric')
+      qr.make();
+      expect(!!qr.createDataURL() ).to.be.true;
+    });
+
   });
 };
