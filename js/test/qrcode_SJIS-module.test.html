@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" >
+    <script type="module">
+
+import { runTests } from '@web/test-runner-mocha';
+import { qrcode } from '../qrcode.mjs';
+import { stringToBytes } from '../qrcode_SJIS.mjs';
+import { sjis as test } from './qrcode-test-impl.js';
+
+qrcode.stringToBytes = stringToBytes;
+
+runTests(async () => {
+  test(qrcode);
+});
+
+    </script>
+  </head>
+</html>

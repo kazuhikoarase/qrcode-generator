@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+    <script type="module">
+
+import { runTests } from '@web/test-runner-mocha';
+import { qrcode } from '../qrcode.mjs';
+import { overview as test } from './qrcode-test-impl.js';
+
+runTests(async () => {
+  test(qrcode);
+});
+
+    </script>
+  </head>
+</html>
