@@ -1,25 +1,22 @@
-/// <reference path="OutputStream.ts" />
-'use strict';
-namespace com.d_project.io {
+import OutputStream from './OutputStream';
 
-  /**
+/**
    * ByteArrayOutputStream
    * @author Kazuhiko Arase
    */
-  export class ByteArrayOutputStream extends OutputStream {
+export default class extends OutputStream {
 
-    private bytes : number[] = [];
+    private bytes: number[] = [];
 
     constructor() {
-      super();
+        super();
     }
 
-    public writeByte(b : number) : void {
-      this.bytes.push(b);
+    public writeByte(b: number): void {
+        this.bytes.push(b);
     }
 
-    public toByteArray() : number[] {
-      return this.bytes;
+    public toByteArray(): number[] {
+        return this.bytes;
     }
-  }
 }
