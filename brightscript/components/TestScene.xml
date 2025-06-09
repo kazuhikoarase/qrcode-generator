@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="TestScene" extends="Scene">
+	<script type="text/brightscript" uri="TestScene.brs" />
+	<children>
+		<!-- This is example use of QRPoster: show QRCode centered on screen -->
+		<QRPoster id="TestQRPoster"
+			loadWidth="700"
+			loadHeight="700"
+			loadPadding="20"
+			translation="[620, 190]" />
+	</children>
+</component>

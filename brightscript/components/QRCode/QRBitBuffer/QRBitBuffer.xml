@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="QRBitBuffer" extends="Node">
+	<script type="text/brightscript" uri="QRBitBuffer.brs" />
+
+	<interface>
+		<function name="getBuffer" /><!-- @return ByteArray -->
+		<function name="getBit" /><!-- @param index integer, @return integer 1 or 0 -->
+		<function name="getLengthInBits" /><!-- @return size in bits -->
+		<function name="put" /><!-- @param num integer, length integer -->
+		<function name="pushBit" /><!-- @param bit boolean -->
+	</interface>
+</component>

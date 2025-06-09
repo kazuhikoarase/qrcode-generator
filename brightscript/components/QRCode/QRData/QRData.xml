@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="QRData" extends="Node">
+	<script type="text/brightscript" uri="QRData.brs" />
+
+	<interface>
+		<!-- Read-only! -->
+		<field id="mode" type="integer" />
+		<field id="length" type="integer" value="0" /><!-- size in bytes -->
+
+		<!-- Read-only! Constants -->
+		<field id="MODE_NUMERIC" type="integer" value="1" />
+		<field id="MODE_ALPHANUMERIC" type="integer" value="2" />
+		<field id="MODE_BYTE" type="integer" value="4" />
+		<field id="MODE_KANJI" type="integer" value="8" />
+
+		<function name="setData" /><!-- string -->
+		<function name="writeToBuffer" /><!-- QRBitBuffer -->
+	</interface>
+</component>

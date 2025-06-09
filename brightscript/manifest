@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2022 Marcin Konicki (https://ahwayakchih.neoni.net)
+# Copyright (c) 2009 Kazuhiko Arase (https://github.com/kazuhikoarase/qrcode-generator)
+#
+# Port of qrcode-generator project (JS implementation) to BrightScript.
+#
+# The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED
+# http://www.denso-wave.com/qrcode/faqpatent-e.html
+#
+
+## Channel Details
+title=QRCode Generator
+major_version=1
+minor_version=0
+build_version=0
+
+## Write all code for fhd, let Roku scale it down
+ui_resolutions=fhd
+
+## Lib does not need network access, nor does our test scene example
+network_not_required=1
+
+## Enable optimizations of newer versions
+rsg_version=1.2
+
+## TODO: Make it a downloadable component library?
+# This disables launching the channel with test scene,
+# so uncomment it only when packaging as a lib.
+#sg_component_libs_provided=QRCode
+
+# This hides channel from default menu
+#hidden=1

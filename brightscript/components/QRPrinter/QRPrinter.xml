@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="QRPrinter" extends="Node">
+	<script type="text/brightscript" uri="QRPrinter.brs" />
+
+	<interface>
+		<!--
+			Usage:
+
+			1. Set `cellSize` to desired value, e.g., 1 means 1 character per module of QRCode.
+			2. Set `padding` to desired "width" of a "frame" around QRCode rendered using UTF-8 blocks.
+			3. Set one of:
+			3.a. `qrcode` to pre-made QRCode object,
+			3.b. `text` to a value that you want QRPrinter to render QRCode string data for.
+			4. print `qrstring` or set some Label.text to its value (remember to use monospaced font!)
+
+			Setting `text` will also set `qrcode` to a new QRCode object.
+
+			Alternative usage:
+			1. callFunc("toASCII", qrcode, cellSize, padding) to get string of UTF-8 characters.
+			   This will not update any of the fields!
+		-->
+
+		<!-- Set to number of characters to be used per module (or "dot") of QRCode -->
+		<field id="cellSize" type="integer" value="1" />
+
+		<!-- Set to number of characters to be added to create a "frame" around QRCode -->
+		<!-- For example: 1 means 1 character on the left, one on the right, 1 above and 1 below -->
+		<field id="padding" type="integer" value="1" />
+
+		<!-- Set QRCode object to render to `qrstring` as UTF-8 characters -->
+		<field id="qrcode" type="node" alwaysNotify="true" />
+
+		<!-- Set to a new value to replace `qrcode` and update `qrstring` -->
+		<field id="text" type="string" value="" />
+
+		<!-- Read-only! This will contain QRCode rendered as UTF-8 blocks and spaces -->
+		<field id="qrstring" type="string" value="" />
+
+		<!--
+			WARNING: It's called `toASCII` even though it uses UTF-8 blocks
+			because of terms like `ASCII Art`, i.e., "drawing using text only".
+		-->
+		<function name="toASCII" /><!-- QRCode, cellSize=1 integer, padding=1 integer -->
+	</interface>
+</component>
