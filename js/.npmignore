@@ -1,5 +1,6 @@
-ts-test
-misc
+coverage
 demo
+misc
+ts-test
 sample.*
 *.tgz
