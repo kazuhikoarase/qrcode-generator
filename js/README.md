@@ -59,6 +59,10 @@ Make a QR Code.
 The number of modules(cells) for each orientation.
 _[Note] call make() before this function._
 
+#### getDarkCount() => <code>number</code>
+The total number of modules(cells) that are dark in the final QR code.
+_[Note] call make() before this function._
+
 #### isDark(row, col) => <code>boolean</code>
 The module at row and col is dark or not.
 _[Note] call make() before this function._
@@ -68,11 +72,35 @@ _[Note] call make() before this function._
 | row   | <code>number</code> | 0 ~ moduleCount - 1 |
 | col   | <code>number</code> | 0 ~ moduleCount - 1 |
 
+#### getTypeNumber() => <code>number</code>
+Gets the code size type of the final QR code.
+_[Note] call make() before this function._
+
+#### getMaskPattern() => <code>number</code>
+Gets the index of the mask pattern (0 to 7) that was used in the final QR code.
+_[Note] call make() before this function._
+
+#### getBestMaskPattern() => <code>number</code>
+Gets the index of the mask pattern (0 to 7) that would be chosen for the QR code, based on its minimal penalty score.
+_[Note] call make() before this function._
+
+#### getMaskPatternPenaltyScores() => <code>number[]</code>
+Gets the calculated penalty score for each mask pattern. Lower values make better QR codes.
+_[Note] call make() before this function._
+
+#### setMaskPattern(index) => <code>void</code>
+Sets the index of the mask pattern (0 to 7) to use in the final QR code, regardless of which the best pattern would be.
+Default to null, which selects the best pattern automatically.
+
+#### setColors(foreground, background) => <code>void</code>
+Sets the foreground and background colors for the output formats. Default to black and white, respectively.
+_[Note] This has no effect on the ASCII output._
+
 #### createDataURL(cellSize, margin) => <code>string</code>
 #### createImgTag(cellSize, margin, alt) => <code>string</code>
 #### createSvgTag(cellSize, margin) => <code>string</code>
 #### createTableTag(cellSize, margin) => <code>string</code>
-#### createASCII(cellSize, margin) => <code>string</code>
+#### createASCII(cellSize, margin, inverted) => <code>string</code>
 Helper functions for HTML.
  _[Note] call make() before these functions._
 
@@ -81,6 +109,7 @@ Helper functions for HTML.
 | cellSize | <code>number</code> | default: 2            |
 | margin   | <code>number</code> | default: cellSize * 4 |
 | alt      | <code>string</code> | (optional)            |
+| inverted | <code>bool</code>   | (optional)            |
 
 #### createSvgTag(opts) => <code>string</code>
 
@@ -91,11 +120,11 @@ Helper functions for HTML.
 | opts.margin   | <code>number</code>  | default: cellSize * 4 |
 | opts.scalable | <code>boolean</code> | default: false        |
 
-#### renderTo2dContext(context, cellSize) => <code>void</code>
+#### renderTo2dContext(context, cellSize, margin) => <code>void</code>
 
---
+----
 
 This implementation is based on JIS X 0510:1999.
 
-The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED
-<br/>http://www.denso-wave.com/qrcode/faqpatent-e.html
+The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED.<br>
+https://www.qrcode.com/en/faq.html

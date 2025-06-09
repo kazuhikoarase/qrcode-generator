@@ -11,7 +11,7 @@
 //
 // The word 'QR Code' is registered trademark of
 // DENSO WAVE INCORPORATED
-//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//  https://www.qrcode.com/en/faq.html
 //
 //---------------------------------------------------------------------
 
@@ -31,8 +31,7 @@ interface QRCodeFactory {
   (typeNumber: TypeNumber, errorCorrectionLevel: ErrorCorrectionLevel) : QRCode;
   stringToBytes(s: string) : number[];
   stringToBytesFuncs : { [encoding : string] : (s: string) => number[] };
-  createStringToBytes(unicodeData: string, numChars: number) :
-    (s : string) => number[];
+  createStringToBytes(unicodeData: string, numChars: number) : (s : string) => number[];
 }
 
 interface QRCode {
@@ -40,14 +39,14 @@ interface QRCode {
   make() : void;
   getModuleCount() : number;
   isDark(row: number, col: number) : boolean;
-  createImgTag(cellSize?: number, margin?: number) : string;
-  createSvgTag(cellSize?: number, margin?: number) : string;
-  createSvgTag(opts? : { cellSize?: number, margin?: number,
-      scalable?: boolean }) : string;
+  setColors(foreground: string, background: string) : void;
+  createImgTag(cellSize?: number, margin?: number, alt?: string) : string;
+  createSvgTag(cellSize?: number, margin?: number, alt?: string, title?: string) : string;
+  createSvgTag(opts? : { cellSize?: number, margin?: number, scalable?: boolean }) : string;
   createDataURL(cellSize?: number, margin?: number) : string;
   createTableTag(cellSize?: number, margin?: number) : string;
-  createASCII(cellSize?: number, margin?: number) : string;
-  renderTo2dContext(context: CanvasRenderingContext2D, cellSize?: number): void;
+  createASCII(cellSize?: number, margin?: number, inverted?: boolean) : string;
+  renderTo2dContext(context: CanvasRenderingContext2D, cellSize?: number, margin?: number): void;
 }
 
 declare var qrcode : QRCodeFactory;
