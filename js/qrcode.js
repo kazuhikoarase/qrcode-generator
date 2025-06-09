@@ -521,8 +521,7 @@ var qrcode = function() {
       var size = _this.getModuleCount() * cellSize + margin * 2;
       var c, mc, r, mr, qrSvg='', rect;
 
-      rect = 'l' + cellSize + ',0 0,' + cellSize +
-        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+      rect = 'h' + cellSize + 'v' + cellSize + 'h-' + cellSize + 'z';
 
       qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
       qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
