@@ -1,0 +1,10 @@
+{
+  "name": "qrcode-generator",
+  "version": "0.2.0",
+  "main": "js/qrcode.js",
+  "files": [
+    "js/qrcode.js",
+    "js/qrcode_UTF8.js",
+    "package.json"
+  ]
+}
