@@ -1,0 +1,13 @@
+{
+	"deploy": false,
+	"createPackage": false,
+	"files": [
+		"source/**/*.*",
+		"components/**/*.*",
+		"images/**/*.*",
+		"fonts/**/*.*",
+		"manifest",
+		"!**/tests",
+		"!**/*.spec.bs"
+	]
+}
