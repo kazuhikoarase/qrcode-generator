@@ -1,0 +1,14 @@
+<script type="module" src="./qr-code.js"></script>
+<qr-code id=qr></qr-code>
+
+<br>
+<button id=btn>toSVG</button>
+
+<script type="module">
+import { downloadFile } from "https://js.sabae.cc/downloadFile.js";
+
+btn.onclick = () => {
+  const svg = qr.toSVG();
+  downloadFile("qr.svg", svg);
+};
+</script>
