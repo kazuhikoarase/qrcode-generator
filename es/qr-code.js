@@ -1,4 +1,5 @@
 import { QR } from "./QR.js";
+import { qrdata2svg } from "./qrdata2svg.js";
 
 export const encodeImageData = (code, r = 3, margin = 4) => {
   const data = QR.encode(code);
@@ -50,9 +51,15 @@ class QRCode extends HTMLElement {
     }
   }
   set value(value) {
+    this._value = value;
     const imgdata = encodeImageData(value, this.pixelsize, this.margin);
     this.canvas.width = this.canvas.height = imgdata.width;
     this.g.putImageData(imgdata, 0, 0);
+  }
+  toSVG(dotw = 10) {
+    const data = QR.encode(this._value);
+    const svg = qrdata2svg(data, dotw);
+    return svg;
   }
 }
 
