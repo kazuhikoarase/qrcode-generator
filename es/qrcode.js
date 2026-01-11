@@ -388,7 +388,7 @@ var qrcode = function() {
     };
 
     _this.addData = function(data, mode) {
-      data = bin2str(data);
+      //data = bin2str(data);
 
       mode = mode || 'Byte';
 
@@ -410,7 +410,6 @@ var qrcode = function() {
       default :
         throw 'mode:' + mode;
       }
-
       _dataList.push(newData);
       _dataCache = null;
     };

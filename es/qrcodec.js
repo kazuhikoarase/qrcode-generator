@@ -147,11 +147,10 @@ var qrAlphaNum = function(data) {
 //---------------------------------------------------------------------
 
 var qr8BitByte = function(data) {
-
+  if (typeof data == "string") {
+    data = new TextEncoder().encode(data);
+  }
   var _mode = QRMode.MODE_8BIT_BYTE;
-  //var _data = data;
-  //var _bytes = qrcode.stringToBytes(data);
-  const _bytes = stringToBytes(data);
 
   var _this = {};
 
@@ -160,12 +159,12 @@ var qr8BitByte = function(data) {
   };
 
   _this.getLength = function(buffer) {
-    return _bytes.length;
+    return data.length;
   };
 
   _this.write = function(buffer) {
-    for (var i = 0; i < _bytes.length; i += 1) {
-      buffer.put(_bytes[i], 8);
+    for (var i = 0; i < data.length; i += 1) {
+      buffer.put(data[i], 8);
     }
   };
 
@@ -177,17 +176,19 @@ var qr8BitByte = function(data) {
 //---------------------------------------------------------------------
 
 var qrKanji = function(data) {
-
   var _mode = QRMode.MODE_KANJI;
   var _data = data;
 
-  var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
-  if (!stringToBytes) {
+  /*
+  const encoder = new TextEncoder(""); //qrcode.stringToBytesFuncs['SJIS'];
+  if (!encoder) {
     throw 'sjis not supported.';
   }
+  */
   !function(c, code) {
     // self test for sjis support.
-    var test = stringToBytes(c);
+    //var test = encoder.encode(c);
+    const test = encodeSJIS(c);
     if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
       throw 'sjis not supported.';
     }
@@ -244,6 +245,7 @@ const qrCheck = (func, s) => {
     func(s).write(dummy);
     return true;
   } catch (e) {
+    //console.log(e);
   }
   return false;
 };
@@ -256,6 +258,11 @@ const qrDetectMode = (s) => {
   if (qrCheck(qrAlphaNum, s)) {
     return "Alphanumeric";
   }
+  /*
+  if (qrCheck(qrKanji, s)) {
+    return "Kanji";
+  }
+  */
   return "Byte";
 };
 
