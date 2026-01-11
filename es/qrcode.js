@@ -410,7 +410,7 @@ var qrcode = function() {
       default :
         throw 'mode:' + mode;
       }
-
+      console.log(mode, newData)
       _dataList.push(newData);
       _dataCache = null;
     };

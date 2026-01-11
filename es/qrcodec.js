@@ -149,9 +149,6 @@ var qrAlphaNum = function(data) {
 var qr8BitByte = function(data) {
 
   var _mode = QRMode.MODE_8BIT_BYTE;
-  //var _data = data;
-  //var _bytes = qrcode.stringToBytes(data);
-  const _bytes = stringToBytes(data);
 
   var _this = {};
 
@@ -160,12 +157,12 @@ var qr8BitByte = function(data) {
   };
 
   _this.getLength = function(buffer) {
-    return _bytes.length;
+    return data.length;
   };
 
   _this.write = function(buffer) {
-    for (var i = 0; i < _bytes.length; i += 1) {
-      buffer.put(_bytes[i], 8);
+    for (var i = 0; i < data.length; i += 1) {
+      buffer.put(data.charCodeAt(i), 8);
     }
   };
 
