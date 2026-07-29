@@ -49,6 +49,7 @@ export type QRSvgTagOpts = {
   cellSize?: number,
   margin?: number,
   scalable?: boolean,
+  crispEdges?: boolean | 'auto',
   alt?: any,
   title?: any
 };

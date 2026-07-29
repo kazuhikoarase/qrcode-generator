@@ -90,6 +90,7 @@ Helper functions for HTML.
 | opts.cellSize | <code>number</code>  | default: 2            |
 | opts.margin   | <code>number</code>  | default: cellSize * 4 |
 | opts.scalable | <code>boolean</code> | default: false        |
+| opts.crispEdges | <code>boolean</code> \| <code>'auto'</code> | default: auto; applies <code>crispEdges</code> automatically for whole-number <code>cellSize</code> values |
 
 #### renderTo2dContext(context, cellSize) => <code>void</code>
 
