@@ -528,6 +528,7 @@ var qrcode = function() {
       qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
       qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
       qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += Math.abs(size - Math.round(size)) < 0.001 ? ' shape-rendering="crispEdges"' : '';
       qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
           escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
       qrSvg += '>';
