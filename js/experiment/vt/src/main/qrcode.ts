@@ -35,7 +35,7 @@ import {
  * @param typeNumber 1 to 40
  * @param errorCorrectionLevel 'L','M','Q','H'
  */
-const qrcode : QRCodeFactory = function(typeNumber : number, errorCorrectionLevel : string) : QRCode {
+const qrcode = function(typeNumber : number, errorCorrectionLevel : string) : QRCode {
 
   const PAD0 = 0xEC;
   const PAD1 = 0x11;
@@ -459,270 +459,71 @@ const qrcode : QRCodeFactory = function(typeNumber : number, errorCorrectionLeve
     makeImpl(false, getBestMaskPattern() );
   };
 
-  const createTableTag = function(cellSize? : number, margin? : number) {
-
-    cellSize = cellSize || 2;
-    margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
-
-    let qrHtml = '';
-
-    qrHtml += '<table style="';
-    qrHtml += ' border-width: 0px; border-style: none;';
-    qrHtml += ' border-collapse: collapse;';
-    qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
-    qrHtml += '">';
-    qrHtml += '<tbody>';
-
-    for (let r = 0; r < _this.getModuleCount(); r += 1) {
-
-      qrHtml += '<tr>';
-
-      for (let c = 0; c < _this.getModuleCount(); c += 1) {
-        qrHtml += '<td style="';
-        qrHtml += ' border-width: 0px; border-style: none;';
-        qrHtml += ' border-collapse: collapse;';
-        qrHtml += ' padding: 0px; margin: 0px;';
-        qrHtml += ' width: ' + cellSize + 'px;';
-        qrHtml += ' height: ' + cellSize + 'px;';
-        qrHtml += ' background-color: ';
-        qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
-        qrHtml += ';';
-        qrHtml += '"/>';
-      }
-
-      qrHtml += '</tr>';
+  const toString = function(format_or_opts? : string | { format: string, [key: string] : any }, ...args : any[]) {
+    let format;
+    let _arguments : any = args;
+    if (typeof format_or_opts === 'string') {
+      format = format_or_opts;
     }
+    else if (typeof format_or_opts === 'object' && format_or_opts?.format) {
+      const { format: objectFormat, ...formatOpts } = format_or_opts;
+      format = objectFormat;
+      _arguments = [formatOpts];
+    }
+    if (! format) return '[QRCode Object]';
+    if (! qrcodeToString.formats[format]) {
+      throw 'unknown format: ' + format;
+    }
+    return qrcodeToString.formats[format].apply(_this, _arguments);
+  };
 
-    qrHtml += '</tbody>';
-    qrHtml += '</table>';
-
-    return qrHtml;
+  const createTableTag = function(cellSize_or_opts? : number | { [key : string] : any }, margin? : number) {
+    const options = (typeof cellSize_or_opts === 'object')
+      ? cellSize_or_opts
+      : {
+        cellSize: cellSize_or_opts || 2,
+        margin
+      };
+    return _this.toString('table', options);
   };
 
   const createSvgTag = function(cellSize_or_opts? : number | QRSvgTagOpts,
       margin? : number, alt? : any, title? : any) {
-
-    let cellSize : number | undefined = 0;
-    let opts : QRSvgTagOpts = {};
-    if (typeof cellSize_or_opts == 'object') {
-      // Called by options.
-      opts = cellSize_or_opts;
-      // overwrite cellSize and margin.
-      cellSize = opts.cellSize;
-      margin = opts.margin;
-      alt = opts.alt;
-      title = opts.title;
-    }
-
-    cellSize = cellSize || 2;
-    margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
-
-    // Compose alt property surrogate
-    alt = (typeof alt === 'string') ? {text: alt} : alt || {};
-    alt.text = alt.text || null;
-    alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
-
-    // Compose title property surrogate
-    title = (typeof title === 'string') ? {text: title} : title || {};
-    title.text = title.text || null;
-    title.id = (title.text) ? title.id || 'qrcode-title' : null;
-
-    const size = _this.getModuleCount() * cellSize + margin * 2;
-    let c : number, mc : number, r : number, mr : number, qrSvg='', rect : string;
-
-    rect = 'l' + cellSize + ',0 0,' + cellSize +
-      ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
-
-    qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
-    qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
-    qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
-    qrSvg += ' preserveAspectRatio="xMinYMin meet"';
-    qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
-        escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
-    qrSvg += '>';
-    qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
-        escapeXml(title.text) + '</title>' : '';
-    qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
-        escapeXml(alt.text) + '</description>' : '';
-    qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
-    qrSvg += '<path d="';
-
-    for (r = 0; r < _this.getModuleCount(); r += 1) {
-      mr = r * cellSize + margin;
-      for (c = 0; c < _this.getModuleCount(); c += 1) {
-        if (_this.isDark(r, c) ) {
-          mc = c*cellSize+margin;
-          qrSvg += 'M' + mc + ',' + mr + rect;
-        }
-      }
-    }
-
-    qrSvg += '" stroke="transparent" fill="black"/>';
-    qrSvg += '</svg>';
-
-    return qrSvg;
+    const options = (typeof cellSize_or_opts === 'object')
+      ? cellSize_or_opts
+      : {
+        cellSize: cellSize_or_opts || 2,
+        margin,
+        alt,
+        title
+      };
+    return _this.toString('svg', options);
   };
 
   const createDataURL = function(cellSize? : number, margin? : number) {
-
-    cellSize = cellSize || 2;
-    margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
-
-    const size = _this.getModuleCount() * cellSize + margin * 2;
-    const min = margin;
-    const max = size - margin;
-
-    return _createDataURL(size, size, function(x, y) {
-      if (min <= x && x < max && min <= y && y < max) {
-        const c = Math.floor( (x - min) / cellSize);
-        const r = Math.floor( (y - min) / cellSize);
-        return _this.isDark(r, c)? 0 : 1;
-      } else {
-        return 1;
-      }
-    } );
+    return _this.toString('gif', {
+      cellSize: cellSize || 2,
+      margin,
+      tag: false
+    });
   };
 
-  const createImgTag = function(cellSize? : number, margin? : number, alt? : string) {
-
-    cellSize = cellSize || 2;
-    margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
-
-    const size = _this.getModuleCount() * cellSize + margin * 2;
-
-    let img = '';
-    img += '<img';
-    img += '\u0020src="';
-    img += _this.createDataURL(cellSize, margin);
-    img += '"';
-    img += '\u0020width="';
-    img += size;
-    img += '"';
-    img += '\u0020height="';
-    img += size;
-    img += '"';
-    if (alt) {
-      img += '\u0020alt="';
-      img += escapeXml(alt);
-      img += '"';
-    }
-    img += '/>';
-
-    return img;
-  };
-
-  const escapeXml = function(s : string) {
-    let escaped = '';
-    for (let i = 0; i < s.length; i += 1) {
-      const c = s.charAt(i);
-      switch(c) {
-      case '<': escaped += '&lt;'; break;
-      case '>': escaped += '&gt;'; break;
-      case '&': escaped += '&amp;'; break;
-      case '"': escaped += '&quot;'; break;
-      default : escaped += c; break;
-      }
-    }
-    return escaped;
-  };
-
-  const _createHalfASCII = function(margin? : number) {
-    const cellSize = 1;
-    margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
-
-    const size = _this.getModuleCount() * cellSize + margin * 2;
-    const min = margin;
-    const max = size - margin;
-
-    let y : number, x : number, r1 : number, r2 : number, p : string;
-
-    const blocks : { [k : string] : string } = {
-      '██': '█',
-      '█ ': '▀',
-      ' █': '▄',
-      '  ': ' '
-    };
-
-    const blocksLastLineNoMargin : { [k : string] : string } = {
-      '██': '▀',
-      '█ ': '▀',
-      ' █': ' ',
-      '  ': ' '
-    };
-
-    let ascii = '';
-    for (y = 0; y < size; y += 2) {
-      r1 = Math.floor((y - min) / cellSize);
-      r2 = Math.floor((y + 1 - min) / cellSize);
-      for (x = 0; x < size; x += 1) {
-        p = '█';
-
-        if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
-          p = ' ';
-        }
-
-        if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
-          p += ' ';
-        }
-        else {
-          p += '█';
-        }
-
-        // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
-        ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
-      }
-
-      ascii += '\n';
-    }
-
-    if (size % 2 && margin > 0) {
-      return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
-    }
-
-    return ascii.substring(0, ascii.length-1);
+  const createImgTag = function(cellSize_or_opts? : number | { [key : string] : any },
+      margin? : number, alt? : string, title? : string) {
+    const options = (typeof cellSize_or_opts === 'object')
+      ? cellSize_or_opts
+      : {
+        cellSize: cellSize_or_opts || 2,
+        margin,
+        alt,
+        title
+      };
+    options.tag = 'img';
+    return _this.toString('gif', options);
   };
 
   const createASCII = function(cellSize? : number, margin? : number) {
-    cellSize = cellSize || 1;
-
-    if (cellSize < 2) {
-      return _createHalfASCII(margin);
-    }
-
-    cellSize -= 1;
-    margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
-
-    const size = _this.getModuleCount() * cellSize + margin * 2;
-    const min = margin;
-    const max = size - margin;
-
-    let y : number, x : number, r : number, p : number;
-
-    const white = Array(cellSize+1).join('██');
-    const black = Array(cellSize+1).join('  ');
-
-    let ascii = '';
-    let line = '';
-    for (y = 0; y < size; y += 1) {
-      r = Math.floor( (y - min) / cellSize);
-      line = '';
-      for (x = 0; x < size; x += 1) {
-        p = 1;
-
-        if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
-          p = 0;
-        }
-
-        // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
-        line += p ? white : black;
-      }
-
-      for (r = 0; r < cellSize; r += 1) {
-        ascii += line + '\n';
-      }
-    }
-
-    return ascii.substring(0, ascii.length-1);
+    return _this.toString('ascii', cellSize, margin);
   };
 
   const renderTo2dContext = function(context : CanvasRenderingContext2D, cellSize? : number) {
@@ -741,6 +542,7 @@ const qrcode : QRCodeFactory = function(typeNumber : number, errorCorrectionLeve
     isDark,
     getModuleCount,
     make,
+    toString,
     createTableTag,
     createSvgTag,
     createDataURL,
@@ -750,7 +552,12 @@ const qrcode : QRCodeFactory = function(typeNumber : number, errorCorrectionLeve
   };
 
   return _this;
+} as QRCodeFactory;
+
+const qrcodeToString = qrcode.toString as typeof qrcode.toString & {
+  formats : { [format : string] : (...args : any[]) => string }
 };
+qrcodeToString.formats = {};
 
 //---------------------------------------------------------------------
 // qrcode.stringToBytes
@@ -1784,154 +1591,6 @@ const qrKanji = function(data : string) : QRData {
   return _this;
 };
 
-//=====================================================================
-// GIF Support etc.
-//
-
-//---------------------------------------------------------------------
-// byteArrayOutputStream
-//---------------------------------------------------------------------
-
-type ByteArrayOutputStream = {
-    writeByte: (b: number) => void;
-    writeShort: (i: number) => void;
-    writeBytes: (b: number[], off?: number, len?: number) => void;
-    writeString: (s: string) => void;
-    toByteArray: () => number[];
-    toString: () => string;
-};
-
-const byteArrayOutputStream = function() : ByteArrayOutputStream {
-
-  const _bytes : number[] = [];
-
-  const writeByte = function(b : number) {
-    _bytes.push(b & 0xff);
-  };
-
-  const writeShort = function(i : number) {
-    _this.writeByte(i);
-    _this.writeByte(i >>> 8);
-  };
-
-  const writeBytes = function(b : number[], off? : number, len? : number) {
-    off = off || 0;
-    len = len || b.length;
-    for (let i = 0; i < len; i += 1) {
-      _this.writeByte(b[i + off]);
-    }
-  };
-
-  const writeString = function(s : string) {
-    for (let i = 0; i < s.length; i += 1) {
-      _this.writeByte(s.charCodeAt(i) );
-    }
-  };
-
-  const toByteArray = function() {
-    return _bytes;
-  };
-
-  const toString = function() {
-    let s = '';
-    s += '[';
-    for (let i = 0; i < _bytes.length; i += 1) {
-      if (i > 0) {
-        s += ',';
-      }
-      s += _bytes[i];
-    }
-    s += ']';
-    return s;
-  };
-
-  const _this = {
-    writeByte,
-    writeShort,
-    writeBytes,
-    writeString,
-    toByteArray,
-    toString,
-  };
-
-  return _this;
-};
-
-//---------------------------------------------------------------------
-// base64EncodeOutputStream
-//---------------------------------------------------------------------
-
-const base64EncodeOutputStream = function() {
-
-  let _buffer = 0;
-  let _buflen = 0;
-  let _length = 0;
-  let _base64 = '';
-
-  const writeEncoded = function(b : number) {
-    _base64 += String.fromCharCode(encode(b & 0x3f) );
-  };
-
-  const encode = function(n : number) {
-    if (n < 0) {
-      throw 'n:' + n;
-    } else if (n < 26) {
-      return 0x41 + n;
-    } else if (n < 52) {
-      return 0x61 + (n - 26);
-    } else if (n < 62) {
-      return 0x30 + (n - 52);
-    } else if (n == 62) {
-      return 0x2b;
-    } else if (n == 63) {
-      return 0x2f;
-    } else {
-      throw 'n:' + n;
-    }
-  };
-
-  const writeByte = function(n : number) {
-
-    _buffer = (_buffer << 8) | (n & 0xff);
-    _buflen += 8;
-    _length += 1;
-
-    while (_buflen >= 6) {
-      writeEncoded(_buffer >>> (_buflen - 6) );
-      _buflen -= 6;
-    }
-  };
-
-  const flush = function() {
-
-    if (_buflen > 0) {
-      writeEncoded(_buffer << (6 - _buflen) );
-      _buffer = 0;
-      _buflen = 0;
-    }
-
-    if (_length % 3 != 0) {
-      // padding
-      const padlen = 3 - _length % 3;
-      for (let i = 0; i < padlen; i += 1) {
-        _base64 += '=';
-      }
-    }
-  };
-
-  const toString = function() {
-    return _base64;
-  };
-
-  const _this = {
-    writeByte,
-    flush,
-    toString,
-  };
-
-  return _this;
-};
-
 //---------------------------------------------------------------------
 // base64DecodeInputStream
 //---------------------------------------------------------------------
@@ -1993,244 +1652,6 @@ const base64DecodeInputStream = function(str : string) {
   const _this = { read };
 
   return _this;
-};
-
-//---------------------------------------------------------------------
-// gifImage (B/W)
-//---------------------------------------------------------------------
-
-const gifImage = function(width : number, height : number) {
-
-  const _width = width;
-  const _height = height;
-  const _data = new Array(width * height);
-
-  const setPixel = function(x : number, y : number, pixel : number) {
-    _data[y * _width + x] = pixel;
-  };
-
-  const write = function(out : ByteArrayOutputStream) {
-
-    //---------------------------------
-    // GIF Signature
-
-    out.writeString('GIF87a');
-
-    //---------------------------------
-    // Screen Descriptor
-
-    out.writeShort(_width);
-    out.writeShort(_height);
-
-    out.writeByte(0x80); // 2bit
-    out.writeByte(0);
-    out.writeByte(0);
-
-    //---------------------------------
-    // Global Color Map
-
-    // black
-    out.writeByte(0x00);
-    out.writeByte(0x00);
-    out.writeByte(0x00);
-
-    // white
-    out.writeByte(0xff);
-    out.writeByte(0xff);
-    out.writeByte(0xff);
-
-    //---------------------------------
-    // Image Descriptor
-
-    out.writeString(',');
-    out.writeShort(0);
-    out.writeShort(0);
-    out.writeShort(_width);
-    out.writeShort(_height);
-    out.writeByte(0);
-
-    //---------------------------------
-    // Local Color Map
-
-    //---------------------------------
-    // Raster Data
-
-    const lzwMinCodeSize = 2;
-    const raster = getLZWRaster(lzwMinCodeSize);
-
-    out.writeByte(lzwMinCodeSize);
-
-    let offset = 0;
-
-    while (raster.length - offset > 255) {
-      out.writeByte(255);
-      out.writeBytes(raster, offset, 255);
-      offset += 255;
-    }
-
-    out.writeByte(raster.length - offset);
-    out.writeBytes(raster, offset, raster.length - offset);
-    out.writeByte(0x00);
-
-    //---------------------------------
-    // GIF Terminator
-    out.writeString(';');
-  };
-
-  const bitOutputStream = function(out : ByteArrayOutputStream) {
-
-    const _out = out;
-    let _bitLength = 0;
-    let _bitBuffer = 0;
-
-    const write = function(data : number, length : number) {
-
-      if ( (data >>> length) != 0) {
-        throw 'length over';
-      }
-
-      while (_bitLength + length >= 8) {
-        _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
-        length -= (8 - _bitLength);
-        data >>>= (8 - _bitLength);
-        _bitBuffer = 0;
-        _bitLength = 0;
-      }
-
-      _bitBuffer = (data << _bitLength) | _bitBuffer;
-      _bitLength = _bitLength + length;
-    };
-
-    const flush = function() {
-      if (_bitLength > 0) {
-        _out.writeByte(_bitBuffer);
-      }
-    };
-
-      const _this = { write, flush };
-
-    return _this;
-  };
-
-  const getLZWRaster = function(lzwMinCodeSize : number) {
-
-    const clearCode = 1 << lzwMinCodeSize;
-    const endCode = (1 << lzwMinCodeSize) + 1;
-    let bitLength = lzwMinCodeSize + 1;
-
-    // Setup LZWTable
-    const table = lzwTable();
-
-    for (let i = 0; i < clearCode; i += 1) {
-      table.add(String.fromCharCode(i) );
-    }
-    table.add(String.fromCharCode(clearCode) );
-    table.add(String.fromCharCode(endCode) );
-
-    const byteOut = byteArrayOutputStream();
-    const bitOut = bitOutputStream(byteOut);
-
-    // clear code
-    bitOut.write(clearCode, bitLength);
-
-    let dataIndex = 0;
-
-    let s = String.fromCharCode(_data[dataIndex]);
-    dataIndex += 1;
-
-    while (dataIndex < _data.length) {
-
-      const c = String.fromCharCode(_data[dataIndex]);
-      dataIndex += 1;
-
-      if (table.contains(s + c) ) {
-
-        s = s + c;
-
-      } else {
-
-        bitOut.write(table.indexOf(s), bitLength);
-
-        if (table.size() < 0xfff) {
-
-          if (table.size() == (1 << bitLength) ) {
-            bitLength += 1;
-          }
-
-          table.add(s + c);
-        }
-
-        s = c;
-      }
-    }
-
-    bitOut.write(table.indexOf(s), bitLength);
-
-    // end code
-    bitOut.write(endCode, bitLength);
-
-    bitOut.flush();
-
-    return byteOut.toByteArray();
-  };
-
-  const lzwTable = function() {
-
-    const _map : { [k : string] : number } = {};
-    let _size = 0;
-
-    const add = function(key : string) {
-      if (_this.contains(key) ) {
-        throw 'dup key:' + key;
-      }
-      _map[key] = _size;
-      _size += 1;
-    };
-
-    const size = function() {
-      return _size;
-    };
-
-    const indexOf = function(key : string) {
-      return _map[key];
-    };
-
-    const contains = function(key : string) {
-      return typeof _map[key] != 'undefined';
-    };
-
-    const _this = { add, size, indexOf, contains};
-
-    return _this;
-  };
-
-  const _this = {
-    setPixel, write
-  };
-
-  return _this;
-};
-
-const _createDataURL = function(width : number, height : number,
-    getPixel : (x : number, y : number) => number) {
-  const gif = gifImage(width, height);
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      gif.setPixel(x, y, getPixel(x, y) );
-    }
-  }
-
-  const b = byteArrayOutputStream();
-  gif.write(b);
-
-  const base64 = base64EncodeOutputStream();
-  const bytes = b.toByteArray();
-  for (let i = 0; i < bytes.length; i += 1) {
-    base64.writeByte(bytes[i]);
-  }
-  base64.flush();
-
-  return 'data:image/gif;base64,' + base64;
 };
 
 /**

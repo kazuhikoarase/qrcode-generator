@@ -31,11 +31,16 @@ export interface QRCode {
   isDark(row: number, col: number) : boolean;
   getModuleCount() : number;
   make() : void;
+  toString() : string;
+  toString(format: string, ...args: any[]) : string;
+  toString(opts: { format: string, [key: string]: any }) : string;
   createTableTag(cellSize?: number, margin?: number) : string;
+  createTableTag(opts? : QRTableTagOpts) : string;
   createSvgTag(cellSize?: number, margin?: number, alt?: any, title?: any) : string;
   createSvgTag(opts? : QRSvgTagOpts) : string;
   createDataURL(cellSize?: number, margin?: number) : string;
-  createImgTag(cellSize?: number, margin?: number, alt?: string) : string;
+  createImgTag(cellSize?: number, margin?: number, alt?: string, title?: string) : string;
+  createImgTag(opts? : QRImgTagOpts) : string;
   createASCII(cellSize?: number, margin?: number) : string;
   renderTo2dContext(context: CanvasRenderingContext2D, cellSize?: number) : void;
 }
@@ -43,14 +48,37 @@ export interface QRCode {
 export interface QRCodeFactory {
   (typeNumber: TypeNumber, errorCorrectionLevel: ErrorCorrectionLevel) : QRCode;
   stringToBytes(s: string): number[];
+  stringToBytesFuncs : { [encoding : string] : (s: string) => number[] };
+  createStringToBytes(unicodeData: string, numChars: number) :
+    (s : string) => number[];
+  toString: {
+    (): string;
+    formats: { [format : string] : (...args : any[]) => string };
+  };
 }
+
+export type QRImgTagOpts = {
+  cellSize?: number,
+  margin?: number,
+  alt?: string,
+  title?: string,
+  [key : string] : any
+};
+
+export type QRTableTagOpts = {
+  cellSize?: number,
+  margin?: number,
+  [key : string] : any
+};
 
 export type QRSvgTagOpts = {
   cellSize?: number,
   margin?: number,
   scalable?: boolean,
+  crispEdges?: boolean | 'auto',
   alt?: any,
-  title?: any
+  title?: any,
+  [key : string] : any
 };
 
 export type QRData = {
