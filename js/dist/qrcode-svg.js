@@ -36,6 +36,7 @@
     if (typeof cell === 'string') cell = { fill: cell };
     if (typeof cell !== 'object' || ! cell) cell = {};
     let scalable = typeof opts.scalable !== 'undefined' ? opts.scalable : ! (typeof cellSize === 'number' || typeof opts.cellSize === 'number' || typeof cell.size === 'number');
+    let crispEdges = typeof opts.crispEdges !== 'undefined' ? opts.crispEdges : 'auto';
     if (typeof cellSize === 'number') cell.size = cellSize;
     if (typeof cell.size !== 'number') cell.size = (typeof opts.cellSize === 'number') ? opts.cellSize : 1;
     if (typeof cellColor === 'string') cell.fill = cellColor;
@@ -76,6 +77,10 @@
     svg += `<svg version="1.1" xmlns="http://www.w3.org/2000/svg"`;
     svg += ! scalable ? ` width="${size}px" height="${size}px"` : '';
     svg += ` viewBox="0 0 ${size} ${size}" preserveAspectRatio="xMinYMin meet" id="${escapeXml(id)}" class="${escapeXml(_class)}" style="${escapeXml(style)}"`;
+    svg += crispEdges === true ||
+      (crispEdges === 'auto' && Math.abs(cell.size - Math.round(cell.size)) < 0.001)
+      ? ` shape-rendering="crispEdges"`
+      : '';
     svg += (title.text || alt.text)
       ? ` role="img" aria-labelledby="${escapeXml([title.id, alt.id].join(' ').trim())}"`
       : '';

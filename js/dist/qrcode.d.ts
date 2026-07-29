@@ -47,7 +47,7 @@ interface QRCode {
   createImgTag(opts? : { cellSize?: number, margin?: number, alt?: string, title?: string, [key: string]: any }) : string;
   createSvgTag(cellSize?: number, margin?: number, alt?: string, title?: string) : string;
   createSvgTag(opts? : { cellSize?: number, margin?: number,
-      scalable?: boolean, alt?: string,
+      scalable?: boolean, crispEdges?: boolean | 'auto', alt?: string,
       title?: string, [key: string]: any }) : string;
   createDataURL(cellSize?: number, margin?: number) : string;
   createTableTag(cellSize?: number, margin?: number) : string;
