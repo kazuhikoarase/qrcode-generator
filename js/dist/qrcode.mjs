@@ -505,6 +505,7 @@ export const qrcode = function(typeNumber, errorCorrectionLevel) {
 
     cellSize = cellSize || 2;
     margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+    const crispEdges = typeof opts.crispEdges == 'undefined' ? 'auto' : opts.crispEdges;
 
     // Compose alt property surrogate
     alt = (typeof alt === 'string') ? {text: alt} : alt || {};
@@ -526,6 +527,9 @@ export const qrcode = function(typeNumber, errorCorrectionLevel) {
     qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
     qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
     qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+    qrSvg += crispEdges === true ||
+      (crispEdges === 'auto' && Math.abs(cellSize - Math.round(cellSize)) < 0.001) ?
+      ' shape-rendering="crispEdges"' : '';
     qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
         escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
     qrSvg += '>';
