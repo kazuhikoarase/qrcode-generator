@@ -12,6 +12,10 @@ export default defineConfig({
     lib: {
       entry: [
         resolve(__dirname, 'src/main/qrcode.ts'),
+        resolve(__dirname, 'src/main/qrcode-gif.ts'),
+        resolve(__dirname, 'src/main/qrcode-ascii.ts'),
+        resolve(__dirname, 'src/main/qrcode-table.ts'),
+        resolve(__dirname, 'src/main/qrcode-svg.ts'),
         resolve(__dirname, 'src/main/qrcode_SJIS.ts'),
         resolve(__dirname, 'src/main/qrcode_UTF8.ts')
       ],

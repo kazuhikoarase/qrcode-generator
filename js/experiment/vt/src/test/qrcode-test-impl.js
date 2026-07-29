@@ -272,6 +272,22 @@ export const misc = function(qrcode) {
       expect(!!qr.createSvgTag({}) ).to.be.true;
     });
 
+    it('svg tag auto crispEdges for whole-number cell size', function(){
+      const qr = qrcode(1, 'H');
+      qr.addData('{SVG}');
+      qr.make();
+      expect(qr.createSvgTag({cellSize : 2}) ).to.contain(' shape-rendering="crispEdges"');
+      expect(qr.createSvgTag({cellSize : 2.5}) ).not.to.contain(' shape-rendering="crispEdges"');
+    });
+
+    it('svg tag can force crispEdges on and off', function(){
+      const qr = qrcode(1, 'H');
+      qr.addData('{SVG}');
+      qr.make();
+      expect(qr.createSvgTag({cellSize : 2.5, crispEdges : true}) ).to.contain(' shape-rendering="crispEdges"');
+      expect(qr.createSvgTag({cellSize : 2, crispEdges : false}) ).not.to.contain(' shape-rendering="crispEdges"');
+    });
+
     it('svg tag by object (for coverage)', function(){
 
       let count = 0;

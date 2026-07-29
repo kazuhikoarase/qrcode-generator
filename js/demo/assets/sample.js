@@ -34,8 +34,23 @@ var create_qrcode = function(text, typeNumber,
   qr.addData(text, mode);
   qr.make();
 
-//  return qr.createTableTag();
-//  return qr.createSvgTag();
+  //return "<pre style='color: white; background: black; padding: 1em;'>" + qr.createASCII(1, 2) + "</pre>";
+  //return "<pre style='color: white; background: black; padding: 1em;'>" + qr.toString('ascii', 1, 2) + "</pre>";
+  //return qr.createTableTag(5, 20);
+  //return qr.toString('table', { cellSize: 5, margin: 20, cellColor: "#f00", backgroundColor: "#ff0" });
+  /*return qr.toString('svg', {
+    cell: {
+      size: 6,
+      fill: "#00f",
+      style: "opacity: 0.8"
+    },
+    background: "#ff0",
+    alt: text,
+    title: "QR Code"
+  });*/
+  //return qr.toString('svg', { cellSize: 5, margin: 10, cellColor: "#f00", backgroundColor: "transparent", alt: "alt", title: "title" });
+  //return qr.toString('svg', 5, 0, "#f00", "transparent");
+  //return qr.createSvgTag();
   return qr.createImgTag();
 };
 
